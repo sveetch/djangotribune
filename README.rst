@@ -33,15 +33,19 @@ nerdz.
 Formats
 -------
 
-`Plain-text <../remote/>`_
-    Very light, use the raw message, ascendant ordered on default.
-`XML <../remote/xml/>`_
-    Very fast, use the remote message render, descendant ordered on default.
-`CRAP XML <../remote/xml/crap/>`_
+Plain-text
+    Very light, use the raw message, ascendant ordered on default. Url path from the 
+    tribune is ``remote/``.
+XML
+    Very fast, use the remote message render, descendant ordered on default. Url path from 
+    the tribune is ``remote/xml/``.
+CRAP XML
     The XML version *extended* to suit to old tribune application client. Actually the 
-    only diff is the XML structure wich is indented.
-`JSON <../remote/json/>`_
-    Very *declarative*, use the web message render, descendant ordered on default.
+    only diff is the XML structure wich is indented. Url path from the tribune is 
+    ``remote/xml/crap/``.
+JSON
+    Very *declarative*, use the web message render, descendant ordered on default. Url 
+    path from the tribune is ``remote/json/``.
 
 Url arguments
 -------------
