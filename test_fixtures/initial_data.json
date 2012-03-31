@@ -1,0 +1,414 @@
+[
+    {
+        "pk": 8, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "h\u00e9cube", 
+            "last_name": "H\u00e9cube", 
+            "is_active": true, 
+            "is_staff": false, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "date_joined": "2012-03-23 23:42:42", 
+            "first_name": "nope", 
+            "is_superuser": false, 
+            "last_login": "2012-03-23 23:42:42", 
+            "email": "h\u00e9cube@sveetch.biz"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "hector", 
+            "last_name": "Hector", 
+            "is_active": true, 
+            "is_staff": false, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "date_joined": "2012-03-23 23:42:42", 
+            "first_name": "nope", 
+            "is_superuser": false, 
+            "last_login": "2012-03-23 23:42:42", 
+            "email": "hector@sveetch.biz"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "cassandre", 
+            "last_name": "Cassandre", 
+            "is_active": true, 
+            "is_staff": false, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "date_joined": "2012-03-23 23:42:42", 
+            "first_name": "nope", 
+            "is_superuser": false, 
+            "last_login": "2012-03-23 23:42:42", 
+            "email": "cassandre@sveetch.biz"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "priam", 
+            "last_name": "Priam", 
+            "is_active": true, 
+            "is_staff": false, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "date_joined": "2012-03-23 23:42:42", 
+            "first_name": "nope", 
+            "is_superuser": false, 
+            "last_login": "2012-03-23 23:42:42", 
+            "email": "priam@sveetch.biz"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "le g\u00e9om\u00e8tre", 
+            "last_name": "Le g\u00e9om\u00e8tre", 
+            "is_active": true, 
+            "is_staff": false, 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "date_joined": "2012-03-23 23:42:42", 
+            "first_name": "nope", 
+            "is_superuser": false, 
+            "last_login": "2012-03-23 23:42:42", 
+            "email": "le g\u00e9om\u00e8tre@sveetch.biz"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "L\u2019avenir des vieillards me laisse indiff\u00e9rent.", 
+            "author": 6, 
+            "web_render": "L\u2019avenir des vieillards me laisse indiff\u00e9rent.", 
+            "clock": "23:42:43", 
+            "remote_render": "L\u2019avenir des vieillards me laisse indiff\u00e9rent.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:43", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Hector, je suis po\u00e8te et juge en po\u00e8te. Suppose que notre vocabulaire ne soit pas quelquefois touch\u00e9 par la beaut\u00e9 ! Suppose que le mot d\u00e9lice n\u2019existe pas !", 
+            "author": null, 
+            "web_render": "Hector, je suis po\u00e8te et juge en po\u00e8te. Suppose que notre vocabulaire ne soit pas quelquefois touch\u00e9 par la beaut\u00e9 ! Suppose que le mot d\u00e9lice n\u2019existe pas !", 
+            "clock": "23:42:44", 
+            "remote_render": "Hector, je suis po\u00e8te et juge en po\u00e8te. Suppose que notre vocabulaire ne soit pas quelquefois touch\u00e9 par la beaut\u00e9 ! Suppose que le mot d\u00e9lice n\u2019existe pas !", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:44", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Nous nous en passerions. Je m\u2019en passe d\u00e9j\u00e0. Je ne prononce le mot d\u00e9lice qu\u2019absolument forc\u00e9.", 
+            "author": 6, 
+            "web_render": "Nous nous en passerions. Je m\u2019en passe d\u00e9j\u00e0. Je ne prononce le mot d\u00e9lice qu\u2019absolument forc\u00e9.", 
+            "clock": "23:42:45", 
+            "remote_render": "Nous nous en passerions. Je m\u2019en passe d\u00e9j\u00e0. Je ne prononce le mot d\u00e9lice qu\u2019absolument forc\u00e9.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:45", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Oui, et tu te passerais du mot volupt\u00e9, sans doute ?", 
+            "author": null, 
+            "web_render": "Oui, et tu te passerais du mot volupt\u00e9, sans doute ?", 
+            "clock": "23:42:46", 
+            "remote_render": "Oui, et tu te passerais du mot volupt\u00e9, sans doute ?", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:46", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 5, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Si c\u2019\u00e9tait au prix de la guerre qu\u2019il fall\u00fbt acheter le mot volupt\u00e9, je m\u2019en passerais.", 
+            "author": 6, 
+            "web_render": "Si c\u2019\u00e9tait au prix de la guerre qu\u2019il fall\u00fbt acheter le mot volupt\u00e9, je m\u2019en passerais.", 
+            "clock": "23:42:47", 
+            "remote_render": "Si c\u2019\u00e9tait au prix de la guerre qu\u2019il fall\u00fbt acheter le mot volupt\u00e9, je m\u2019en passerais.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:47", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 6, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "C\u2019est au prix de la guerre que tu as trouv\u00e9 le plus beau, le mot courage.", 
+            "author": null, 
+            "web_render": "C\u2019est au prix de la guerre que tu as trouv\u00e9 le plus beau, le mot courage.", 
+            "clock": "23:42:48", 
+            "remote_render": "C\u2019est au prix de la guerre que tu as trouv\u00e9 le plus beau, le mot courage.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:48", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 7, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "C\u2019\u00e9tait bien pay\u00e9.", 
+            "author": 6, 
+            "web_render": "C\u2019\u00e9tait bien pay\u00e9.", 
+            "clock": "23:42:49", 
+            "remote_render": "C\u2019\u00e9tait bien pay\u00e9.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:49", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 8, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Le mot l\u00e2chet\u00e9 a d\u00fb \u00eatre trouv\u00e9 par la m\u00eame occasion.", 
+            "author": 8, 
+            "web_render": "Le mot l\u00e2chet\u00e9 a d\u00fb \u00eatre trouv\u00e9 par la m\u00eame occasion.", 
+            "clock": "23:42:50", 
+            "remote_render": "Le mot l\u00e2chet\u00e9 a d\u00fb \u00eatre trouv\u00e9 par la m\u00eame occasion.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:50", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 9, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Mon fils, pourquoi te forces-tu \u00e0 ne pas nous comprendre ?", 
+            "author": 5, 
+            "web_render": "Mon fils, pourquoi te forces-tu \u00e0 ne pas nous comprendre ?", 
+            "clock": "23:42:51", 
+            "remote_render": "Mon fils, pourquoi te forces-tu \u00e0 ne pas nous comprendre ?", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:51", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 10, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Je vous comprends fort bien. \u00c0 l\u2019aide d\u2019un quiproquo, en pr\u00e9tendant nous faire battre pour la beaut\u00e9, vous voulez nous faire battre pour une femme.", 
+            "author": 6, 
+            "web_render": "Je vous comprends fort bien. \u00c0 l\u2019aide d\u2019un quiproquo, en pr\u00e9tendant nous faire battre pour la beaut\u00e9, vous voulez nous faire battre pour une femme.", 
+            "clock": "23:42:52", 
+            "remote_render": "Je vous comprends fort bien. \u00c0 l\u2019aide d\u2019un quiproquo, en pr\u00e9tendant nous faire battre pour la beaut\u00e9, vous voulez nous faire battre pour une femme.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:52", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Et tu ne ferais la guerre pour aucune femme ?", 
+            "author": 5, 
+            "web_render": "Et tu ne ferais la guerre pour aucune femme ?", 
+            "clock": "23:42:53", 
+            "remote_render": "Et tu ne ferais la guerre pour aucune femme ?", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:53", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 12, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Certainement non !", 
+            "author": 6, 
+            "web_render": "Certainement non !", 
+            "clock": "23:42:54", 
+            "remote_render": "Certainement non !", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:54", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 13, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Et il aurait rudement raison.", 
+            "author": 8, 
+            "web_render": "Et il aurait rudement raison.", 
+            "clock": "23:42:55", 
+            "remote_render": "Et il aurait rudement raison.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:55", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 14, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "S\u2019il n\u2019y en avait qu\u2019une peut-\u00eatre. Mais ce chiffre est largement d\u00e9pass\u00e9.", 
+            "author": 7, 
+            "web_render": "S\u2019il n\u2019y en avait qu\u2019une peut-\u00eatre. Mais ce chiffre est largement d\u00e9pass\u00e9.", 
+            "clock": "23:42:56", 
+            "remote_render": "S\u2019il n\u2019y en avait qu\u2019une peut-\u00eatre. Mais ce chiffre est largement d\u00e9pass\u00e9.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:56", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 15, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Tu ne ferais pas la guerre pour reprendre Andromaque ?", 
+            "author": null, 
+            "web_render": "Tu ne ferais pas la guerre pour reprendre Andromaque ?", 
+            "clock": "23:42:57", 
+            "remote_render": "Tu ne ferais pas la guerre pour reprendre Andromaque ?", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:57", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 16, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Andromaque et moi avons d\u00e9j\u00e0 convenu de moyens secrets pour \u00e9chapper \u00e0 toute prison et nous rejoindre.", 
+            "author": 6, 
+            "web_render": "Andromaque et moi avons d\u00e9j\u00e0 convenu de moyens secrets pour \u00e9chapper \u00e0 toute prison et nous rejoindre.", 
+            "clock": "23:42:58", 
+            "remote_render": "Andromaque et moi avons d\u00e9j\u00e0 convenu de moyens secrets pour \u00e9chapper \u00e0 toute prison et nous rejoindre.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:58", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 17, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Pour vous rejoindre, si tout espoir est perdu ?", 
+            "author": null, 
+            "web_render": "Pour vous rejoindre, si tout espoir est perdu ?", 
+            "clock": "23:42:59", 
+            "remote_render": "Pour vous rejoindre, si tout espoir est perdu ?", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:42:59", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 18, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Pour cela aussi.", 
+            "author": null, 
+            "web_render": "Pour cela aussi.", 
+            "clock": "23:43:00", 
+            "remote_render": "Pour cela aussi.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:43:00", 
+            "user_agent": "Andromaque"
+        }
+    }, 
+    {
+        "pk": 19, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Tu as bien fait de les d\u00e9masquer, Hector. Ils veulent faire la guerre pour un femme, c\u2019est la fa\u00e7on d\u2019aimer des impuissants.", 
+            "author": 8, 
+            "web_render": "Tu as bien fait de les d\u00e9masquer, Hector. Ils veulent faire la guerre pour un femme, c\u2019est la fa\u00e7on d\u2019aimer des impuissants.", 
+            "clock": "23:43:01", 
+            "remote_render": "Tu as bien fait de les d\u00e9masquer, Hector. Ils veulent faire la guerre pour un femme, c\u2019est la fa\u00e7on d\u2019aimer des impuissants.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:43:01", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 20, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "C\u2019est vous donner beaucoup de prix ?", 
+            "author": null, 
+            "web_render": "C\u2019est vous donner beaucoup de prix ?", 
+            "clock": "23:43:02", 
+            "remote_render": "C\u2019est vous donner beaucoup de prix ?", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:43:02", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 21, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Ah oui ! par exemple !", 
+            "author": 8, 
+            "web_render": "Ah oui ! par exemple !", 
+            "clock": "23:43:03", 
+            "remote_render": "Ah oui ! par exemple !", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:43:03", 
+            "user_agent": "From script"
+        }
+    }, 
+    {
+        "pk": 22, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Permets-moi de ne pas \u00eatre de ton avis. Le sexe \u00e0 qui je dois ma m\u00e8re, je le respecterai jusqu\u2019en ses repr\u00e9sentantes les moins dignes.", 
+            "author": null, 
+            "web_render": "Permets-moi de ne pas \u00eatre de ton avis. Le sexe \u00e0 qui je dois ma m\u00e8re, je le respecterai jusqu\u2019en ses repr\u00e9sentantes les moins dignes.", 
+            "clock": "23:43:04", 
+            "remote_render": "Permets-moi de ne pas \u00eatre de ton avis. Le sexe \u00e0 qui je dois ma m\u00e8re, je le respecterai jusqu\u2019en ses repr\u00e9sentantes les moins dignes.", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:43:04", 
+            "user_agent": "Demokos"
+        }
+    }, 
+    {
+        "pk": 23, 
+        "model": "tribune.message", 
+        "fields": {
+            "raw": "Nous le savons. Tu l\u2019y as d\u00e9j\u00e0 respect\u00e9...", 
+            "author": 8, 
+            "web_render": "Nous le savons. Tu l\u2019y as d\u00e9j\u00e0 respect\u00e9...", 
+            "clock": "23:43:05", 
+            "remote_render": "Nous le savons. Tu l\u2019y as d\u00e9j\u00e0 respect\u00e9...", 
+            "ip": "192.168.0.112", 
+            "created": "2012-03-23 23:43:05", 
+            "user_agent": "From script"
+        }
+    }
+]
