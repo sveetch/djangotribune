@@ -15,7 +15,7 @@ Currently in alpha version, this include :
 
 * An awesome project title;
 * Data models;
-* Queryset filtering API for "standard" tribune behavior;
+* Queryset filtering API for "standard" tribune behavior and more with some options;
 * All stuff for base remote views and remote views for plain-text, JSON and XML;
 * ...
 * Profit !
@@ -52,8 +52,13 @@ Url arguments
 
 On backend URLs, you can set somes options in adding by adding URL arguments like : ::
     
-    /remote/?limit=42&direction=asc&last_id=77
+    /remote/?channel=foo&limit=42&direction=asc&last_id=77
 
+channel
+    A string to specify the channel *slug* to use to limit the backend to fetch messages 
+    only from the given channel. By default, when this argument is not specified, the 
+    default channel is used. If the specified channel does not exist, the response return 
+    a *Http404*.
 limit
     An integer to specify how much message can be retrieved, this value cannot be higher 
     than the setting value ``TRIBUNE_MESSAGES_MAX_LIMIT``. Default value come from 

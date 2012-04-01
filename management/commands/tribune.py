@@ -15,7 +15,7 @@ from djangotribune.models import Message
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
-        make_option("--build_test_attemps", dest="build_test_attemps", action="store_true", default=None, help="Print out some values to check in the unittests. For Development purpose only."),
+        make_option("--build_test_attempts", dest="build_test_attempts", action="store_true", default=None, help="Print out some values to check in the unittests. For Development purpose only."),
     )
     help = "Command for Sveetchies-tribune"
 
@@ -23,21 +23,21 @@ class Command(BaseCommand):
         if len(args) != 0:
             raise CommandError("Command doesn't accept any arguments")
         
-        self.build_test_attemps = options.get('build_test_attemps')
+        self.build_test_attempts = options.get('build_test_attempts')
         self.verbosity = int(options.get('verbosity'))
         
-        if self.build_test_attemps:
-            self.do_build_test_attemps()
+        if self.build_test_attempts:
+            self.do_build_test_attempts()
 
-    def do_build_test_attemps(self):
+    def do_build_test_attempts(self):
         """
         Create values to attempt in unittests
         """
         # Users
-        superman = User.objects.get(username='superman')
-        wonderwoman = User.objects.get(username='wonderwoman')
+        self.user_with_filter_1 = User.objects.get(username='user_with_filter_1')
+        self.user_with_filter_2 = User.objects.get(username='user_with_filter_2')
         
-        # With anonymous
+        # With anonymous, with no channel filter
         base_total = Message.objects.orderize()
         base_from_10 = Message.objects.orderize(10)
         print "base_total =", list(base_total.flat())
@@ -45,20 +45,29 @@ class Command(BaseCommand):
         print "base_from_10_limit_10 =", list(base_from_10[:10].flat())
         print
         
+        # With anonymous, with default channel filter
+        default_chan_total = Message.objects.orderize().from_chan()
+        default_chan_from_10 = Message.objects.orderize(10).from_chan()
+        #backend_default_chan_total = Message.objects.orderize().from_chan()
+        print "default_chan_total =", list(default_chan_total.flat())
+        print "default_chan_from_10 =", list(default_chan_from_10.flat())
+        print "default_chan_from_10_limit_10 =", list(default_chan_from_10[:10].flat())
+        print
+        
         # With superman
-        #superman.filterentry_set.get_filters_args()
-        superman_total = Message.objects.bunkerize(superman).orderize()
-        superman_from_10 = Message.objects.bunkerize(superman).orderize(10)
-        print "superman_total =", list(superman_total.flat())
-        print "superman_from_10 =", list(superman_from_10.flat())
-        print "superman_from_10_limit_10 =", list(superman_from_10[:10].flat())
+        #self.user_with_filter_1.filterentry_set.get_filters_args()
+        user_with_filter_1_total = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_1).orderize()
+        user_with_filter_1_from_10 = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_1).orderize(10)
+        print "user_with_filter_1_total =", list(user_with_filter_1_total.flat())
+        print "user_with_filter_1_from_10 =", list(user_with_filter_1_from_10.flat())
+        print "user_with_filter_1_from_10_limit_10 =", list(user_with_filter_1_from_10[:10].flat())
         print
         
         # With wonderwoman
-        #wonderwoman.filterentry_set.get_filters_args()
-        wonderwoman_total = Message.objects.bunkerize(wonderwoman).orderize()
-        wonderwoman_from_10 = Message.objects.bunkerize(wonderwoman).orderize(10)
-        print "wonderwoman_total =", list(wonderwoman_total.flat())
-        print "wonderwoman_from_10 =", list(wonderwoman_from_10.flat())
-        print "wonderwoman_from_10_limit_10 =", list(wonderwoman_from_10[:10].flat())
+        #self.user_with_filter_2.filterentry_set.get_filters_args()
+        user_with_filter_2_total = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_2).orderize()
+        user_with_filter_2_from_10 = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_2).orderize(10)
+        print "user_with_filter_2_total =", list(user_with_filter_2_total.flat())
+        print "user_with_filter_2_from_10 =", list(user_with_filter_2_from_10.flat())
+        print "user_with_filter_2_from_10_limit_10 =", list(user_with_filter_2_from_10[:10].flat())
         print

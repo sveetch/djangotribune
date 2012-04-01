@@ -1,10 +1,64 @@
 [
     {
-        "pk": 8, 
+        "pk": 2, 
         "model": "auth.user", 
         "fields": {
-            "username": "h\u00e9cube", 
-            "last_name": "H\u00e9cube", 
+            "username": "superman", 
+            "first_name": "Clark", 
+            "last_name": "Kent", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2012-02-21 01:20:45", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "email": "superman@sveetch.biz", 
+            "date_joined": "2012-01-16 09:51:13"
+        }
+    }, 
+    {
+        "pk": 3, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "batman", 
+            "first_name": "Bruce", 
+            "last_name": "Wayne", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2012-02-21 01:20:45", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "email": "batman@sveetch.biz", 
+            "date_joined": "2012-01-16 09:51:13"
+        }
+    }, 
+    {
+        "pk": 4, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "wonderwoman", 
+            "first_name": "Diana", 
+            "last_name": "Prince", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2012-02-21 01:20:45", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "sha1$4d3a8$fca1271f611df21fa05ddf3736df20e323e67bd9", 
+            "email": "wonderwoman@sveetch.biz", 
+            "date_joined": "2012-01-16 09:51:13"
+        }
+    },
+    {
+        "pk": 5, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "priam", 
+            "last_name": "Priam", 
             "is_active": true, 
             "is_staff": false, 
             "groups": [], 
@@ -14,7 +68,7 @@
             "first_name": "nope", 
             "is_superuser": false, 
             "last_login": "2012-03-23 23:42:42", 
-            "email": "h\u00e9cube@sveetch.biz"
+            "email": "priam@sveetch.biz"
         }
     }, 
     {
@@ -54,11 +108,11 @@
         }
     }, 
     {
-        "pk": 5, 
+        "pk": 8, 
         "model": "auth.user", 
         "fields": {
-            "username": "priam", 
-            "last_name": "Priam", 
+            "username": "h\u00e9cube", 
+            "last_name": "H\u00e9cube", 
             "is_active": true, 
             "is_staff": false, 
             "groups": [], 
@@ -68,7 +122,7 @@
             "first_name": "nope", 
             "is_superuser": false, 
             "last_login": "2012-03-23 23:42:42", 
-            "email": "priam@sveetch.biz"
+            "email": "h\u00e9cube@sveetch.biz"
         }
     }, 
     {
@@ -90,9 +144,84 @@
         }
     }, 
     {
-        "pk": 1, 
-        "model": "tribune.message", 
+        "pk": 10, 
+        "model": "auth.user", 
         "fields": {
+            "username": "user_with_filter_1", 
+            "first_name": "user", 
+            "last_name": "filters1", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2012-04-01 12:43:24", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "placeholder", 
+            "email": "user_with_filter_1@sveetch.biz", 
+            "date_joined": "2012-04-01 12:43:24"
+        }
+    }, 
+    {
+        "pk": 11, 
+        "model": "auth.user", 
+        "fields": {
+            "username": "user_with_filter_2", 
+            "first_name": "user", 
+            "last_name": "filters2", 
+            "is_active": true, 
+            "is_superuser": false, 
+            "is_staff": false, 
+            "last_login": "2012-04-01 12:43:24", 
+            "groups": [], 
+            "user_permissions": [], 
+            "password": "placeholder", 
+            "email": "user_with_filter_2@sveetch.biz", 
+            "date_joined": "2012-04-01 12:43:24"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "djangotribune.channel", 
+        "fields": {
+            "title": "La guerre de Troie n\u2019aura pas lieu, Acte 1", 
+            "slug": "troie", 
+            "created": "2012-03-22 01:47:28"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "djangotribune.channel", 
+        "fields": {
+            "title": "Python", 
+            "slug": "py", 
+            "created": "2012-03-22 01:48:33"
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "djangotribune.filterentry", 
+        "fields": {
+            "kind": "exact", 
+            "target": "author__username", 
+            "value": "cassandre", 
+            "author": 10
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "djangotribune.filterentry", 
+        "fields": {
+            "kind": "icontains", 
+            "target": "user_agent", 
+            "value": "Demokos", 
+            "author": 11
+        }
+    },
+    {
+        "pk": 1, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": 1, 
             "raw": "L\u2019avenir des vieillards me laisse indiff\u00e9rent.", 
             "author": 6, 
             "web_render": "L\u2019avenir des vieillards me laisse indiff\u00e9rent.", 
@@ -105,8 +234,9 @@
     }, 
     {
         "pk": 2, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Hector, je suis po\u00e8te et juge en po\u00e8te. Suppose que notre vocabulaire ne soit pas quelquefois touch\u00e9 par la beaut\u00e9 ! Suppose que le mot d\u00e9lice n\u2019existe pas !", 
             "author": null, 
             "web_render": "Hector, je suis po\u00e8te et juge en po\u00e8te. Suppose que notre vocabulaire ne soit pas quelquefois touch\u00e9 par la beaut\u00e9 ! Suppose que le mot d\u00e9lice n\u2019existe pas !", 
@@ -119,8 +249,9 @@
     }, 
     {
         "pk": 3, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Nous nous en passerions. Je m\u2019en passe d\u00e9j\u00e0. Je ne prononce le mot d\u00e9lice qu\u2019absolument forc\u00e9.", 
             "author": 6, 
             "web_render": "Nous nous en passerions. Je m\u2019en passe d\u00e9j\u00e0. Je ne prononce le mot d\u00e9lice qu\u2019absolument forc\u00e9.", 
@@ -133,8 +264,9 @@
     }, 
     {
         "pk": 4, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Oui, et tu te passerais du mot volupt\u00e9, sans doute ?", 
             "author": null, 
             "web_render": "Oui, et tu te passerais du mot volupt\u00e9, sans doute ?", 
@@ -147,8 +279,9 @@
     }, 
     {
         "pk": 5, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Si c\u2019\u00e9tait au prix de la guerre qu\u2019il fall\u00fbt acheter le mot volupt\u00e9, je m\u2019en passerais.", 
             "author": 6, 
             "web_render": "Si c\u2019\u00e9tait au prix de la guerre qu\u2019il fall\u00fbt acheter le mot volupt\u00e9, je m\u2019en passerais.", 
@@ -161,8 +294,9 @@
     }, 
     {
         "pk": 6, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "C\u2019est au prix de la guerre que tu as trouv\u00e9 le plus beau, le mot courage.", 
             "author": null, 
             "web_render": "C\u2019est au prix de la guerre que tu as trouv\u00e9 le plus beau, le mot courage.", 
@@ -175,8 +309,9 @@
     }, 
     {
         "pk": 7, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "C\u2019\u00e9tait bien pay\u00e9.", 
             "author": 6, 
             "web_render": "C\u2019\u00e9tait bien pay\u00e9.", 
@@ -189,8 +324,9 @@
     }, 
     {
         "pk": 8, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Le mot l\u00e2chet\u00e9 a d\u00fb \u00eatre trouv\u00e9 par la m\u00eame occasion.", 
             "author": 8, 
             "web_render": "Le mot l\u00e2chet\u00e9 a d\u00fb \u00eatre trouv\u00e9 par la m\u00eame occasion.", 
@@ -203,8 +339,9 @@
     }, 
     {
         "pk": 9, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Mon fils, pourquoi te forces-tu \u00e0 ne pas nous comprendre ?", 
             "author": 5, 
             "web_render": "Mon fils, pourquoi te forces-tu \u00e0 ne pas nous comprendre ?", 
@@ -217,8 +354,9 @@
     }, 
     {
         "pk": 10, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Je vous comprends fort bien. \u00c0 l\u2019aide d\u2019un quiproquo, en pr\u00e9tendant nous faire battre pour la beaut\u00e9, vous voulez nous faire battre pour une femme.", 
             "author": 6, 
             "web_render": "Je vous comprends fort bien. \u00c0 l\u2019aide d\u2019un quiproquo, en pr\u00e9tendant nous faire battre pour la beaut\u00e9, vous voulez nous faire battre pour une femme.", 
@@ -231,8 +369,9 @@
     }, 
     {
         "pk": 11, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Et tu ne ferais la guerre pour aucune femme ?", 
             "author": 5, 
             "web_render": "Et tu ne ferais la guerre pour aucune femme ?", 
@@ -245,8 +384,9 @@
     }, 
     {
         "pk": 12, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Certainement non !", 
             "author": 6, 
             "web_render": "Certainement non !", 
@@ -259,8 +399,9 @@
     }, 
     {
         "pk": 13, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Et il aurait rudement raison.", 
             "author": 8, 
             "web_render": "Et il aurait rudement raison.", 
@@ -273,8 +414,9 @@
     }, 
     {
         "pk": 14, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "S\u2019il n\u2019y en avait qu\u2019une peut-\u00eatre. Mais ce chiffre est largement d\u00e9pass\u00e9.", 
             "author": 7, 
             "web_render": "S\u2019il n\u2019y en avait qu\u2019une peut-\u00eatre. Mais ce chiffre est largement d\u00e9pass\u00e9.", 
@@ -287,8 +429,9 @@
     }, 
     {
         "pk": 15, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Tu ne ferais pas la guerre pour reprendre Andromaque ?", 
             "author": null, 
             "web_render": "Tu ne ferais pas la guerre pour reprendre Andromaque ?", 
@@ -301,8 +444,9 @@
     }, 
     {
         "pk": 16, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Andromaque et moi avons d\u00e9j\u00e0 convenu de moyens secrets pour \u00e9chapper \u00e0 toute prison et nous rejoindre.", 
             "author": 6, 
             "web_render": "Andromaque et moi avons d\u00e9j\u00e0 convenu de moyens secrets pour \u00e9chapper \u00e0 toute prison et nous rejoindre.", 
@@ -315,8 +459,9 @@
     }, 
     {
         "pk": 17, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Pour vous rejoindre, si tout espoir est perdu ?", 
             "author": null, 
             "web_render": "Pour vous rejoindre, si tout espoir est perdu ?", 
@@ -329,8 +474,9 @@
     }, 
     {
         "pk": 18, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Pour cela aussi.", 
             "author": null, 
             "web_render": "Pour cela aussi.", 
@@ -343,8 +489,9 @@
     }, 
     {
         "pk": 19, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Tu as bien fait de les d\u00e9masquer, Hector. Ils veulent faire la guerre pour un femme, c\u2019est la fa\u00e7on d\u2019aimer des impuissants.", 
             "author": 8, 
             "web_render": "Tu as bien fait de les d\u00e9masquer, Hector. Ils veulent faire la guerre pour un femme, c\u2019est la fa\u00e7on d\u2019aimer des impuissants.", 
@@ -357,8 +504,9 @@
     }, 
     {
         "pk": 20, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "C\u2019est vous donner beaucoup de prix ?", 
             "author": null, 
             "web_render": "C\u2019est vous donner beaucoup de prix ?", 
@@ -371,8 +519,9 @@
     }, 
     {
         "pk": 21, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Ah oui ! par exemple !", 
             "author": 8, 
             "web_render": "Ah oui ! par exemple !", 
@@ -385,8 +534,9 @@
     }, 
     {
         "pk": 22, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Permets-moi de ne pas \u00eatre de ton avis. Le sexe \u00e0 qui je dois ma m\u00e8re, je le respecterai jusqu\u2019en ses repr\u00e9sentantes les moins dignes.", 
             "author": null, 
             "web_render": "Permets-moi de ne pas \u00eatre de ton avis. Le sexe \u00e0 qui je dois ma m\u00e8re, je le respecterai jusqu\u2019en ses repr\u00e9sentantes les moins dignes.", 
@@ -399,8 +549,9 @@
     }, 
     {
         "pk": 23, 
-        "model": "tribune.message", 
+        "model": "djangotribune.message", 
         "fields": {
+            "channel": 1, 
             "raw": "Nous le savons. Tu l\u2019y as d\u00e9j\u00e0 respect\u00e9...", 
             "author": 8, 
             "web_render": "Nous le savons. Tu l\u2019y as d\u00e9j\u00e0 respect\u00e9...", 
@@ -409,6 +560,111 @@
             "ip": "192.168.0.112", 
             "created": "2012-03-23 23:43:05", 
             "user_agent": "From script"
+        }
+    },
+    {
+        "pk": 24, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": 2, 
+            "created": "2012-03-17 16:15:27", 
+            "remote_render": "Preum's", 
+            "ip": "192.168.0.112", 
+            "clock": "16:15:27", 
+            "web_render": "Preum's", 
+            "raw": "Preum's", 
+            "user_agent": "From Admin"
+        }
+    }, 
+    {
+        "pk": 25, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": null, 
+            "created": "2012-03-17 16:16:13", 
+            "remote_render": "Deuze", 
+            "ip": "192.168.0.112", 
+            "clock": "16:16:13", 
+            "web_render": "Deuze", 
+            "raw": "Deuze", 
+            "user_agent": "Coward"
+        }
+    },
+    {
+        "pk": 26, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": 4, 
+            "created": "2012-03-17 16:16:14", 
+            "remote_render": "Troize", 
+            "ip": "192.168.0.112", 
+            "clock": "16:16:14", 
+            "web_render": "Troize", 
+            "raw": "Troize", 
+            "user_agent": "From Admin"
+        }
+    }, 
+    {
+        "pk": 27, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": 3, 
+            "created": "2012-03-17 16:16:15", 
+            "remote_render": "Tous refusé", 
+            "ip": "192.168.0.112", 
+            "clock": "16:16:15", 
+            "web_render": "Tous refusé", 
+            "raw": "Tous refusé", 
+            "user_agent": "From Admin"
+        }
+    },
+    {
+        "pk": 28, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": null, 
+            "created": "2012-03-17 17:00:00", 
+            "remote_render": "coin! coin!", 
+            "ip": "192.168.0.112", 
+            "clock": "17:00:00", 
+            "web_render": "coin! coin!", 
+            "raw": "coin! coin!", 
+            "user_agent": "Lorem ipsum salace"
+        }
+    },
+    {
+        "pk": 29, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": null, 
+            "created": "2012-03-17 17:00:12", 
+            "remote_render": "Plonk", 
+            "ip": "192.168.0.112", 
+            "clock": "17:00:12", 
+            "web_render": "Plonk", 
+            "raw": "Plonk", 
+            "user_agent": "Lorem ipsum salace"
+        }
+    },
+    {
+        "pk": 30, 
+        "model": "djangotribune.message", 
+        "fields": {
+            "channel": null, 
+            "author": null, 
+            "created": "2012-03-17 17:01:00", 
+            "remote_render": "Floup", 
+            "ip": "192.168.0.112", 
+            "clock": "17:01:00", 
+            "web_render": "Floup", 
+            "raw": "Floup", 
+            "user_agent": "Lorem ipsum salace"
         }
     }
 ]

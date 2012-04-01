@@ -15,6 +15,8 @@ FILTER_TARGET_CHOICE = (
     ('raw', 'Raw message'),
 )
 # Kind determines what kind of Field lookup is used on the filter
+# TODO: Add 'startswith' and 'endswith' kinds and remember to limit or disable the 
+#      'regex' kinds (that seems to have too much cost on performance)
 FILTER_KIND_CHOICE = (
     ('regex', 'Case-sensitive regular expression match'),
     ('iregex', 'Case-insensitive regular expression match'),
@@ -23,6 +25,21 @@ FILTER_KIND_CHOICE = (
     ('exact', 'Case-sensitive exact match'),
     ('iexact', 'Case-insensitive exact match'),
 )
+
+class Channel(models.Model):
+    """
+    Channel
+    """
+    created = models.DateTimeField(_('created date'), auto_now_add=True)
+    slug = models.SlugField('slug', unique=True, max_length=75)
+    title = models.CharField(_('title'), max_length=55, blank=False)
+    
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = _('channel')
+        verbose_name_plural = _('channels')
 
 class UserPreferences(models.Model):
     """
@@ -78,18 +95,30 @@ class MessageManagerMixin(object):
     """
     Message manager enhanced with methods to follow a standardized backend
     """
-    def orderize(self, last_id=None):
-        """Desc ordering, optionnaly starting search from a ``last_id``"""
-        if last_id:
-            return self.filter(id__gt=last_id).order_by('-id')
-        return self.order_by('-id')
+    def get_backend(self, channel=None, author=None, last_id=None):
+        """
+        A all-in-one method to fetch messages with attempted behavior from a tribune 
+        backend
+        """
+        q = self.from_chan(channel=channel)
+        # Adds the user message filters
+        q = q.bunkerize(author=author)
+        # Ever force the right order to fetch
+        q = q.orderize(last_id=last_id)
+        return q
     
-    def last_id(self, last_id):
-        return self.filter(id__gt=last_id)
-    
-    def flat(self):
-        """Return only IDs, for debug purpose"""
-        return self.values_list('id', flat=True)
+    def from_chan(self, channel=None):
+        """Select messages only from default or given channel if any"""
+        # TODO: clean option/argument to fetch messages from all channel (default and "real")
+        # Default channel
+        if not channel:
+            return self.filter(channel__isnull=True)
+        # Select on the specified channel or from the given channel ids
+        else:
+            if isinstance(channel, Channel):
+                return self.filter(channel=channel)
+            else:
+                return self.filter(channel__slug=channel)
     
     def bunkerize(self, author=None):
         """Get message filters to excludes messages"""
@@ -98,6 +127,20 @@ class MessageManagerMixin(object):
             for x in author.filterentry_set.get_filters_args():
                 q = q.exclude(**x)
         return q
+    
+    def orderize(self, last_id=None):
+        """Desc ordering, optionnaly starting search from a ``last_id``"""
+        if last_id:
+            return self.filter(id__gt=last_id).order_by('-id')
+        return self.order_by('-id')
+    
+    def last_id(self, last_id):
+        """Limit the queryset to start his select from the given id"""
+        return self.filter(id__gt=last_id)
+    
+    def flat(self):
+        """Return only IDs, for debug purpose"""
+        return self.values_list('id', flat=True)
 
 # Need stuff to have manager chaining methods
 class MessageQuerySet(QuerySet, MessageManagerMixin): pass
@@ -108,7 +151,11 @@ class MessageBackendManager(models.Manager, MessageManagerMixin):
 class Message(models.Model):
     """
     Message posted on tribune
+    
+    Message without Channel relation is on the default channel. The default channel is 
+    not a Channel object, just the starting entry for the tribune.
     """
+    channel = models.ForeignKey(Channel, verbose_name=_('channel'), blank=True, null=True, default=None)
     author = models.ForeignKey(User, verbose_name=_('identified author'), blank=True, null=True, default=None)
     created = models.DateTimeField(_('created date'), auto_now_add=True)
     clock = models.TimeField(_('clock'), auto_now_add=True)

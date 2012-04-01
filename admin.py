@@ -5,6 +5,10 @@ Model admin
 from django.contrib import admin
 from models import *
 
+class ChannelAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'created')
+    ordering = ('-created',)
+
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('created', 'author', 'user_agent', 'clock', 'raw', 'ip')
     list_filter = ('created','author')
@@ -15,6 +19,7 @@ class FilterEntryAdmin(admin.ModelAdmin):
     list_filter = ('target', 'kind')
     ordering = ('author', 'target', 'kind')
 
+admin.site.register(Channel, ChannelAdmin)
 admin.site.register(UserPreferences)
 admin.site.register(FilterEntry, FilterEntryAdmin)
 admin.site.register(Message, MessageAdmin)

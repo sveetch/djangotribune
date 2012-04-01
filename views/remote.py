@@ -12,9 +12,10 @@ except ImportError:
 from django import http
 from django.db.models.query import QuerySet
 from django.contrib.sites.models import Site
+from django.shortcuts import get_object_or_404
 
 from djangotribune import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT
-from djangotribune.models import Message, FilterEntry
+from djangotribune.models import Channel, Message, FilterEntry
 from djangotribune.clocks import ClockIndice
 from djangotribune.views import getmax_identity, BackendEncoder, LockView
 
@@ -30,6 +31,13 @@ class RemoteBaseMixin(object):
     default_row_direction = "desc"
     # ``clock`` and ``created`` fields are required if ``clock_indexation`` is actived
     remote_fields = ('clock', 'created', 'author__username', 'user_agent', 'raw')
+
+    def get_channel(self):
+        """Get the channel to fetch messages"""
+        channel = self.request.GET.get('channel', None)
+        if channel:
+            channel = get_object_or_404(Channel, slug=channel)
+        return channel
 
     def get_last_id(self):
         """Get the id from wich to start row fetching"""
@@ -55,14 +63,14 @@ class RemoteBaseMixin(object):
                 limit = TRIBUNE_MESSAGES_DEFAULT_LIMIT
         return limit
     
-    def get_backend_queryset(self, last_id, direction, limit):
+    def get_backend_queryset(self, channel, last_id, direction, limit):
         """
         Get the queryset to fetch messages with options from args/kwargs
         
         The returned queryset contains only dicts of messages (where each dict is a 
         message), mapped key comes from ``self.remote_fields``.
         """
-        return Message.objects.bunkerize(self.request.user or None).orderize(last_id).values(*self.remote_fields)[:limit]
+        return Message.objects.get_backend(channel=channel, author=(self.request.user or None), last_id=last_id).values(*self.remote_fields)[:limit]
     
     def get_backend(self):
         """
@@ -71,8 +79,9 @@ class RemoteBaseMixin(object):
         limit = self.get_row_limit()
         last_id = self.get_last_id()
         direction = self.get_row_direction()
+        channel = self.get_channel()
         # Build the queryset with filtering, base order, limit, etc..
-        q = self.get_backend_queryset(last_id, direction, limit)
+        q = self.get_backend_queryset(channel, last_id, direction, limit)
         # Clock indexation
         if self.clock_indexation:
             q = self.clock_indexing(q)

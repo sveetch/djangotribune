@@ -9,52 +9,29 @@ from djangotribune.models import Message
 class MessagesAPITest(TestCase):
     """Test the queryset API to fetch messages"""
     def setUp(self):
-        self.superman_user = User.objects.create(
-            username='superman',
-            first_name='clark',
-            last_name='kent',
-            email='superman@sveetch.biz',
-            password='placeholder',
-        )
-        self.superman_user.filterentry_set.create(**{
-            "kind": "exact", 
-            "target": "author__username", 
-            "value": "cassandre", 
-        })
+        self.user_with_filter_1 = User.objects.get(username='user_with_filter_1')
+        self.user_with_filter_2 = User.objects.get(username='user_with_filter_2')
         
-        self.wonderwoman_user = User.objects.create(
-            username='wonderwoman',
-            first_name='diana',
-            last_name='prince',
-            email='wonderwoman@sveetch.biz',
-            password='placeholder',
-        )
-        self.wonderwoman_user.filterentry_set.create(**{
-            "kind": "icontains", 
-            "target": "user_agent", 
-            "value": "Demokos", 
-        })
-        
-    def test_01_anonymous(self):
-        """test with anonymous"""
+    def test_01_base(self):
+        """test from anonymous on all channels with no filters"""
         base_total = Message.objects.bunkerize().orderize()
         base_from_10 = Message.objects.bunkerize().orderize(10)
         self.assertEqual(list(base_total.flat()), [23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
         self.assertEqual(list(base_from_10.flat()), [23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11])
         self.assertEqual(list(base_from_10[:10].flat()), [23, 22, 21, 20, 19, 18, 17, 16, 15, 14])
         
-    def test_02_superman(self):
-        """test bunkerize with superman user"""
-        base_total = Message.objects.bunkerize(self.superman_user).orderize()
-        base_from_10 = Message.objects.bunkerize(self.superman_user).orderize(10)
+    def test_03_filters(self):
+        """test bunkerize with user message filters 1 on channel 'troie'"""
+        base_total = Message.objects.bunkerize(self.user_with_filter_1).orderize()
+        base_from_10 = Message.objects.bunkerize(self.user_with_filter_1).orderize(10)
         self.assertEqual(list(base_total.flat()), [23, 22, 21, 20, 19, 18, 17, 16, 15, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
         self.assertEqual(list(base_from_10.flat()), [23, 22, 21, 20, 19, 18, 17, 16, 15, 13, 12, 11])
         self.assertEqual(list(base_from_10[:10].flat()), [23, 22, 21, 20, 19, 18, 17, 16, 15, 13])
         
-    def test_02_wonderwoman(self):
-        """test bunkerize with wonderwoman user"""
-        base_total = Message.objects.bunkerize(self.wonderwoman_user).orderize()
-        base_from_10 = Message.objects.bunkerize(self.wonderwoman_user).orderize(10)
+    def test_04_filters(self):
+        """test bunkerize with user message filters 2 on channel 'troie'"""
+        base_total = Message.objects.bunkerize(self.user_with_filter_2).orderize()
+        base_from_10 = Message.objects.bunkerize(self.user_with_filter_2).orderize(10)
         self.assertEqual(list(base_total.flat()), [23, 21, 19, 18, 16, 14, 13, 12, 11, 10, 9, 8, 7, 5, 3, 1])
         self.assertEqual(list(base_from_10.flat()), [23, 21, 19, 18, 16, 14, 13, 12, 11])
         self.assertEqual(list(base_from_10[:10].flat()), [23, 21, 19, 18, 16, 14, 13, 12, 11])
