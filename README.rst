@@ -133,7 +133,7 @@ From remote client applications
 
 Remote clients can send a new message directly within a **POST** request and putting the 
 content in a ``content`` argument. Validated messages return the last updated backend (from 
-the *knowed* last id). Invalidated messages return an Http error (thus it's not 
+the *knowed* last id). Unvalid message return an Http error (thus it's not 
 implemented yet).
 
 `Url arguments`_ options can be given for the POST request and they will be used for the returned 
@@ -142,6 +142,9 @@ backend in success case.
 In fact, remote client applications should always give the 
 ``last_id`` option (taken from the last message they know just before sending the POST 
 request) to receive only messages they didn't know (and not the whole backend).
+
+If the **POST** request is invalidated (with the form) the returned response will be an 
+Http400 (*Bad Request*) with an explanation in Ascii.
 
 Action commands
 ***************
@@ -170,3 +173,6 @@ Name
     Remove the saved ua : ::
     
         /name
+    
+    Succeeded action doesn't save any message, your name will be effective for your next 
+    message.

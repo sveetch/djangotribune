@@ -41,5 +41,5 @@ class LockView(View):
     """
     def dispatch(self, request, *args, **kwargs):
         if TRIBUNE_LOCKED and request.user.is_anonymous():
-            return http.HttpResponseForbidden()
+            return http.HttpResponseForbidden("The tribune is locked", status="text/plain; charset=utf-8")
         return super(LockView, self).dispatch(request, *args, **kwargs)

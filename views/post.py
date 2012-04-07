@@ -1,33 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Message form views
-
-TODO: Remote post views should return the updated backend since the "last_id" argument 
-      if given, else from the id of the new message. But not for the plain or html, which 
-      must return the whole update backend (but with limit, not all messages contained in 
-      database);
-
-ALL FORMAT BUT HTML
-    * If the message is validated :
-      * If is a command action, execute it through the save() method and return the 
-        backend;
-      * If not a command action, save it as a message and return the backend;
-    * If message is invalid :
-      * raise the correct Http error code status;
-    
-HTML
-    * Used like the main html interface, so :
-      * Accept GET to display messages and form;
-      * Accept POST to receive a new message and display the updated messages lists 
-        or form errors;
-    * If the message is validated :
-      * If is a command action, execute it through the save() method and display page 
-        with the update message list;
-      * If not a command action, save it as a message and display page with the update 
-        message list;
-    * If message is invalid :
-      * Display page with form errors;
-
 """
 from django import http
 from django.db.models.query import QuerySet
@@ -73,10 +46,8 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
     This view need to be inherited with a Remote mixin because it use the 
     ``build_backend`` method
     
-    TODO: Should raise a convenient Http error code status in ``form_invalid``, JSON remote 
-          should have a specific behavior to not raise an http error but transmit the error 
-          to be displayed by the interface.
-    
+    Remote post views raise an http error 400 (Bad Request) in case of form error with an 
+    explanation.
     """
     http_method_names = ['post', 'put']
     
@@ -98,7 +69,14 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
         messages = self.get_backend()
         backend = self.build_backend(messages)
         
-        return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
+        return self.patch_response( http.HttpResponse(backend, mimetype=RemotePlainMixin.mimetype) )
+
+    def form_invalid(self, form):
+        errors = []
+        for k,v in form.errors.items():
+            errors.append(u"{fieldname}: {errs}".format(fieldname=k, errs=" ".join(v)))
+        errors_display = "* {0}".format("\n* ".join(errors))
+        return http.HttpResponseBadRequest(errors_display, mimetype=self.mimetype)
     
     def patch_response(self, response):
         response = super(PostRemoteBaseView, self).patch_response(response)

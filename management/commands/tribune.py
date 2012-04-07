@@ -12,10 +12,13 @@ from django.core.management.base import CommandError, BaseCommand
 from django.contrib.auth.models import User
 
 from djangotribune.models import Message
+from djangotribune.test_parser import MESSAGE_TESTS
+from djangotribune.parser import MessageParser
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("--build_test_attempts", dest="build_test_attempts", action="store_true", default=None, help="Print out some values to check in the unittests. For Development purpose only."),
+        make_option("--test_parser", dest="test_parser", action="store_true", default=None, help="Test some parser rendering."),
     )
     help = "Command for Sveetchies-tribune"
 
@@ -24,10 +27,32 @@ class Command(BaseCommand):
             raise CommandError("Command doesn't accept any arguments")
         
         self.build_test_attempts = options.get('build_test_attempts')
+        self.test_parser = options.get('test_parser')
         self.verbosity = int(options.get('verbosity'))
         
         if self.build_test_attempts:
             self.do_build_test_attempts()
+        
+        if self.test_parser:
+            self.do_test_parser()
+
+    def do_test_parser(self):
+        """Temporary dummy parser test"""
+        parser_instance = MessageParser()
+        for serie_name, serie_tests in MESSAGE_TESTS.items():
+            err = 0
+            print "="*90
+            print "Serie:", serie_name
+            print "="*90
+            for source, attempt in serie_tests:
+                result = parser_instance.render(source)['web_render']
+                if result != attempt:
+                    err += 1
+                print "- Attempt {0}:".format(type(attempt)), attempt
+                print "- Rendered {0}:".format(type(result)), result
+                print "-"*40
+            print "Results : {0} / {1}".format(err, len(serie_tests))
+            print
 
     def do_build_test_attempts(self):
         """

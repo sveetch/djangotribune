@@ -23,7 +23,7 @@ class RemoteBaseMixin(object):
     """
     This Mixin implement all base stuff to generate a remote backend
     
-    But the view must implement his correct ``build_backend`` methods.
+    But a view must implement his correct ``build_backend`` methods.
     """
     http_method_names = ['get']
     clock_indexation = True

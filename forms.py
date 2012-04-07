@@ -4,6 +4,7 @@ Forms
 """
 from django import forms
 from django.utils.html import escape as html_escape
+from django.utils.translation import ugettext as _
 
 from djangotribune import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN
 from djangotribune.models import Channel, Message, Url
@@ -35,7 +36,7 @@ class MessageForm(forms.Form):
     """
     Message form
     """
-    content = forms.CharField(max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=ContentMessageWidget(attrs={'size':'50', 'accesskey':'T'}))
+    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=ContentMessageWidget(attrs={'size':'50', 'accesskey':'T'}))
     
     def __init__(self, headers, cookies, session, author, channel=None, *args, **kwargs):
         self.headers = headers
@@ -93,7 +94,7 @@ class MessageForm(forms.Form):
         # Parse content only if it's not a valid command action
         self.parser = MessageParser()
         if not self.parser.validate(content):
-            raise forms.ValidationError(u'Unvalid post content')
+            raise forms.ValidationError(_('Unvalid post content'))
         
         return content
     
@@ -137,6 +138,8 @@ class MessageForm(forms.Form):
             remote_render=rendered['remote_render'],
         )
         new_message.save()
+        
+        # If message contains URLs, archive them
         if rendered['urls']:
             self._save_urls(new_message, rendered['urls'])
         

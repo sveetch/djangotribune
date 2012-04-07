@@ -105,6 +105,7 @@ class CommandActionName(CommandBase):
         
         return response
 
+# A better, more pluggable system would be nice instead of this static register
 TRIBUNE_COMMANDS = (
     #("admin", CommandAdmin),
     ("name", CommandActionName),
