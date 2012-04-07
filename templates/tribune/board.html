@@ -1,0 +1,38 @@
+{% load i18n %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Board</title>
+    {{ form.medias }}
+</head>
+
+<body>
+
+<h1>Board</h1>
+
+<ul>
+    {% for row in message_list %}
+    <li class="item{{ row.clockclass }}{{ row.brother_indice|stringformat:"02d" }}">
+        <span class="horloge">{{ row.clock|time:"H:i:s" }}<sup>{% ifnotequal row.brother_indice 1 %}{{ row.brother_indice }}{% else %}&nbsp;&nbsp;{% endifnotequal %}</sup></span>
+        <strong>{% spaceless %}{% if row.user %}
+            <span class="login" title="{{ row.ua }}">{{ row.author__username }}</span>
+        {% else %}
+            <span class="user_agent" title="{{ row.user_agent }}">{{ row.user_agent }}</span>
+        {% endif %}</strong>{% endspaceless %}
+        <span>{{ row.web_render|safe }}</span>
+    </li>
+    {% empty %}
+        <li>{% trans 'tribune.nomessages' %}</li>
+    {% endfor %}
+</ul>
+
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <p>
+        <input type="submit" value="Ok" />
+    </p>
+</form>
+
+</body>
+</html>

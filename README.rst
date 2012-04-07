@@ -1,6 +1,5 @@
-==============
-Django-tribune
-==============
+.. contents:: 
+.. sectnum::
 
 Introduction
 ============
@@ -11,17 +10,52 @@ strong usage of message clocks.
 **Message clocks** are always displayed and used in message to reference anwser or 
 relation with other messages.
 
+A sample part of Tribune messages will look like this in a plain-text version : ::
+    
+    16:15:27     <superman>            First
+    16:16:13     Anonymous coward      16:15:27 oh no you don't !
+    16:15:27     <superman>            16:16:13 lier !
+    18:39:01     Mozilla/5.0           Hello world !
+    18:39:05     <superman>            18:39:01 hello
+    18:43:22     Anonymous coward      18:39:01 yo
+
 Currently in alpha version, this include :
 
 * An awesome project title;
 * Data models;
 * Queryset filtering API for "standard" tribune behavior and more with some options;
-* All stuff for base remote views and remote views for plain-text, JSON and XML;
+* All stuff for base remote views and remote views in various formats;
+* Message posting views;
 * ...
 * Profit !
 
+Installation
+============
+
+Actually Django-tribune doesn't require any dependancy, just register the app in your 
+project settings like this : ::
+
+    INSTALLED_APPS = (
+        ...
+        'djangotribune',
+        ...
+    )
+
+Then after you should register the app urls in your project ``urls.py`` : ::
+
+    url(r'^tribune/', include('djangotribune.urls')),
+
+Of course you can use another mounting directory than the default ``tribune/`` or even 
+use your own app urls, look at the provided ``djangotribune.urls`` to see what you have 
+to map.
+
+And finally don't forget to do the Django's *syncdb command* to synchronise models in your 
+database.
+
 Usage
 =====
+
+The tribune can either be used from the web interface or via remote client applications.
 
 Message backends
 ****************
@@ -83,4 +117,56 @@ last_id
       return messages from ``id`` 38 to 42;
     
     No matter what direction you specify in option, the results will stays identical.
+
+Message post
+************
+
+From web interface
+------------------
+
+The actual web interface is really simple and don't implement yet a "rich interface" with 
+Javascript, this is only a simple HTML form with the message list. The rich interface is 
+planned to be implemented in last.
+
+From remote client applications
+-------------------------------
+
+Remote clients can send a new message directly within a **POST** request and putting the 
+content in a ``content`` argument. Validated messages return the last updated backend (from 
+the *knowed* last id). Invalidated messages return an Http error (thus it's not 
+implemented yet).
+
+`Url arguments`_ options can be given for the POST request and they will be used for the returned 
+backend in success case.
+
+In fact, remote client applications should always give the 
+``last_id`` option (taken from the last message they know just before sending the POST 
+request) to receive only messages they didn't know (and not the whole backend).
+
+Action commands
+***************
+
+Action commands can be passed in message content, generally this result in doing the 
+action without saving a new message although some actions can push a message to save.
+
+All action command must start with a ``/`` followed (without any separator) by the 
+action name and then the action arguments if any. Unvalid action command will often 
+result in saving the content as a new message.
+
+Currently implemented actions
+-----------------------------
+
+Name
+    This allow anonymous users to display a custom name instead of their *User-Agent* in 
+    messages.
     
+    Name saving is made by a special cookie, so if the user lost or delete his cookie, 
+    he lost his custom name.
+    
+    Add new ua : ::
+    
+        /name My name is bond
+    
+    Remove the saved ua : ::
+    
+        /name

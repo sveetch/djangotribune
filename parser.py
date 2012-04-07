@@ -3,6 +3,10 @@
 Message parser
 """
 import re
+from datetime import datetime
+from StringIO import StringIO
+
+from djangotribune import TRIBUNE_SMILEYS_URL
 
 POST_CLEANER_TAG_RE = '<(?P<tag>/?(?:b|i|s|u|tt|m|code))>'
 POST_CLEANER_SCHEME_RE = '(?P<scheme>(?:http|ftp|https|chrome|gopher|git|git+ssh|svn|svn+ssh)://)'
@@ -11,7 +15,7 @@ POST_CLEANER_TOTOZ_RE = '(?P<totoz>\[\:[A-Za-z0-9-_ ]+\])'
 POST_CLEANER_RE = re.compile('(' + POST_CLEANER_TOTOZ_RE + '|(?P<sep>[\(\)\[\]"])|' + POST_CLEANER_TAG_RE + '|' + POST_CLEANER_SCHEME_RE + '|' + POST_CLEANER_CLOCK_RE + ')')
 POST_CLEANER_SEP_END = { '(': ')', '[': ']', '"': '"' }
 
-# TODO: à migrer dans le settings "local" and use re.compile
+# TODO: move to settings "local" and use re.compile
 URL_SUBSTITUTION = (
     (r".tar.gz", "tgz"),
     (r".tgz", "tgz"),
@@ -249,3 +253,66 @@ class PostCleaner(GenericPostCleaner):
                 break
         
         return "[%s]" % title
+
+class MessageParser(object):
+    def __init__(self, smileys_url=TRIBUNE_SMILEYS_URL, min_width=2):
+        self.smileys_url = smileys_url
+        self.min_width = min_width
+        self.link_rel_escape = "$LinkRelEscape{0}$".format(datetime.now().strftime('%s'))
+
+    def render(self, source):
+        """
+        Procède au rendu de transformation et le renvoi dans un dictionnaire 
+        avec les stats de parsing
+        """
+        lastIndex = 0
+        slipped = StringIO()
+        slipped_remote = StringIO()
+        # Procède au scan et nettoyage de la source
+        parserObject = PostCleaner(link_rel_escape=self.link_rel_escape)
+        parserObject.append_batch( source )
+        cleaned_source = unicode( parserObject )
+        
+        # Itération sur les résultats de la Regex de formattage
+        for chunk in parserObject:
+            if chunk[0] == '<':
+                # Moment
+                if chunk == '<m>':
+                    slipped.write('====&#62; <b>Moment ')
+                    slipped_remote.write('====&#62; <b>Moment ')
+                elif chunk == '</m>':
+                    slipped.write('</b> &#60;====')
+                    slipped_remote.write('</b> &#60;====')
+                # Horloge
+                elif chunk[0:7] == '<clock ':
+                    slipped.write('<span class="horloge_ref">')
+                    slipped_remote.write(chunk)
+                elif chunk == '</clock>':
+                    slipped.write('</span>')
+                    slipped_remote.write(chunk)
+                # Smileys
+                elif chunk[0:7] == '<totoz ':
+                    totoz = chunk[13:-4]
+                    totoz_url = self.smileys_url.format(totoz)
+                    slipped.write('<a class="smiley" href="%s" rel="nofollow">[:%s]</a>' % (totoz_url, totoz))
+                    slipped_remote.write('<a href="%s" class="smiley">[:%s]</a>' % (totoz_url, totoz))
+                else:
+                    slipped.write(chunk)
+                    slipped_remote.write(chunk)
+            else:
+                slipped.write(chunk)
+                slipped_remote.write(chunk)
+        
+        return {
+            'web_render': slipped.getvalue().replace(self.link_rel_escape, ' rel="nofollow"'),
+            'remote_render': slipped_remote.getvalue().replace(self.link_rel_escape, ''),
+            'urls': parserObject.matched_urls,
+            'smileys': parserObject.matched_totozs,
+            'clocks': parserObject.matched_clocks,
+        }
+        
+    def validate(self, source):
+        ## TODO: invalid for words with a crazy length
+        #if len(source.strip()) < self.min_width:
+            #return False
+        return True

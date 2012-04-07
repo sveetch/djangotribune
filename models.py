@@ -74,9 +74,6 @@ class FilterEntryManager(models.Manager):
 class FilterEntry(models.Model):
     """
     Personnal user entry to hide messages
-    
-    NOTE: Users should have a limit to use filter to avoid too much ressources usage on 
-          database ?
     """
     author = models.ForeignKey(User, verbose_name=_('identified author'), blank=False)
     target = models.CharField(_('target'), choices=FILTER_TARGET_CHOICE, max_length=30, blank=False)
@@ -109,7 +106,7 @@ class MessageManagerMixin(object):
     
     def from_chan(self, channel=None):
         """Select messages only from default or given channel if any"""
-        # TODO: clean option/argument to fetch messages from all channel (default and "real")
+        # TODO: add a clean option/argument to fetch messages from all channel (default and "real")
         # Default channel
         if not channel:
             return self.filter(channel__isnull=True)
@@ -159,7 +156,7 @@ class Message(models.Model):
     author = models.ForeignKey(User, verbose_name=_('identified author'), blank=True, null=True, default=None)
     created = models.DateTimeField(_('created date'), auto_now_add=True)
     clock = models.TimeField(_('clock'), auto_now_add=True)
-    user_agent = models.CharField(_('User Agent'), max_length=70)
+    user_agent = models.CharField(_('User Agent'), max_length=150)
     ip = models.IPAddressField(_('IP adress'), blank=True, null=True)
     raw = models.TextField(_('raw'), blank=False)
     web_render = models.TextField(_('html'), blank=False)

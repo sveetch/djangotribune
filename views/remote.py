@@ -34,10 +34,14 @@ class RemoteBaseMixin(object):
 
     def get_channel(self):
         """Get the channel to fetch messages"""
-        channel = self.request.GET.get('channel', None)
-        if channel:
-            channel = get_object_or_404(Channel, slug=channel)
-        return channel
+        memokey = '_cache_get_channel'
+        if not hasattr(self, memokey):
+            if self.request.GET.get('channel', None):
+                channel = get_object_or_404(Channel, slug=self.request.GET['channel'])
+            else:
+                channel = None
+            setattr(self, memokey, channel)
+        return getattr(self, memokey)
 
     def get_last_id(self):
         """Get the id from wich to start row fetching"""
@@ -94,6 +98,13 @@ class RemoteBaseMixin(object):
             q.reverse()
         return q
 
+    def get_redirect_url(self, url):
+        """Return the URL 'redirect to' with the URL args if any"""
+        args = self.request.META["QUERY_STRING"]
+        if args:
+            url = "{0}?{1}".format(url, args)
+        return url
+
     def build_backend(self, messages):
         return 'Hello World'
     
@@ -142,26 +153,15 @@ class RemoteBaseMixin(object):
         """
         return response
 
-class RemoteBaseView(RemoteBaseMixin, LockView):
+class RemotePlainMixin(RemoteBaseMixin):
     """
-    By default this view accepts only 'GET' methods but implements 
-    'POST' too.
-    """
-    def get(self, request, *args, **kwargs):
-        messages = self.get_backend()
-        backend = self.build_backend(messages)
-        return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
-    
-    #def post(self, request, *args, **kwargs):
-        #messages = self.get_backend()
-        #backend = self.build_backend(messages)
-        #return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
-
-class MessagePlainView(RemoteBaseView):
-    """
-    Remote PLAIN TEXT view
+    Remote PLAIN TEXT mixin
     """
     default_row_direction = "asc"
+
+    def patch_row(self, row):
+        row['user_agent'] = row['user_agent'][:30]
+        return row
     
     def build_backend(self, messages):
         """
@@ -219,7 +219,7 @@ class MessagePlainView(RemoteBaseView):
         
         return table.draw()
 
-class MessageJsonView(RemoteBaseView):
+class RemoteJsonMixin(RemoteBaseMixin):
     """
     Remote JSON
     """
@@ -239,7 +239,30 @@ class MessageJsonView(RemoteBaseView):
         row['clockclass'] = row['clock'].strftime("%H%M%S") + str(row.get('clock_indice', 1))
         return row
 
-class MessageXmlView(RemoteBaseView):
+class RemoteHtmlMixin(RemoteJsonMixin):
+    """
+    Remote Html for template usage
+    
+    There is no real builded backend as this is the queryset that is returned in the 
+    template. And some URL argument are ignored thus they have no sense in this context.
+    """
+    default_row_direction = "asc"
+    def build_backend(self, messages):
+        return messages
+
+    def patch_row(self, row):
+        row['user_agent'] = row['user_agent'][:30]
+        return row
+
+    def get_last_id(self):
+        """Ignore 'last_id' option"""
+        return 0
+    
+    def get_row_direction(self):
+        """Ignore 'direction' option"""
+        return self.default_row_direction
+
+class RemoteXmlMixin(RemoteBaseMixin):
     """
     Remote XML
     """
@@ -288,8 +311,36 @@ class MessageXmlView(RemoteBaseView):
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
 
-class MessageCrapXmlView(MessageXmlView):
+class RemoteBaseView(LockView):
     """
-    Remote XML with indent (for some very old client application)
+    Remote base view is not intended to be used as a real view, this is just the base 
+    implementation view to be inherited with a remote mixin
+    """
+    def get(self, request, *args, **kwargs):
+        messages = self.get_backend()
+        backend = self.build_backend(messages)
+        return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
+
+class RemotePlainView(RemotePlainMixin, RemoteBaseView):
+    """
+    Remote PLAIN TEXT view
+    """
+    pass
+
+class RemoteJsonView(RemoteJsonMixin, RemoteBaseView):
+    """
+    Remote JSON view
+    """
+    pass
+
+class RemoteXmlView(RemoteXmlMixin, RemoteBaseView):
+    """
+    Remote XML view
+    """
+    pass
+
+class RemoteCrapXmlView(RemoteXmlView):
+    """
+    Remote XML view with indent (for some very old client application)
     """
     prettify_backend = True
