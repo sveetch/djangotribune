@@ -86,7 +86,7 @@ class MessageForm(forms.Form):
             action_name = content.split(' ')[0][1:]
             actions = dict(TRIBUNE_COMMANDS)
             if action_name in actions:
-                command = actions[action_name](content.split(' ')[1:])
+                command = actions[action_name](content.split(' ')[1:], self.author, self.cookies, self.session)
                 if command.validate():
                     self.command = command
                     return content

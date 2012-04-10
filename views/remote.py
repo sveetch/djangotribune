@@ -14,8 +14,8 @@ from django.db.models.query import QuerySet
 from django.contrib.sites.models import Site
 from django.shortcuts import get_object_or_404
 
-from djangotribune import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT
-from djangotribune.models import Channel, Message, FilterEntry
+from djangotribune import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
+from djangotribune.models import Channel, Message
 from djangotribune.clocks import ClockIndice
 from djangotribune.views import getmax_identity, BackendEncoder, LockView
 
@@ -71,10 +71,17 @@ class RemoteBaseMixin(object):
         """
         Get the queryset to fetch messages with options from args/kwargs
         
+        If the user session contain a BaK controller, it will be used to extract filters 
+        and apply them.
+        
         The returned queryset contains only dicts of messages (where each dict is a 
         message), mapped key comes from ``self.remote_fields``.
         """
-        return Message.objects.get_backend(channel=channel, author=(self.request.user or None), last_id=last_id).values(*self.remote_fields)[:limit]
+        bak = self.request.session.get(TRIBUNE_BAK_SESSION_NAME, None)
+        filters = None
+        if bak and bak.active:
+            filters = bak.get_filters()
+        return Message.objects.get_backend(channel=channel, filters=filters, last_id=last_id).values(*self.remote_fields)[:limit]
     
     def get_backend(self):
         """
@@ -112,10 +119,10 @@ class RemoteBaseMixin(object):
         """
         Same clock indexation
         
-        Linear identical clocks are marked with an indice called "clock indice" or 
-        "brother indice", a brother clock recover the previous indice incremented.
+        Linear identical clocks are marked with an indice called "clock indice" (or 
+        *brother indice*), a brother clock recover the previous indice incremented.
         
-        This method use actually a double pass through of the message list.
+        This method use actually a double pass through on the message list.
         """
         # Count all duplicate clock and store them in a registry
         duplicates = {}
@@ -149,8 +156,10 @@ class RemoteBaseMixin(object):
         """
         For patching response like headers injection, etc..
         
-        Do nothing by default
+        By default this add cache information to avoid remotes caching by browsers
         """
+        response['Pragma'] = "no-cache"
+        response['Cache-Control'] = "no-cache, no-store, must-revalidate, max-age=0" 
         return response
 
 class RemotePlainMixin(RemoteBaseMixin):
@@ -176,7 +185,6 @@ class RemotePlainMixin(RemoteBaseMixin):
         clock_col_width = 10
         default_table_width = 90
         max_table_width = 600
-        default_with_title = 1
         
         try:
             table_width = int(self.request.GET.get('table_width', default_table_width))
@@ -185,11 +193,6 @@ class RemotePlainMixin(RemoteBaseMixin):
         else:
             if table_width > max_table_width:
                 table_width = max_table_width
-        
-        try:
-            with_title = int(self.request.GET.get('with_title', default_with_title))
-        except ValueError:
-            with_title = default_with_title
         
         username_modifier = lambda x: u"<{0}>".format(x)
         identity_col_width = reduce(lambda x,y: getmax_identity(x,y, username_cmp=username_modifier), messages, 10)
@@ -200,9 +203,6 @@ class RemotePlainMixin(RemoteBaseMixin):
         table.set_cols_align(["l", "l", "l"])
         table.set_cols_valign(["t", "t", "t"])
         table.set_cols_width([clock_col_width, identity_col_width, table_width-identity_col_width-clock_col_width])
-        
-        if with_title:
-            table.header(('', '', u'Hello World')) # TODO: random title
         
         for item in messages:
             clock = item['clock'].strftime("%H:%M:%S")

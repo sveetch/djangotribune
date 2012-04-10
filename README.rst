@@ -29,10 +29,16 @@ Currently in alpha version, this include :
 * ...
 * Profit !
 
+Requires
+========
+
+* `texttable <http://pypi.python.org/pypi/texttable/0.8.1>`_ (used to display 
+  plain-text backends);
+
 Installation
 ============
 
-Actually Django-tribune doesn't require any dependancy, just register the app in your 
+Actually Django-tribune doesn't requires any dependancy, just register the app in your 
 project settings like this : ::
 
     INSTALLED_APPS = (
@@ -52,6 +58,10 @@ to map.
 And finally don't forget to do the Django's *syncdb command* to synchronise models in your 
 database.
 
+.. NOTE:: The recommended database engine is **PostgreSQL**. With SQLite you could have 
+          problems because the application make usage of case-insensitive matching 
+          notably in `Message filtering`_.
+
 Usage
 =====
 
@@ -68,17 +78,17 @@ Formats
 -------
 
 Plain-text
-    Very light, use the raw message, ascendant ordered on default. Url path from the 
+    Very light, use the raw message, ascendant ordered by default. Url path from the 
     tribune is ``remote/``.
 XML
-    Very fast, use the remote message render, descendant ordered on default. Url path from 
+    Very fast, use the remote message render, descendant ordered by default. Url path from 
     the tribune is ``remote/xml/``.
 CRAP XML
     The XML version *extended* to suit to old tribune application client. Actually the 
     only diff is the XML structure wich is indented. Url path from the tribune is 
     ``remote/xml/crap/``.
 JSON
-    Very *declarative*, use the web message render, descendant ordered on default. Url 
+    Very *declarative*, use the web message render, descendant ordered by default. Url 
     path from the tribune is ``remote/json/``.
 
 Url arguments
@@ -159,12 +169,12 @@ result in saving the content as a new message.
 Currently implemented actions
 -----------------------------
 
-Name
+name
     This allow anonymous users to display a custom name instead of their *User-Agent* in 
     messages.
     
-    Name saving is made by a special cookie, so if the user lost or delete his cookie, 
-    he lost his custom name.
+    Name saving is made by a special cookie, so if the user lose or delete his cookie, 
+    he lose his custom name.
     
     Add new ua : ::
     
@@ -174,5 +184,143 @@ Name
     
         /name
     
-    Succeeded action doesn't save any message, your name will be effective for your next 
-    message.
+    Note that this name will only be directly visible on anonymous user, because 
+    registered users have their username displayed, but the name (or user-agent) is 
+    visible on mouseover their username. This is behavior is only on HTML board, remote 
+    clients have their own behaviors.
+bak
+    Intended for users to manage their message filters, see `Message filtering`_ for a 
+    full explanation.
+
+Message filtering
+*****************
+
+All users (registred and anonymous) can manage their own entries for filtering messages 
+on various pattern. These filters are stored in the user session in an object called BaK 
+as *Boîte à Kons* (eg: *Idiots box*) which is persistent in your session.
+
+That being so an user can lose his session (by a very long inactivity or when logged out) 
+so there are option to **save** the filters in your BaK in your profile in database then 
+after you can **load** them in your session when needed.
+
+There is two way to manage filter from your bak :
+
+* You can use **the easy way** which always assume you use an exact pattern, this is the 
+  purpose of options **add** and **del** than expects only two arguments, a target and 
+  the pattern;
+* Or you can use **the verbose way** which expects three arguments respectively the target, 
+  the kind and the pattern, this is the purpose of options **set** and **remove**;
+
+Available arguments
+-------------------
+
+target
+    The part of the message which will be used to apply the filter, available targets are :
+    
+    * ``ua`` for the user-agent;
+    * ``author`` for the author username only effective for messages from registered used;
+    * ``message`` for the message in his raw version (as it was posted).
+kind
+    The kind of matching filter that will be used. Only used in the *verbose way* 
+    options, for the *easy way* this is always forced to an exact matching.
+    
+    Kinds are written like *operators*, the available kinds are :
+    
+    * ``*=`` for Case-sensitive containment test;
+    * ``|=`` for Case-insensitive containment test;
+    * ``==`` for Case-sensitive exact match;
+    * ``~=`` for Case-insensitive exact match;
+    * ``^=`` for Case-sensitive starts-with;
+    * ``$=`` for Case-sensitive ends-with.
+pattern
+    The pattern to match by the filter. This is a simple string and not a regex pattern. 
+    You can use space in your pattern without quoting it.
+
+Options details
+---------------
+
+add
+    The *easy way* to add a new filter. This requires two arguments, the target and the 
+    pattern like that : ::
+        
+        /bak add author Badboy
+del
+    The *easy way* to drop a filter. This requires two arguments, the target and the 
+    pattern that you did have used, like that : ::
+        
+        /bak del author Badboy
+set
+    The *verbose way* to add a new filter. This requires three arguments, the target, the 
+    kind operator and the pattern like that : ::
+        
+        /bak set author == Badboy
+remove
+    The *verbose way* to drop a filter. This requires three arguments, the target, the 
+    kind operator and the pattern like that : ::
+        
+        /bak remove author == Badboy
+save
+    To save your current filters in your session to your profile in database, this works only 
+    for registered users. 
+    
+    Saving your filters will overwrite all your previous saved filters, so if you just 
+    want to add new filters, load the previously saved filters before.
+    
+    This is option does not requires any argument : ::
+        
+        /bak save
+load
+    To load your previously saved filters in your current session. If you allready have 
+    filters in your current session this will overwrite them.
+    
+    This is option does not requires any argument : ::
+        
+        /bak load
+on
+    To enable message filtering using your filters in current session. A new session have 
+    message filtering enabled by default.
+    
+    This is option does not requires any argument : ::
+        
+        /bak on
+off
+    To disable message filtering using your filters in current session. The filters will 
+    not be dropped out of your session so you can enable them after if needed.
+    
+    This is option does not requires any argument : ::
+        
+        /bak off
+reset
+    To clear all your filters in current session. You can use this option followed after 
+    by a save action to clear your saved filters too.
+    
+    This is option does not requires any argument : ::
+        
+        /bak reset
+
+.. NOTE:: Messages filters will not be retroactive on displays on remote clients, only 
+          for new message to come after your command actions. So generally you will have 
+          to reload your client to see applyed filters on messages posted before your 
+          command actions.
+
+Examples
+--------
+
+You want to avoid displaying message from the registered user ``BadBoy``, you will do : ::
+    
+        /bak add author Badboy
+
+You want to avoid displaying all message containing a reference to ``http://perdu.com`` you will do : ::
+        
+        /bak set message *= http://perdu.com
+
+You want to avoid displaying message from all user with an user-agent from ``Mozilla`` : ::
+    
+        /bak set ua *= Mozilla
+
+Planned
+=======
+
+* Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
+* The *lastfm* action command to use LastFM to automatically post a *musical instant*;
+* A board with a *rich interface*;

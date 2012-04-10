@@ -2,17 +2,16 @@
 """
 Message form views
 """
+import random
+
 from django import http
-from django.db.models.query import QuerySet
-from django.contrib.sites.models import Site
-from django.shortcuts import get_object_or_404
 from django.views.generic.edit import BaseFormView, FormView
 from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 
-from djangotribune.models import Channel, Message, FilterEntry
-from djangotribune.clocks import ClockIndice
+from djangotribune import TRIBUNE_TITLES
+from djangotribune.models import Channel, Message
 from djangotribune.forms import MessageForm
 from djangotribune.views import LockView
 from djangotribune.views.remote import RemoteBaseMixin, RemotePlainMixin, RemoteHtmlMixin, RemoteJsonMixin, RemoteXmlMixin
@@ -101,10 +100,19 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
     def get_context_data(self, **kwargs):
         kwargs = super(PostBoardView, self).get_context_data(**kwargs)
         kwargs.update({
+            'board_title': self.get_board_title(),
             'channel': self.get_channel(),
             'message_list': self.get_backend(),
         })
         return kwargs
+    
+    def get_board_title(self):
+        """
+        Get a random title from ``TRIBUNE_TITLES``
+        
+        Only used by some special backends
+        """
+        return TRIBUNE_TITLES[ random.randrange(0, len(TRIBUNE_TITLES)) ]
     
     def form_valid(self, form):
         response = super(PostBoardView, self).form_valid(form)

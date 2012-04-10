@@ -14,16 +14,32 @@ FILTER_TARGET_CHOICE = (
     ('author__username', 'Username'),
     ('raw', 'Raw message'),
 )
-# Kind determines what kind of Field lookup is used on the filter
-# TODO: Add 'startswith' and 'endswith' kinds and remember to limit or disable the 
-#      'regex' kinds (that seems to have too much cost on performance)
+# Aliases for target field names
+FILTER_TARGET_ALIASES = (
+    ('ua', 'user_agent'),
+    ('author', 'author__username'),
+    ('message', 'raw'),
+)
+# Kind determines what kind of Field lookup is used on the filter.
+# 'regex' are disabled because they seem to have too much cost on performance
 FILTER_KIND_CHOICE = (
-    ('regex', 'Case-sensitive regular expression match'),
-    ('iregex', 'Case-insensitive regular expression match'),
+    #('regex', 'Case-sensitive regular expression match'),
+    #('iregex', 'Case-insensitive regular expression match'),
     ('contains', 'Case-sensitive containment test'),
     ('icontains', 'Case-insensitive containment test'),
     ('exact', 'Case-sensitive exact match'),
     ('iexact', 'Case-insensitive exact match'),
+    ('startswith', 'Case-sensitive starts-with'),
+    ('endswith', 'Case-sensitive ends-with'),
+)
+# Aliases for lookup kinds
+FILTER_KIND_ALIASES = (
+    ('*=', 'contains'),
+    ('|=', 'icontains'),
+    ('==', 'exact'),
+    ('~=', 'iexact'),
+    ('^=', 'startswith'),
+    ('$=', 'endswith'),
 )
 
 class Channel(models.Model):
@@ -63,12 +79,19 @@ class FilterEntryManager(models.Manager):
     """
     FilterEntry manager
     """
-    def get_filters_args(self):
-        """Return filters as a tuple of dict kwargs"""
+    def get_filters_kwargs(self):
+        """Return filters as a tuple of dicts kwargs"""
         args = []
-        for item in self.get_query_set().all():
-            key = "{target}__{kindfunc}".format(target=item.target, kindfunc=item.kind)
-            args.append( {key: item.value} )
+        for item in self.get_query_set().all().values('target', 'value', 'kind'):
+            key = "{target}__{kindfunc}".format(target=item['target'], kindfunc=item['kind'])
+            args.append( {key: item['value']} )
+        return tuple(args)
+
+    def get_filters(self):
+        """Return filters as a tuple of tuples (target, pattern, kind)"""
+        args = []
+        for item in self.get_query_set().all().values('target', 'value', 'kind'):
+            args.append( (item['target'], item['value'], item['kind']) )
         return tuple(args)
 
 class FilterEntry(models.Model):
@@ -92,21 +115,23 @@ class MessageManagerMixin(object):
     """
     Message manager enhanced with methods to follow a standardized backend
     """
-    def get_backend(self, channel=None, author=None, last_id=None):
+    def get_backend(self, channel=None, filters=None, last_id=None):
         """
         A all-in-one method to fetch messages with attempted behavior from a tribune 
         backend
         """
         q = self.from_chan(channel=channel)
-        # Adds the user message filters
-        q = q.bunkerize(author=author)
+        # Add the user message filters if any
+        if filters:
+            q = q.apply_filters(filters)
         # Ever force the right order to fetch
         q = q.orderize(last_id=last_id)
         return q
     
     def from_chan(self, channel=None):
         """Select messages only from default or given channel if any"""
-        # TODO: add a clean option/argument to fetch messages from all channel (default and "real")
+        # TODO: add a new option/argument to fetch messages from all channel (default 
+        # and "reals")
         # Default channel
         if not channel:
             return self.filter(channel__isnull=True)
@@ -117,11 +142,30 @@ class MessageManagerMixin(object):
             else:
                 return self.filter(channel__slug=channel)
     
+    def apply_filters(self, filters):
+        """
+        Apply messages filtering from the given filters
+        
+        Filters are tuple (target, pattern, kind)
+        """
+        q = self.exclude()
+        args = []
+        for v in filters:
+            target, pattern, kind = v
+            key = "{target}__{kindfunc}".format(target=target, kindfunc=kind)
+            q = q.exclude(**{key: pattern})
+        return q
+    
     def bunkerize(self, author=None):
-        """Get message filters to excludes messages"""
+        """
+        Get message filters to excludes messages
+        
+        This is method automatically get the saved filters in the author profile in 
+        database.
+        """
         q = self.exclude()
         if author and author.is_authenticated():
-            for x in author.filterentry_set.get_filters_args():
+            for x in author.filterentry_set.get_filters_kwargs():
                 q = q.exclude(**x)
         return q
     
