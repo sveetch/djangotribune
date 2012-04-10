@@ -58,6 +58,8 @@ to map.
 And finally don't forget to do the Django's *syncdb command* to synchronise models in your 
 database.
 
+If needed you can change some `Application settings`_ in your settings file.
+
 .. NOTE:: The recommended database engine is **PostgreSQL**. With SQLite you could have 
           problems because the application make usage of case-insensitive matching 
           notably in `Message filtering`_.
@@ -318,9 +320,49 @@ You want to avoid displaying message from all user with an user-agent from ``Moz
     
         /bak set ua *= Mozilla
 
+Application settings
+====================
+
+There a some app-settings you can overload in your settings file to change behaviors. All 
+these default application setting values are in the ``__init__.py`` file of djangotribune.
+
+TRIBUNE_LOCKED
+    When set to ``True`` all anonymous users will be rejected from any request on remote 
+    views, post views and board views, only registred users will continue to access to 
+    these views. 
+    
+    By default this is set to ``False`` so anonymous and registred users have full access 
+    to any *public views*.
+TRIBUNE_MESSAGES_DEFAULT_LIMIT
+    Default message limit to display in backend. 
+    
+    Require an integer, by default this is set to 50.
+TRIBUNE_MESSAGES_MAX_LIMIT
+    The maximum value allowed for the message limit option. Limit option used beyond this 
+    will be set to this maximum value. 
+    
+    Require an integer, by default this is set to 100.
+TRIBUNE_MESSAGES_POST_MAX_LENGTH
+    Maximum length (in characters) for the content message. 
+    
+    Require an integer, by default this is set to 500. You have no real limit on this 
+    value because this is stored in full text field without limit.
+TRIBUNE_SMILEYS_URL
+    `Template string <http://docs.python.org/library/string.html#formatstrings>`_ for 
+    smileys URL, this is where you can set the wanted smiley host. By default this is set to : ::
+        
+        http://sfw.totoz.eu/{0}.gif
+        
+    So the host will be *sfw.totoz.eu*.
+TRIBUNE_TITLES
+    List of titles randomly displayed on tribune boards. 
+    
+    The default one allready contains many titles.
+
 Planned
 =======
 
 * Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
 * The *lastfm* action command to use LastFM to automatically post a *musical instant*;
 * A board with a *rich interface*;
+* Optional Captcha system to post new message to enable in settings;
