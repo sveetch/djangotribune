@@ -63,8 +63,10 @@ class RemoteBaseMixin(object):
         except ValueError:
             limit = TRIBUNE_MESSAGES_DEFAULT_LIMIT
         finally:
-            if limit == 0 or limit > TRIBUNE_MESSAGES_MAX_LIMIT:
+            if not limit:
                 limit = TRIBUNE_MESSAGES_DEFAULT_LIMIT
+            elif limit > TRIBUNE_MESSAGES_MAX_LIMIT:
+                limit = TRIBUNE_MESSAGES_MAX_LIMIT
         return limit
     
     def get_backend_queryset(self, channel, last_id, direction, limit):
