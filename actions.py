@@ -5,45 +5,75 @@ Message commands parser
 Action idea to implement (or not)
 =================================
 
-Flood tribune with some pre-registred message(s) (must be reserved to admins at less): ::
+Admin command to edit a post by clock selected on the last clock with this pattern so 
+clock out of backend can be edited too : ::
 
-    /flood FLOODNAME
+    /admin edit clock 12:00:00
 
-Use Lastfm to emit a 'musical instant' (eg: ``===> Moment The Beatles - Help <===``): ::
+If the Ban on IP is implemented, an admin command to ban directly on IP : ::
 
-    /lastfm instant USERNAME
+    /admin ban ip XXX.XXX.XXX.XXX
+
+Or ban on the ip used to post the message on the given clock : ::
+
+    /admin ban clock 12:00:00
+
+Flood tribune with some pre-registred message(s) : ::
+
+    /admin flood FLOODNAME
 
 """
-import datetime
+import datetime, urllib, urllib2, json
 from base64 import b64encode
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
-from djangotribune import TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE, TRIBUNE_MESSAGES_UA_LENGTH_MIN, TRIBUNE_BAK_SESSION_NAME
+from djangotribune import (
+    TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE, 
+    TRIBUNE_MESSAGES_UA_LENGTH_MIN, TRIBUNE_BAK_SESSION_NAME,
+    TRIBUNE_LASTFM_API_URL, TRIBUNE_LASTFM_API_KEY
+)
 from djangotribune.models import FILTER_TARGET_CHOICE, FILTER_TARGET_ALIASES, FILTER_KIND_ALIASES
 from djangotribune.bak import BakController
+
+class ActionError(ValidationError):
+    pass
 
 class CommandBase(object):
     """Base command action"""
     required_args = 0
+    need_to_push_data = False
+    need_to_patch_response = False
     
     def __init__(self, args, author, cookies, session):
         self.args = args
         self.author = author
         self.cookies = cookies
         self.session = session
+        
+        self.opt_name = None
+        if self.required_args and len(self.args):
+            self.opt_name = self.args.pop(0)
     
     def validate(self):
+        """
+        Used by form to validate the command action, this should raise an 
+        ``ActionError`` for any error
+        """
         return True
     
     def execute(self):
-        self.do_dummy()
+        """Place to proceed to action processing"""
+        pass
     
     def patch_response(self, response):
+        """Used by views to patch the response"""
         return response
     
-    def do_dummy(self):
-        print "Dummy action is dummy"
+    def push_data(self, data):
+        """Used by form to push data in a message to save"""
+        return data
 
 class CommandActionName(CommandBase):
     """
@@ -58,6 +88,8 @@ class CommandActionName(CommandBase):
     Remove the saved ua : ::
         /name
     """
+    need_to_patch_response = True
+    
     def __init__(self, *args, **kwargs):
         super(CommandActionName, self).__init__(*args, **kwargs)
         self.new_name = None
@@ -76,9 +108,6 @@ class CommandActionName(CommandBase):
     def patch_response(self, response):
         """
         Patch response to set or update cookie
-        
-        TODO: Can't we just use ``self.cookies`` instead of patching response for 
-              set/delete cookie ?
         """
         # Set the cookie to save the new name
         if self.new_name and len(self.new_name) >= TRIBUNE_MESSAGES_UA_LENGTH_MIN:
@@ -120,6 +149,7 @@ class CommandBak(CommandBase):
 
         /bak load
     """
+    required_args = 1
     option_names = ('on', 'off', 'add', 'set', 'del', 'remove', 'save', 'load', 'reset')
     short_options = ('on', 'off', 'save', 'load', 'reset') # options than didn't need arguments
     lv1_options = ('add', 'del') # options than require only one argument
@@ -127,7 +157,6 @@ class CommandBak(CommandBase):
     
     def __init__(self, *args, **kwargs):
         super(CommandBak, self).__init__(*args, **kwargs)
-        self.opt_name = self.args.pop(0)
         self.controller = None
         
         self.available_filter_targets = dict(FILTER_TARGET_ALIASES).keys()
@@ -135,23 +164,25 @@ class CommandBak(CommandBase):
         
     def validate(self):
         # Is an allowed option name
+        if not self.opt_name:
+            raise ActionError(u"This action require at least one argument.")
         if self.opt_name not in self.option_names:
-            return False
+            raise ActionError(u"Unkown option '{option}' in your command action.".format(option=self.opt_name))
         # Some options requires arguments
         # This is tricky but there are few option and not many different option needs
         if self.opt_name not in self.short_options:
             if self.opt_name in self.lv1_options:
                 if len(self.args)<2:
-                    return False
+                    raise ActionError(u"Option '{option}' require a target and a pattern.".format(option=self.opt_name))
                 elif self.args[0] not in self.available_filter_targets:
-                    return False
+                    raise ActionError(u"Target '{arg}' is not valid'.".format(arg=self.args[0]))
             elif self.opt_name in self.lv2_options:
                 if len(self.args)<3:
-                    return False
+                    raise ActionError(u"Option '{option}' require a target, a kind and a pattern.".format(option=self.opt_name))
                 elif self.args[0] not in self.available_filter_targets:
-                    return False
+                    raise ActionError(u"Target '{arg}' is not valid'.".format(arg=self.args[0]))
                 elif self.args[1] not in self.available_filter_kinds:
-                    return False
+                    raise ActionError(u"Kind '{arg}' is not valid'.".format(arg=self.args[1]))
             
         return True
     
@@ -205,9 +236,114 @@ class CommandBak(CommandBase):
     def do_reset(self):
         self.controller.off()
 
+class CommandActionLastFM(CommandBase):
+    """
+    Use Lastfm to emit a 'musical instant' (eg: ``===> Moment The Beatles - Help <===``): ::
+
+        /lastfm instant USERNAME
+    
+    Or for an registred user with the same username on lastfm and his tribune profile : ::
+
+        /lastfm instant
+
+    TODO: Add a new option 'name' to set a specific username (in session or cookies) 
+          to use by default when no username is given in command;
+    """
+    required_args = 1
+    need_to_push_data = True
+    need_to_patch_response = True
+    option_names = ('instant',)
+    
+    def __init__(self, *args, **kwargs):
+        super(CommandActionLastFM, self).__init__(*args, **kwargs)
+        self.track = None
+        
+    def validate(self):
+        """
+        Validation and pre-processing of request to LastFM
+        """
+        if not self.opt_name:
+            raise ActionError(u"This action require at least one argument.")
+        if self.opt_name not in self.option_names:
+            raise ActionError(u"Unkown option '{0}' in your command action.".format(self.opt_name))
+        
+        # Do request with a valid username
+        if len(self.args) > 0:
+            self.track = self.get_current_track(self.args[0])
+        elif self.author.is_authenticated():
+            self.track = self.get_current_track(self.author.username)
+        else:
+            raise ActionError(u"No valid 'username' finded.".format(self.opt_name))
+        
+        return True
+    
+    def push_data(self, data):
+        return self.push_current_track(self.track)
+    
+    def get_current_track(self, username):
+        """
+        Request LastFM API to get the current played track from an user
+        
+        This is raising exception ``ActionError`` for any error
+        """
+        params = urllib.urlencode({
+            'user': username,
+            'api_key': TRIBUNE_LASTFM_API_KEY,
+            'method': 'user.getRecentTracks',
+            'limit': 1, # Only need the last one
+            'format': 'json',
+        })
+        client_headers = {'User-agent': 'djangotribune'}
+        req = urllib2.Request(url=TRIBUNE_LASTFM_API_URL, data=params, headers=client_headers)
+        
+        try:
+            fp = urllib2.urlopen(req)
+        # Request Errors
+        except urllib2.HTTPError, exception:
+            raise ActionError("Error Http{0}".format(exception.code))
+        except urllib2.URLError, exception:
+            raise ActionError(exception.reason)
+        # Succeeded Request
+        else:
+            data = json.loads(fp.read())
+            
+            # Error from LastFM API
+            if 'error' in data:
+                raise ActionError(data['message'])
+            
+            # Try to find a current played track
+            last_track = data['recenttracks'].get('track', None)
+            
+            if not last_track:
+                raise ActionError("No current track played")
+            
+            # API can return a list of dicts for the X+1 last recent tracks instead of a 
+            # simple dict
+            if isinstance(last_track, list):
+                last_track = last_track[0]
+            
+            # If the track has a date field it is not a current played track, just the 
+            # last recent track
+            if 'date' in last_track:
+                raise ActionError("No current track played")
+                
+            return last_track
+        
+        return None
+    
+    def push_current_track(self, last_track):
+        """
+        Push the combined track artist and track title in an *instant* as the new content 
+        message to save
+        """
+        title = last_track['name']
+        artist = last_track['artist']['#text']
+        return {'content': u"<m>{artist} - {title}</m>".format(artist=artist, title=title)}
+
 # A better, more pluggable system would be nice instead of this static register
 TRIBUNE_COMMANDS = (
     #("admin", CommandAdmin),
     ("name", CommandActionName),
     ("bak", CommandBak),
+    ("lastfm", CommandActionLastFM),
 )

@@ -96,7 +96,7 @@ JSON
 Url arguments
 -------------
 
-On backend URLs, you can set somes options in adding by adding URL arguments like : ::
+On backend URLs, you can set somes options by adding URL arguments like this : ::
     
     /remote/?channel=foo&limit=42&direction=asc&last_id=77
 
@@ -168,9 +168,6 @@ All action command must start with a ``/`` followed (without any separator) by t
 action name and then the action arguments if any. Unvalid action command will often 
 result in saving the content as a new message.
 
-Currently implemented actions
------------------------------
-
 name
     This allow anonymous users to display a custom name instead of their *User-Agent* in 
     messages.
@@ -190,6 +187,26 @@ name
     registered users have their username displayed, but the name (or user-agent) is 
     visible on mouseover their username. This is behavior is only on HTML board, remote 
     clients have their own behaviors.
+lastfm
+    This command use LastFM to automatically post a *musical instant* for the current 
+    track played. This works only the **current** track played, not the last recent 
+    track played.
+    
+    You should specify an *username* in argument within the action, it will be used as 
+    the username account on LastFM from where to search the current track.
+    
+    Generally, you will do like this : ::
+    
+        /lastfm instant myname
+    
+    But if you are authenticated on the tribune and your username is the same as on your 
+    LastFM account, you can do like this : ::
+    
+        /lastfm instant
+    
+    This will result in a message like this :
+        
+        **====> Moment Artist - Title <====**
 bak
     Intended for users to manage their message filters, see `Message filtering`_ for a 
     full explanation.
@@ -363,6 +380,5 @@ Planned
 =======
 
 * Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
-* The *lastfm* action command to use LastFM to automatically post a *musical instant*;
 * A board with a *rich interface*;
 * Optional Captcha system to post new message to enable in settings;

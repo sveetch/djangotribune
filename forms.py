@@ -81,7 +81,8 @@ class MessageForm(forms.Form):
         Content validation
         """
         content = self.cleaned_data['content']
-        # If it's a validated command action, don't proceed with the parser
+        
+        # Command validation and eventual pre-processing
         if content.startswith("/"):
             action_name = content.split(' ')[0][1:]
             actions = dict(TRIBUNE_COMMANDS)
@@ -89,12 +90,13 @@ class MessageForm(forms.Form):
                 command = actions[action_name](content.split(' ')[1:], self.author, self.cookies, self.session)
                 if command.validate():
                     self.command = command
-                    return content
         
-        # Parse content only if it's not a valid command action
-        self.parser = MessageParser()
-        if not self.parser.validate(content):
-            raise forms.ValidationError(_('Unvalid post content'))
+        # Parse content only if it's not a command action or if the command need to push 
+        # content
+        if not self.command or self.command.need_to_push_data:
+            self.parser = MessageParser()
+            if not self.parser.validate(content):
+                raise forms.ValidationError(_('Unvalid post content'))
         
         return content
     
@@ -111,13 +113,20 @@ class MessageForm(forms.Form):
         Dispatch action depending on whether the content is a command action to execute 
         or a new message to save
         """
+        # Excecute command and push message if any
+        if self.command:
+            self.command.execute()
+            # If the action don't need to push data, simply return the action controller 
+            # (eventually used to patch_response)
+            if not self.command.need_to_push_data:
+                return None
+            # If the action need to push data, update the form datas to push a content
+            else:
+                self.cleaned_data.update( self.command.push_data(self.cleaned_data) )
+        
         if self.parser:
             # Return the new saved message
             return self._save_message()
-        else:
-            # Return the command action instance
-            self.command.execute()
-            return self.command
     
     def _save_message(self):
         """Save the new message"""

@@ -34,6 +34,7 @@ class PostBaseView(LockView, FormView):
 
     def form_valid(self, form):
         self.object = form.save()
+        self.command = form.command
         return super(PostBaseView, self).form_valid(form)
 
 class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
@@ -80,11 +81,14 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
     def patch_response(self, response):
         response = super(PostRemoteBaseView, self).patch_response(response)
         
+        # When form result in a new message, push his id in response headers
         if hasattr(self, 'object') and self.object:
-            if isinstance(self.object, Message):
-                response['X-Post-Id'] = self.object.id
-            elif isinstance(self.object, CommandBase):
-                self.object.patch_response(response)
+            response['X-Post-Id'] = self.object.id
+        
+        # When form has a command that needs to patch response
+        if self.command and self.command.need_to_patch_response:
+            self.command.patch_response(response)
+        
         return response
 
 class PostBoardView(RemoteHtmlMixin, PostBaseView):
@@ -121,11 +125,14 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
     def patch_response(self, response):
         response = super(PostBoardView, self).patch_response(response)
         
+        # When form result in a new message, push his id in response headers
         if hasattr(self, 'object') and self.object:
-            if isinstance(self.object, Message):
-                response['X-Post-Id'] = self.object.id
-            elif isinstance(self.object, CommandBase):
-                self.object.patch_response(response)
+            response['X-Post-Id'] = self.object.id
+        
+        # When form has a command that needs to patch response
+        if self.command and self.command.need_to_patch_response:
+            self.command.patch_response(response)
+        
         return response
         
     def get_success_url(self):
