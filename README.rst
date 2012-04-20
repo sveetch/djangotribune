@@ -1,13 +1,10 @@
-.. contents:: 
-.. sectnum::
-
 Introduction
 ============
 
 This Django app is a *chat-like application* with some aspects from *IRC* but with a 
 strong usage of message clocks.
 
-**Message clocks** are always displayed and used in message to reference anwser or 
+**Message clocks** are always displayed and used in message to reference answer or 
 relation with other messages.
 
 A sample part of Tribune messages will look like this in a plain-text version : ::
@@ -19,15 +16,11 @@ A sample part of Tribune messages will look like this in a plain-text version : 
     18:39:05     <superman>            18:39:01 hello
     18:43:22     Anonymous coward      18:39:01 yo
 
-Currently in alpha version, this include :
+Actually the application includes all the needed batteries but it lack a *rich 
+interface*, this will come soon.
 
-* An awesome project title;
-* Data models;
-* Queryset filtering API for "standard" tribune behavior and more with some options;
-* All stuff for base remote views and remote views in various formats;
-* Message posting views;
-* ...
-* Profit !
+You can download it on his `Github repository <https://github.com/sveetch/djangotribune>`_ and find 
+his `documentation on DjangoSveetchies <http://sveetchies.sveetch.net/django-tribune/>`_.
 
 Requires
 ========
@@ -188,7 +181,8 @@ name
     visible on mouseover their username. This is behavior is only on HTML board, remote 
     clients have their own behaviors.
 lastfm
-    This command use LastFM to automatically post a *musical instant* for the current 
+    This command use the `LastFM <http://www.last.fm/>`_ `API <http://www.last.fm/api>`_ 
+    to automatically post a *musical instant* for the current 
     track played. This works only the **current** track played, not the last recent 
     track played.
     
@@ -382,3 +376,4 @@ Planned
 * Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
 * A board with a *rich interface*;
 * Optional Captcha system to post new message to enable in settings;
+
