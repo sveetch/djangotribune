@@ -4,15 +4,15 @@ Data Models
 """
 from django.db import models
 from django.db.models.query import QuerySet
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from django.contrib.auth.models import User
 
 # Target determines wich field is used on the filter
 FILTER_TARGET_CHOICE = (
-    ('user_agent', 'User Agent'),
-    ('author__username', 'Username'),
-    ('raw', 'Raw message'),
+    ('user_agent', _('User Agent')),
+    ('author__username', _('Username')),
+    ('raw', _('Raw message')),
 )
 # Aliases for target field names
 FILTER_TARGET_ALIASES = (
@@ -23,14 +23,14 @@ FILTER_TARGET_ALIASES = (
 # Kind determines what kind of Field lookup is used on the filter.
 # 'regex' are disabled because they seem to have too much cost on performance
 FILTER_KIND_CHOICE = (
-    #('regex', 'Case-sensitive regular expression match'),
-    #('iregex', 'Case-insensitive regular expression match'),
-    ('contains', 'Case-sensitive containment test'),
-    ('icontains', 'Case-insensitive containment test'),
-    ('exact', 'Case-sensitive exact match'),
-    ('iexact', 'Case-insensitive exact match'),
-    ('startswith', 'Case-sensitive starts-with'),
-    ('endswith', 'Case-sensitive ends-with'),
+    #('regex', _('Case-sensitive regular expression match')),
+    #('iregex', _('Case-insensitive regular expression match')),
+    ('contains', _('Case-sensitive containment test')),
+    ('icontains', _('Case-insensitive containment test')),
+    ('exact', _('Case-sensitive exact match')),
+    ('iexact', _('Case-insensitive exact match')),
+    ('startswith', _('Case-sensitive starts-with')),
+    ('endswith', _('Case-sensitive ends-with')),
 )
 # Aliases for lookup kinds
 FILTER_KIND_ALIASES = (

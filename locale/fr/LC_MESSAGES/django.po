@@ -1,0 +1,173 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# DAVID THENON <sveetch@gmail.com>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: sveetch@gmail.com\n"
+"POT-Creation-Date: 2012-04-25 01:50+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: DAVID THENON <sveetch@gmail.com>\n"
+"Language-Team: FRENCH <FR@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: forms.py:39
+msgid "Your message"
+msgstr "Votre message"
+
+#: forms.py:99
+msgid "Unvalid post content"
+msgstr "Contenu invalide"
+
+#: models.py:13 models.py:203
+msgid "User Agent"
+msgstr "User Agent"
+
+#: models.py:14
+msgid "Username"
+msgstr "Nom d'utilisation"
+
+#: models.py:15
+msgid "Raw message"
+msgstr "Message brut"
+
+#: models.py:28
+msgid "Case-sensitive containment test"
+msgstr "Case-sensitive containment test"
+
+#: models.py:29
+msgid "Case-insensitive containment test"
+msgstr "Case-insensitive containment test"
+
+#: models.py:30
+msgid "Case-sensitive exact match"
+msgstr "Case-sensitive exact match"
+
+#: models.py:31
+msgid "Case-insensitive exact match"
+msgstr "Case-insensitive exact match"
+
+#: models.py:32
+msgid "Case-sensitive starts-with"
+msgstr "Case-sensitive starts-with"
+
+#: models.py:33
+msgid "Case-sensitive ends-with"
+msgstr "Case-sensitive ends-with"
+
+#: models.py:49 models.py:65 models.py:201 models.py:226
+msgid "created date"
+msgstr "date de création"
+
+#: models.py:51
+msgid "title"
+msgstr "titre"
+
+#: models.py:57 models.py:199
+msgid "channel"
+msgstr "canal"
+
+#: models.py:58
+msgid "channels"
+msgstr "canaux"
+
+#: models.py:64
+msgid "owner"
+msgstr "détenteur"
+
+#: models.py:66
+msgid "refresh time"
+msgstr "temps de rafraichissement"
+
+#: models.py:67
+msgid "refresh actived"
+msgstr "rafraichissement activé"
+
+#: models.py:68
+msgid "smileys host url"
+msgstr "url de l'hôte des totoz"
+
+#: models.py:69
+msgid "maximised view"
+msgstr "view maximisée"
+
+#: models.py:75
+msgid "user preference"
+msgstr "préférences utilisateur"
+
+#: models.py:76
+msgid "user preferences"
+msgstr "préférences des utilisateurs"
+
+#: models.py:101 models.py:200 models.py:225
+msgid "identified author"
+msgstr "auteur identifié"
+
+#: models.py:102
+msgid "target"
+msgstr "cible"
+
+#: models.py:103
+msgid "kind"
+msgstr "genre"
+
+#: models.py:104
+msgid "value"
+msgstr "valeur"
+
+#: models.py:111
+msgid "user message filter"
+msgstr "filtre de messages"
+
+#: models.py:112
+msgid "user message filters"
+msgstr "filtres de messages"
+
+#: models.py:202
+msgid "clock"
+msgstr "horloge"
+
+#: models.py:204
+msgid "IP adress"
+msgstr "adresse IP"
+
+#: models.py:205
+msgid "raw"
+msgstr "brut"
+
+#: models.py:206
+msgid "html"
+msgstr "html"
+
+#: models.py:207
+msgid "xml"
+msgstr "xml"
+
+#: models.py:217
+msgid "message"
+msgstr "message"
+
+#: models.py:218
+msgid "messages"
+msgstr "messages"
+
+#: models.py:227 models.py:239
+msgid "url"
+msgstr "url"
+
+#: models.py:240
+msgid "urls"
+msgstr "urls"
+
+#: templates/tribune/board.html:26
+msgid "tribune.nomessages"
+msgstr "Aucun message"
+
+#: views/__init__.py:45
+msgid "The tribune is locked"
+msgstr "La tribune est verrouillée"

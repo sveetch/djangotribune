@@ -3,6 +3,7 @@ import datetime, json
 
 from django import http
 from django.views.generic.base import View
+from django.utils.translation import ugettext as _
 
 from djangotribune import TRIBUNE_LOCKED
 
@@ -41,5 +42,5 @@ class LockView(View):
     """
     def dispatch(self, request, *args, **kwargs):
         if TRIBUNE_LOCKED and request.user.is_anonymous():
-            return http.HttpResponseForbidden("The tribune is locked", status="text/plain; charset=utf-8")
+            return http.HttpResponseForbidden(_("The tribune is locked"), status="text/plain; charset=utf-8")
         return super(LockView, self).dispatch(request, *args, **kwargs)

@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 """
 Django-tribune
-
-TODO: * La politique quand au captcha sera de ne l'utiliser que sur le frontend web, pas 
-        sur les remotes. En effet on peut considérer pour l'instant que les seuls 
-        nuisibles sont les bots de spams qui en théorie n'auront pas connaissance de l'url 
-        pour poster sur le remote.
 """
 from django.conf import settings
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 # If ``True`` only logged user can read and write to the tribune, Anonymous user will be 
 # rejected either from backend or post requests

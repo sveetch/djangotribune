@@ -12,13 +12,23 @@ from django.core.management.base import CommandError, BaseCommand
 from django.contrib.auth.models import User
 
 from djangotribune.models import Message
+from djangotribune.actions import CommandBak
+from djangotribune.bak import BakController
 from djangotribune.test_parser import MESSAGE_TESTS
 from djangotribune.parser import MessageParser
+from djangotribune import TRIBUNE_BAK_SESSION_NAME
+
+class FakeSession(dict):
+    """Fake session via dict inherit just to add an dummy ``modified`` attribute"""
+    def __init__(self, *args, **kwargs):
+        super(FakeSession, self).__init__(*args, **kwargs)
+        self.modified = False
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option("--build_test_attempts", dest="build_test_attempts", action="store_true", default=None, help="Print out some values to check in the unittests. For Development purpose only."),
         make_option("--test_parser", dest="test_parser", action="store_true", default=None, help="Test some parser rendering."),
+        make_option("--bak", dest="test_bak", action="store_true", default=None, help="Temporary testing of Bak controller"),
     )
     help = "Command for Sveetchies-tribune"
 
@@ -28,6 +38,7 @@ class Command(BaseCommand):
         
         self.build_test_attempts = options.get('build_test_attempts')
         self.test_parser = options.get('test_parser')
+        self.test_bak = options.get('test_bak')
         self.verbosity = int(options.get('verbosity'))
         
         if self.build_test_attempts:
@@ -35,6 +46,53 @@ class Command(BaseCommand):
         
         if self.test_parser:
             self.do_test_parser()
+
+        if self.test_bak:
+            self.do_test_bak()
+
+    def do_test_bak(self):
+        superman = User.objects.get(username='superman')
+        bak_sup = BakController(superman)
+        
+        # Tricky fake session object for test
+        self.fake_session = FakeSession()
+        self.fake_session[TRIBUNE_BAK_SESSION_NAME] = bak_sup
+        
+        #self._do_test_action(['load'])
+        
+        print "==== UNVALIDS ===="
+        self._do_test_action(['foo', 'author', 'todrop'])
+        self._do_test_action(['add'])
+        self._do_test_action(['set', 'author', 'todrop'])
+        self._do_test_action(['set', 'hiddenfield', 'todrop'])
+        self._do_test_action(['set', 'author', 'superRegex', 'todrop'])
+        self._do_test_action(['set', 'hiddenfield', 'superRegex', 'todrop'])
+        
+        print "==== VALIDS ===="
+        self._do_test_action(['set', 'ua', '|=', 'mozilla'])
+        self._do_test_action(['set', 'message', '*=', 'kikoolol'])
+        
+        self._do_test_action(['add', 'author', 'todrop'])
+        
+        self._do_test_action(['del', 'author', 'todrop'])
+        
+        self._do_test_action(['remove', 'message', '*=', 'kikoolol'])
+        
+        #print bak_sup.get_filters()
+        #self._do_test_action(['save'])
+        
+    def _do_test_action(self, command_args):
+        print "_"*100
+        print command_args
+        commbak = CommandBak(command_args, [], {}, self.fake_session)
+        
+        is_valid = commbak.validate()
+        print "is_valid:", is_valid
+        if is_valid:
+            commbak.execute()
+            print ">>", commbak.controller.rules
+            
+        print
 
     def do_test_parser(self):
         """Temporary dummy parser test"""
@@ -80,7 +138,7 @@ class Command(BaseCommand):
         print
         
         # With superman
-        #self.user_with_filter_1.filterentry_set.get_filters_args()
+        #self.user_with_filter_1.filterentry_set.get_filters_kwargs()
         user_with_filter_1_total = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_1).orderize()
         user_with_filter_1_from_10 = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_1).orderize(10)
         print "user_with_filter_1_total =", list(user_with_filter_1_total.flat())
@@ -89,7 +147,7 @@ class Command(BaseCommand):
         print
         
         # With wonderwoman
-        #self.user_with_filter_2.filterentry_set.get_filters_args()
+        #self.user_with_filter_2.filterentry_set.get_filters_kwargs()
         user_with_filter_2_total = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_2).orderize()
         user_with_filter_2_from_10 = Message.objects.from_chan("troie").bunkerize(self.user_with_filter_2).orderize(10)
         print "user_with_filter_2_total =", list(user_with_filter_2_total.flat())
