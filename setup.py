@@ -22,7 +22,7 @@ setup(
         'Topic :: Communications :: Chat',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    requires=['texttable (==0.8.1)']
+    requires=['texttable (==0.8.1)'],
     include_package_data=True,
     zip_safe=False
 )
