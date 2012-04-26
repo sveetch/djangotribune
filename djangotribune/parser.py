@@ -6,7 +6,7 @@ import re
 from datetime import datetime
 from StringIO import StringIO
 
-from djangotribune import TRIBUNE_SMILEYS_URL
+from djangotribune.settings_local import TRIBUNE_SMILEYS_URL
 
 POST_CLEANER_TAG_RE = '<(?P<tag>/?(?:b|i|s|u|tt|m|code))>'
 POST_CLEANER_SCHEME_RE = '(?P<scheme>(?:http|ftp|https|chrome|gopher|git|git+ssh|svn|svn+ssh)://)'

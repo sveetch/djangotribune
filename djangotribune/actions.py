@@ -29,7 +29,7 @@ from base64 import b64encode
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-from djangotribune import (
+from djangotribune.settings_local import (
     TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE, 
     TRIBUNE_MESSAGES_UA_LENGTH_MIN, TRIBUNE_BAK_SESSION_NAME,
     TRIBUNE_LASTFM_API_URL, TRIBUNE_LASTFM_API_KEY

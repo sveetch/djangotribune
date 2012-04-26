@@ -5,7 +5,7 @@ from django import http
 from django.views.generic.base import View
 from django.utils.translation import ugettext as _
 
-from djangotribune import TRIBUNE_LOCKED
+from djangotribune.settings_local import TRIBUNE_LOCKED
 
 def getmax_identity(accumulated, current, ua_cmp=lambda x:x, username_cmp=lambda x:x):
     """

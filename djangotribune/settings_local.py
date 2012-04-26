@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Django-tribune
+App default settings
 """
 from django.conf import settings
-
-__version__ = '0.4.1'
 
 # If ``True`` only logged user can read and write to the tribune, Anonymous user will be 
 # rejected either from backend or post requests

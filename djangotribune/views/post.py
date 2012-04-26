@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.urlresolvers import reverse
 from django.utils.decorators import method_decorator
 
-from djangotribune import TRIBUNE_TITLES
+from djangotribune.settings_local import TRIBUNE_TITLES
 from djangotribune.models import Channel, Message
 from djangotribune.forms import MessageForm
 from djangotribune.views import LockView

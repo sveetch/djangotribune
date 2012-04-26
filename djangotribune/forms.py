@@ -6,7 +6,7 @@ from django import forms
 from django.utils.html import escape as html_escape
 from django.utils.translation import ugettext as _
 
-from djangotribune import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN
+from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN
 from djangotribune.models import Channel, Message, Url
 from djangotribune.parser import MessageParser
 from djangotribune.actions import TRIBUNE_COMMANDS

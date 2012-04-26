@@ -16,7 +16,7 @@ from djangotribune.actions import CommandBak
 from djangotribune.bak import BakController
 from djangotribune.test_parser import MESSAGE_TESTS
 from djangotribune.parser import MessageParser
-from djangotribune import TRIBUNE_BAK_SESSION_NAME
+from djangotribune.settings_local import TRIBUNE_BAK_SESSION_NAME
 
 class FakeSession(dict):
     """Fake session via dict inherit just to add an dummy ``modified`` attribute"""

@@ -14,7 +14,7 @@ from django.db.models.query import QuerySet
 from django.contrib.sites.models import Site
 from django.shortcuts import get_object_or_404
 
-from djangotribune import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
+from djangotribune.settings_local import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
 from djangotribune.models import Channel, Message
 from djangotribune.clocks import ClockIndice
 from djangotribune.views import getmax_identity, BackendEncoder, LockView
