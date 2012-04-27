@@ -1,3 +1,5 @@
+.. _Django internationalization system: https://docs.djangoproject.com/en/dev/topics/i18n/
+
 Introduction
 ============
 
@@ -19,8 +21,12 @@ A sample part of Tribune messages will look like this in a plain-text version : 
 Actually the application includes all the needed batteries but it lack a *rich 
 interface*, this will come soon.
 
-You can download it on his `Github repository <https://github.com/sveetch/djangotribune>`_ and find 
-his `documentation on DjangoSveetchies <http://sveetchies.sveetch.net/django-tribune/>`_.
+Links
+*****
+
+* Download his `PyPi package <http://pypi.python.org/pypi/djangotribune>`_;
+* Clone it on his `Github repository <https://github.com/sveetch/djangotribune>`_;
+* Documentation and demo to come on his `DjangoSveetchies page <http://sveetchies.sveetch.net/djangotribune/>`_.
 
 Requires
 ========
@@ -334,8 +340,12 @@ You want to avoid displaying message from all user with an user-agent from ``Moz
 Application settings
 ====================
 
-There a some app-settings you can overload in your settings file to change behaviors. All 
-these default application setting values are in the ``__init__.py`` file of djangotribune.
+All default app settings is located in the ``settings_local.py`` file of ``djangotribune``, you can modify them in your 
+project settings.
+
+.. NOTE:: All app settings are overwritten if present in your project settings with the exception of 
+          dict variables. This is to be remembered when you want to add a new entry in a list variable, you will have to 
+          copy the default version in your settings with the new entry otherwise default variable will be lost.
 
 TRIBUNE_LOCKED
     When set to ``True`` all anonymous users will be rejected from any request on remote 
@@ -369,6 +379,12 @@ TRIBUNE_TITLES
     List of titles randomly displayed on tribune boards. 
     
     The default one allready contains many titles.
+
+Internationalization and localization
+=====================================
+
+This application make usage of the `Django internationalization system`_, see the Django documentation about this if 
+you want to add a new language translation.
 
 Planned
 =======
