@@ -1,5 +1,5 @@
 include MANIFEST.in
-include LICENSE.txt
+include LICENCE.txt
 include README.rst
 recursive-include djangotribune/templates *
 recursive-include djangotribune/static *
