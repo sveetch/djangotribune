@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='djangotribune',
     version=__import__('djangotribune').__version__,
-    description='Django-tribune is a chat-like application',
+    description=__import__('djangotribune').__doc__,
     long_description=open('README.rst').read(),
     author='David Thenon',
     author_email='sveetch@gmail.com',
