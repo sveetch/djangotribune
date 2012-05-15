@@ -96,6 +96,7 @@ TRIBUNE_TITLES = getattr(settings, 'TRIBUNE_TITLES_AVAILABLE', (
     u'/b/',
     u"Only Classic Rock n' Roll",
 ))
+
 # URL to the LastFM API to use the lastfm command action
 TRIBUNE_LASTFM_API_URL = getattr(settings, 'TRIBUNE_LASTFM_API_URL', 'http://ws.audioscrobbler.com/2.0/')
 # API Key used by djangotribune with the LastFM API

@@ -1,6 +1,14 @@
 # -*- coding: utf-8 -*-
 """
 Message backends views
+
+RemoteBaseMixin is the base *Mixin for all remote mixins for various output format, 
+it is where the format logic resides. But they are not views.
+
+Further, the views are simple binding of RemoteBaseView plus their format mixins.
+
+This is a simple system that allow to more flexible, besides the post views use the 
+mixins to implement their formats.
 """
 import json, texttable
 
@@ -13,11 +21,29 @@ from django import http
 from django.db.models.query import QuerySet
 from django.contrib.sites.models import Site
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
+from django.views.decorators.http import condition
 
 from djangotribune.settings_local import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
 from djangotribune.models import Channel, Message
 from djangotribune.clocks import ClockIndice
 from djangotribune.views import getmax_identity, BackendEncoder, LockView
+
+def last_modified_condition(request, *args, **kwargs):
+    """
+    Return the last modified date for message with queryset parameters (filters, 
+    request arguments, etc..) for conditional view header purpose.
+    
+    Use directly the remote base mixin to correctly do the queryset.
+    """
+    remote = RemoteBaseMixin()
+    remote.request = request
+    remote.args = args
+    remote.kwargs = kwargs
+    last = remote.get_last_item()
+    if last:
+        return last.created
+    return None
 
 class RemoteBaseMixin(object):
     """
@@ -85,6 +111,28 @@ class RemoteBaseMixin(object):
             filters = bak.get_filters()
         return Message.objects.get_backend(channel=channel, filters=filters, last_id=last_id).values(*self.remote_fields)[:limit]
     
+    def get_last_item(self):
+        """
+        Return the last modified message using all queryset parameters applied
+        
+        This perform a query so this is not a method to call to know the last item from 
+        a fetched backend.
+        """
+        limit = self.get_row_limit()
+        last_id = self.get_last_id()
+        direction = self.get_row_direction()
+        channel = self.get_channel()
+        bak = self.request.session.get(TRIBUNE_BAK_SESSION_NAME, None)
+        filters = None
+        if bak and bak.active:
+            filters = bak.get_filters()
+        try:
+            last_item = Message.objects.get_backend(channel=channel, filters=filters, last_id=last_id).latest('created')
+        except Message.DoesNotExist:
+            return None
+        else:
+            return last_item
+    
     def get_backend(self):
         """
         Return a messages list containing a dict for each message
@@ -148,9 +196,7 @@ class RemoteBaseMixin(object):
 
     def patch_row(self, row):
         """
-        For patching rows
-        
-        Do nothing by default
+        For patching rows after just after the backend has been fetched
         """
         return row
     
@@ -227,6 +273,7 @@ class RemoteJsonMixin(RemoteBaseMixin):
     """
     mimetype = "application/json; charset=utf-8"
     remote_fields = ('id', 'created', 'clock', 'author__username', 'user_agent', 'web_render')
+    default_row_direction = "asc"
     
     def build_backend(self, messages):
         if isinstance(messages, QuerySet):
@@ -248,13 +295,12 @@ class RemoteHtmlMixin(RemoteJsonMixin):
     There is no real builded backend as this is the queryset that is returned in the 
     template. And some URL argument are ignored thus they have no sense in this context.
     """
-    default_row_direction = "asc"
     def build_backend(self, messages):
         return messages
 
     def patch_row(self, row):
         row['user_agent'] = row['user_agent'][:30]
-        return row
+        return super(RemoteHtmlMixin, self).patch_row(row)
 
     def get_last_id(self):
         """Ignore 'last_id' option"""
@@ -318,6 +364,7 @@ class RemoteBaseView(LockView):
     Remote base view is not intended to be used as a real view, this is just the base 
     implementation view to be inherited with a remote mixin
     """
+    @method_decorator(condition(last_modified_func=last_modified_condition))
     def get(self, request, *args, **kwargs):
         messages = self.get_backend()
         backend = self.build_backend(messages)

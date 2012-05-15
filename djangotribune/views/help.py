@@ -59,5 +59,5 @@ class ReadmePage(ConditionalParserView):
     """
     Page d'aide sur le module
     """
-    source_doc_name = "README.rst"
+    source_doc_name = "../README.rst"
     source_doc_title = "Sveetchies-tribune"

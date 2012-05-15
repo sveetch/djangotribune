@@ -1,0 +1,62 @@
+/*
+* Base styles for Django-tribune
+* Created by David THENON in May 2012
+*/
+.djangotribune{
+    margin:0;
+    padding: .1em;
+}
+.djangotribune_scroll,
+.djangotribune ul.messages{
+    margin: 0;
+    padding:0;
+}
+
+.djangotribune .message{
+    margin:0.2em;
+    padding:0;
+    font-size: .9em;
+    list-style-type:none;
+}
+
+.djangotribune .message span.clock{
+    padding-right:0.5em;
+    color:#FF0000;
+    text-decoration:none;
+/*    border-left:3px solid transparent;
+    border-bottom:1px solid transparent;*/
+}
+.djangotribune .message span.identity.authenticated{
+    padding-right:0.5em;
+    color:green;
+    text-decoration:none;
+}
+.djangotribune .message span.identity.anonymous{
+    padding-right:0.5em;
+    font-style:italic;
+    color:#660000;
+    text-decoration:none;
+}
+.djangotribune .message span.horloge_ref{
+    color:blue;
+}
+
+/* For owned reference clocks */
+.djangotribune .message span.mine{
+    border-left:3px solid #E0B080;
+    border-bottom:1px solid #E0B080;
+}
+
+/* Highlights for clock events */
+.djangotribune .message .clock_reference:hover{
+    text-decoration:underline;
+}
+.ui_clock_highlight_1{
+    background-color:#f2e5e4;
+}
+.ui_usercast{
+    border:1px solid #d0b060;
+}
+.ui_clock_highlight_2{
+    background-color:#e2d5d4;
+}

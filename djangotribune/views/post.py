@@ -81,7 +81,7 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
     def patch_response(self, response):
         response = super(PostRemoteBaseView, self).patch_response(response)
         
-        # When form result in a new message, push his id in response headers
+        # When form results in a new message, push his id to a private response header
         if hasattr(self, 'object') and self.object:
             response['X-Post-Id'] = self.object.id
         
@@ -100,13 +100,16 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
     """
     http_method_names = ['get', 'post', 'put', 'delete', 'head', 'options', 'trace']
     template_name = "tribune/board.html"
+    clock_indexation = True
     
     def get_context_data(self, **kwargs):
+        # Bubble up some data to the board context
         kwargs = super(PostBoardView, self).get_context_data(**kwargs)
         kwargs.update({
             'board_title': self.get_board_title(),
             'channel': self.get_channel(),
             'message_list': self.get_backend(),
+            'message_display_limit': self.get_row_limit(), # used by rich interface as the display limit
         })
         return kwargs
     
@@ -134,6 +137,14 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
             self.command.patch_response(response)
         
         return response
+
+    #def patch_row(self, row):
+        #"""
+        #Add a *clockclass* suitable in ``class=""``, it's a combination of ``clock`` and 
+        #``clock_indice`` (padded on two digits)
+        #"""
+        #row['clockclass'] = row['clock'].strftime("%H%M%S") + str(row.get('clock_indice', 1))
+        #return row
         
     def get_success_url(self):
         """
@@ -141,6 +152,14 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
         form request
         """
         return self.get_redirect_url(reverse('tribune-board'))
+
+class PostBoardNoScriptView(PostBoardView):
+    """
+    HTML Interface view duplicata with different template
+    
+    TODO: Should not need an inherit just to change template name
+    """
+    template_name = "tribune/board_noscript.html"
 
 class PostRemotePlainView(RemotePlainMixin, PostRemoteBaseView):
     """
