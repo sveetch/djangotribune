@@ -73,6 +73,11 @@ class RemoteBaseMixin(object):
         """Get the id from wich to start row fetching"""
         last_id = self.kwargs.get('last_id', 0)
         last_id = self.request.GET.get('last_id', last_id)
+        try:
+            last_id = int(last_id)
+        except ValueError:
+            return 0
+            
         return last_id
     
     def get_row_direction(self):
