@@ -217,12 +217,16 @@ DEBUG = false; // TEMP
     var events = {
         /*
          * Update HTML to append new messages from the given backend data
+         * This should not be used if there are no message in backend
          */
         update : function(event, data, backend, last_id, options) {
             var $this = $(event.target),
                 current_message_length = $(".djangotribune_scroll li", $this).length;
             
             if(DEBUG) console.log("Djangotribune events.update");
+ 
+            // Drop the notice for empty lists
+            $(".djangotribune_scroll li.notice.empty", $this).remove();
  
             // Custom options if any
             options = options||{};
@@ -236,7 +240,9 @@ DEBUG = false; // TEMP
             $.each(backend, function(index, row) {
                 // Drop the oldier message if message list has allready reached the 
                 // message display limit
-                if (current_message_length > 0 || current_message_length > data.settings.message_limit) {
+                console.log("current_message_length: "+ current_message_length);
+                console.log("data.settings.message_limit: "+ data.settings.message_limit);
+                if (current_message_length >= data.settings.message_limit) {
                     $(".djangotribune_scroll li", $this).slice(0,1).remove();
                 }
                 
