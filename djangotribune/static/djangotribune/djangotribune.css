@@ -47,6 +47,22 @@
     border-bottom:1px solid #E0B080;
 }
 
+/* Content input */
+.djangotribune form input.content_field{
+    font-size: .9em;
+    border: 1px solid #aaa;
+    color:#000000;
+    background-color:#ffffff;
+}
+.djangotribune form input.content_field.disabled{
+    border: 1px solid #606060;
+    color:#606060;
+    background-color:#C0C0C0;
+}
+.djangotribune form input.content_field.error{
+    border: 1px solid #ff0000;
+}
+
 /* Highlights for clock events */
 .djangotribune .message .clock_reference:hover{
     text-decoration:underline;
@@ -59,4 +75,14 @@
 }
 .ui_clock_highlight_2{
     background-color:#e2d5d4;
+}
+/* Temporary notice for changes */
+.notice{
+    padding: .5em;
+    border: 1px solid #cdd9f7;
+    background-color: #e8efff;
+    font-size:.9em;
+    color:#384976;
+    background-repeat: no-repeat;
+    background-position: .7em .7em;
 }

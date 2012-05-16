@@ -15,6 +15,7 @@
 <script language="JavaScript" type="text/javascript">
 //<![CDATA[
     $(document).ready(function() {
+        {% if debug %}DEBUG = true;{% endif %}
         $(".djangotribune").djangotribune({
             "host" : '{{ SITE.web_url }}',
             "remote_path": '{% url tribune-remote-json %}',
@@ -31,15 +32,26 @@
 {% block content %}
 <h2>{{ board_title }}</h2>
 
+<div class="notice">
+    <p>This is the early staging for a <em>rich</em> interface. Actually implemented features are :</p>
+    <ul>
+        <li>Parsing initial content in html page;</li>
+        <li>Refresh backend using a timer;</li>
+        <li>Checkbox to disable/enable the automatic refresh;</li>
+        <li><em>Ajax</em> post.</li>
+    </ul>
+    <p>There are currently no highlight, no editable setting, no error notices, no channel, etc..</p>
+</div>
+
 <div class="djangotribune">
     <ul class="messages">
-        {% comment %}{% for row in message_list %}
+        {% for row in message_list %}
         <li class="message msg_clockclass_{{ row.clockclass }}{{ row.clock_indice|stringformat:"02d" }}">
             <span class="pk" style="display:none;">{{ row.id }}</span>
             <span class="created" style="display:none;">{{ row.created|date:"YmdHis" }}</span>
             <span class="clock_indice" style="display:none;">{{ row.clock_indice|stringformat:"02d" }}</span>
             <span class="clockclass" style="display:none;">{{ row.clockclass }}</span>
-            <span class="clock">{{ row.clock|time:"H:i:s" }}<sup>{% ifnotequal row.clock_indice 1 %}{{ row.clock_indice }}{% else %}&nbsp;&nbsp;{% endifnotequal %}</sup></span>
+            <span class="clock">{{ row.clock|time:"H:i:s" }}{% ifnotequal row.clock_indice 1 %}<sup>{{ row.clock_indice }}</sup>{% else %}&nbsp;&nbsp;{% endifnotequal %}</span>
             <strong>{% spaceless %}{% if row.author__username %}
                 <span class="identity authenticated" title="{{ row.user_agent }}">{{ row.author__username }}</span>
             {% else %}
@@ -48,8 +60,8 @@
             <span class="content">{{ row.web_render|safe }}</span>
         </li>
         {% empty %}
-            <li>{% trans 'There is no message yet, you should post the first message !' %}</li>
-        {% endfor %}{% endcomment %}
+            <li class="message notice empty">{% trans 'There is no message yet, you should post the first one !' %}</li>
+        {% endfor %}
     </ul>
 
     <form action="." method="post">{% csrf_token %}
@@ -57,7 +69,6 @@
         <p>
             <input type="submit" value="Ok" />
         </p>
-        <p class="active_refresh"><label><input type="checkbox" name="active" value="1"/>Active refresh</label></p>
     </form>
     
 </div>

@@ -15,7 +15,7 @@
     <ul class="messages">
         {% for row in message_list %}
         <li class="message list_item item{{ row.clockclass }}{{ row.brother_indice|stringformat:"02d" }}">
-            <span class="clock">{{ row.clock|time:"H:i:s" }}<sup>{% ifnotequal row.clock_indice 1 %}{{ row.clock_indice }}{% else %} {% endifnotequal %}</sup></span>
+            <span class="clock">{{ row.clock|time:"H:i:s" }}{% ifnotequal row.clock_indice 1 %}<sup>{{ row.clock_indice }}</sup>{% else %}&nbsp;&nbsp;{% endifnotequal %}</span>
             <strong>{% spaceless %}{% if row.author__username %}
                 <span class="identity authenticated" title="{{ row.user_agent }}">{{ row.author__username }}</span>
             {% else %}

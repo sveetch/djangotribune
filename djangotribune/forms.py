@@ -35,8 +35,14 @@ class ContentMessageWidget(forms.TextInput):
 class MessageForm(forms.Form):
     """
     Message form
+    
+    TODO: minimum length required for content
     """
-    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=ContentMessageWidget(attrs={'size':'50', 'accesskey':'T'}))
+    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=ContentMessageWidget(attrs={
+        'class':'content_field',
+        'size':'50',
+        'accesskey':'T'
+    }))
     
     def __init__(self, headers, cookies, session, author, channel=None, *args, **kwargs):
         self.headers = headers

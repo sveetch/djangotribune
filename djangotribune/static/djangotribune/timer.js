@@ -1,12 +1,11 @@
 /*
-/ Registre et méthodes des timers utilisés
+/ Timer methods
 */
 refreshTimer = {
     timers : {},
-    
     /*
-    / Retourne un timer du registre
-    */
+     * Get the timer from registry
+     */
     getTimer : function(key) {
         try {
             var timerObj = this.timers[key];
@@ -15,31 +14,24 @@ refreshTimer = {
         }
         return timerObj;
     },
-    
     /*
-    / Stop un timer du registre
-    */
+     * Stop timer
+     */
     stopTimer : function(key) {
-        var timerObj = this.getTimer( key );
+        var timerObj = this.getTimer(key);
         if (timerObj != null) {
-            if(DEBUG) console.log("Timer Object:"+key+" => clearInterval()");
+            if(DEBUG) console.log("Timer '"+key+"' cleared");
             clearInterval(timerObj);
             this.timers[key] = null;
         }
     },
-    
     /*
-    / Créé/édite un timer dans le registre
-    */
+     * Set a new timer
+     */
     setTimer : function(key, funcString, milliseconds, force_zero) {
         if( typeof(milliseconds) != "number" ) milliseconds = parseInt(milliseconds);
-        // Si la valeure égale zéro, par défaut on prends ça comme un stop du 
-        // timer, on peut forcer l'utilisation du zéro avec l'option force_zero
-        if(force_zero || milliseconds > 0) {
-            if(DEBUG) console.log("Timer Object:"+key+" => setTimeout('"+funcString+"', "+milliseconds+")");
-            this.timers[key] = setTimeout(funcString, milliseconds);
-        } else {
-            this.stopTimer(key);
-        }
+        this.stopTimer(key); // Clear previous clearInterval from memory
+        if(DEBUG) console.log("Timer '"+key+"' setted for "+milliseconds+" milliseconds");
+        this.timers[key] = setTimeout(funcString, milliseconds);
     }
 };
