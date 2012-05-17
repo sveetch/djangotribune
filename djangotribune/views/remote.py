@@ -20,6 +20,7 @@ except ImportError:
 from django import http
 from django.db.models.query import QuerySet
 from django.contrib.sites.models import Site
+from django.http import HttpResponseNotModified
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
@@ -53,6 +54,7 @@ class RemoteBaseMixin(object):
     """
     http_method_names = ['get']
     clock_indexation = True
+    http304_if_empty = True
     mimetype = "text/plain; charset=utf-8"
     default_row_direction = "desc"
     # ``clock`` and ``created`` fields are required if ``clock_indexation`` is actived
@@ -211,8 +213,8 @@ class RemoteBaseMixin(object):
         
         By default this add cache information to avoid remotes caching by browsers
         """
-        response['Pragma'] = "no-cache"
-        response['Cache-Control'] = "no-cache, no-store, must-revalidate, max-age=0" 
+        #response['Pragma'] = "no-cache"
+        #response['Cache-Control'] = "no-cache, no-store, must-revalidate, max-age=0" 
         return response
 
 class RemotePlainMixin(RemoteBaseMixin):
@@ -372,6 +374,9 @@ class RemoteBaseView(LockView):
     @method_decorator(condition(last_modified_func=last_modified_condition))
     def get(self, request, *args, **kwargs):
         messages = self.get_backend()
+        if self.http304_if_empty and len(messages) == 0:
+            return HttpResponseNotModified()
+        
         backend = self.build_backend(messages)
         return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
 

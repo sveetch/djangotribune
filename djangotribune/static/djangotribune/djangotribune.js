@@ -79,6 +79,7 @@ DEBUG = false; // TEMP
                     type: "GET",
                     dataType: "json",
                     beforeSend: CSRFpass,
+                    ifModified: true,
                     cache: false
                 });
                 
@@ -187,7 +188,9 @@ DEBUG = false; // TEMP
                     },
                     success: function (backend, textStatus) {
                         if(DEBUG) console.log("Djangotribune Request textStatus: "+textStatus);
-                       
+                        
+                        if(textStatus == "notmodified") return false;
+                        
                         // Send signal to update messages list with the fetched backend 
                         // if there are at least one row
                         if(backend.length>0) {
@@ -323,6 +326,8 @@ DEBUG = false; // TEMP
                    
                     $("input.content_field", $this).removeClass("error");
                     $("input.content_field", $this).val("");
+                        
+                    if(textStatus == "notmodified") return false;
                     
                     // Send signal to update messages list with the fetched backend 
                     // if there are at least one row
