@@ -213,8 +213,8 @@ class RemoteBaseMixin(object):
         
         By default this add cache information to avoid remotes caching by browsers
         """
-        #response['Pragma'] = "no-cache"
-        #response['Cache-Control'] = "no-cache, no-store, must-revalidate, max-age=0" 
+        response['Pragma'] = "no-cache"
+        response['Cache-Control'] = "no-cache, no-store, must-revalidate, max-age=0" 
         return response
 
 class RemotePlainMixin(RemoteBaseMixin):
@@ -375,7 +375,7 @@ class RemoteBaseView(LockView):
     def get(self, request, *args, **kwargs):
         messages = self.get_backend()
         if self.http304_if_empty and len(messages) == 0:
-            return HttpResponseNotModified()
+            return HttpResponseNotModified(mimetype=self.mimetype)
         
         backend = self.build_backend(messages)
         return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
