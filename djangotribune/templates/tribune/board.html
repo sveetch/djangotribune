@@ -20,6 +20,7 @@
             "host" : '{{ SITE.web_url }}',
             "remote_path": '{% url tribune-remote-json %}',
             "post_path": '{% url tribune-post-json %}',
+            {% if user.is_authenticated %}"authenticated_username": "{{ user.username }}",{% endif %}
             "message_limit": {{ message_display_limit }}
         });
     });
@@ -35,18 +36,20 @@
 <div class="notice">
     <p>This is the early staging for a <em>rich</em> interface. Actually implemented features are :</p>
     <ul>
-        <li>Parsing initial content in html page;</li>
         <li>Refresh backend using a timer;</li>
         <li>Checkbox to disable/enable the automatic refresh;</li>
-        <li><em>Ajax</em> post.</li>
+        <li><em>Ajax</em> post;</li>
+        <li>Action commands (<tt>name</tt> and <tt>lastfm</tt>);</li>
+        <li>Mussle and user casting (<tt>moules&lt;</tt> and <tt>an_username&lt;</tt>);</li>
+        <li>Simple clock and messages highlights.</li>
     </ul>
-    <p>There are currently no highlight, no editable setting, no error notices, no channel, etc..</p>
+    <p>There are currently no editable setting, no owner marks, no error notices, no channel support, etc.. And this need to be more tested on various browsers.</p>
 </div>
 
 <div class="djangotribune">
     <ul class="messages">
         {% for row in message_list %}
-        <li class="message msg_clockclass_{{ row.clockclass }}{{ row.clock_indice|stringformat:"02d" }}">
+        <li class="message msgclock_{{ row.clockclass }}">
             <span class="pk" style="display:none;">{{ row.id }}</span>
             <span class="created" style="display:none;">{{ row.created|date:"YmdHis" }}</span>
             <span class="clock_indice" style="display:none;">{{ row.clock_indice|stringformat:"02d" }}</span>

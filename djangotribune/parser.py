@@ -266,7 +266,7 @@ class MessageParser(object):
         avec les stats de parsing
         """
         lastIndex = 0
-        slipped = StringIO()
+        slipped_web = StringIO()
         slipped_remote = StringIO()
         # Procède au scan et nettoyage de la source
         parserObject = PostCleaner(link_rel_escape=self.link_rel_escape)
@@ -278,33 +278,33 @@ class MessageParser(object):
             if chunk[0] == '<':
                 # Moment
                 if chunk == '<m>':
-                    slipped.write('====&#62; <b>Moment ')
+                    slipped_web.write('====&#62; <b>Moment ')
                     slipped_remote.write('====&#62; <b>Moment ')
                 elif chunk == '</m>':
-                    slipped.write('</b> &#60;====')
+                    slipped_web.write('</b> &#60;====')
                     slipped_remote.write('</b> &#60;====')
                 # Horloge
                 elif chunk[0:7] == '<clock ':
-                    slipped.write('<span class="horloge_ref">')
+                    slipped_web.write('<span class="pointer">')
                     slipped_remote.write(chunk)
                 elif chunk == '</clock>':
-                    slipped.write('</span>')
+                    slipped_web.write('</span>')
                     slipped_remote.write(chunk)
                 # Smileys
                 elif chunk[0:7] == '<totoz ':
                     totoz = chunk[13:-4]
                     totoz_url = self.smileys_url.format(totoz)
-                    slipped.write('<a class="smiley" href="%s" rel="nofollow">[:%s]</a>' % (totoz_url, totoz))
+                    slipped_web.write('<a class="smiley" href="%s" rel="nofollow">[:%s]</a>' % (totoz_url, totoz))
                     slipped_remote.write('<a href="%s" class="smiley">[:%s]</a>' % (totoz_url, totoz))
                 else:
-                    slipped.write(chunk)
+                    slipped_web.write(chunk)
                     slipped_remote.write(chunk)
             else:
-                slipped.write(chunk)
+                slipped_web.write(chunk)
                 slipped_remote.write(chunk)
         
         return {
-            'web_render': slipped.getvalue().replace(self.link_rel_escape, ' rel="nofollow"'),
+            'web_render': slipped_web.getvalue().replace(self.link_rel_escape, ' class="external" rel="nofollow"'),
             'remote_render': slipped_remote.getvalue().replace(self.link_rel_escape, ''),
             'urls': parserObject.matched_urls,
             'smileys': parserObject.matched_totozs,

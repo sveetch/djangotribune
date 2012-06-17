@@ -2,10 +2,11 @@
 * The Django-tribune jQuery plugin
 * 
 * TODO: This lack of :
+*       * Display totoz;
+*       * Correctly register clocks and compute clock indices;
+*       * Bug with Chromium ?
 *       * Timer should be contained in plugin namespace or deprecated in favor of 
 *         a jquery timer plugin;
-*       * Correctly register clocks and compute clock indices;
-*       * Display event (highlight, etc..);
 *       * Themes usage, like codemirror with appending a css class with the theme 
 *         slugname;
 *       * Use qTip2 implement "out of screen clocks" and totoz display with qTip2 ?
@@ -20,6 +21,43 @@
 *       Core plugin must store all instance data in their element with elem.data().
 */
 DEBUG = false; // TEMP
+
+// TODO: to move in his own plugin file
+/*
+ * jQuery method to insert text in an input at current cursor position
+ * 
+ * Stealed from :
+ * 
+ * http://stackoverflow.com/questions/946534/insert-text-into-textarea-with-jquery
+ */
+jQuery.fn.extend({
+    insertAtCaret: function(myValue){
+        return this.each(function(i) {
+            if (document.selection) {
+                //For browsers like Internet Explorer
+                this.focus();
+                var sel = document.selection.createRange();
+                sel.text = myValue;
+                this.focus();
+            }
+            else if (this.selectionStart || this.selectionStart == '0') {
+                //For browsers like Firefox and Webkit based
+                var startPos = this.selectionStart;
+                var endPos = this.selectionEnd;
+                var scrollTop = this.scrollTop;
+                this.value = this.value.substring(0, startPos)+myValue+this.value.substring(endPos,this.value.length);
+                this.focus();
+                this.selectionStart = startPos + myValue.length;
+                this.selectionEnd = startPos + myValue.length;
+                this.scrollTop = scrollTop;
+            } else {
+                this.value += myValue;
+                this.focus();
+            }
+        })
+    }
+});
+
 
 (function($){
     /*
@@ -53,6 +91,7 @@ DEBUG = false; // TEMP
                 "message_limit": 30,
                 "refresh_active": true,
                 "refresh_time_shifting": 10000,
+                "authenticated_username": null,
                 "urlopen_blank": true
             }, options);
             
@@ -123,20 +162,21 @@ DEBUG = false; // TEMP
                     if( $("span.identity", this).hasClass('username') ) {
                         identity_username = $("span.identity", this).html();
                     }
-                    var data = {
+                    var message_data = {
                         "id": currentid,
                         "created": $("span.created", this).text(),
                         "clock": $("span.clock", this).text(),
                         "clock_indice": $("span.clock_indice", this).text(),
                         "clockclass": $("span.clockclass", this).text(),
                         "user_agent": $("span.identity", this).attr('title'),
-                        "username": identity_username,
+                        "author__username": identity_username,
                         "web_render": $("span.content", this).html()
                     };
                     
                     // TODO: Put data in clock/timestamp/etc.. register and initialize 
                     //       events (clock, links, totoz, etc..) on rows
                     // ...
+                    events.bind_message($this, data, this, message_data);
                 });
                 
                 // First timer init
@@ -241,23 +281,25 @@ DEBUG = false; // TEMP
             var last_id = $this.data("djangotribune_lastid");
             
             $.each(backend, function(index, row) {
-                // Drop the oldier message if message list has allready reached the 
-                // message display limit
-                console.log("current_message_length: "+ current_message_length);
-                console.log("data.settings.message_limit: "+ data.settings.message_limit);
+                if(DEBUG) console.log("current_message_length: "+ current_message_length);
+                if(DEBUG) console.log("data.settings.message_limit: "+ data.settings.message_limit);
+                // Drop the oldiest item if message list has allready reached the 
+                // display limit
                 if (current_message_length >= data.settings.message_limit) {
                     $(".djangotribune_scroll li", $this).slice(0,1).remove();
                 }
                 
                 // Compute some additionals row data
-                row.css_classes = ["msg_clockclass_"+row.created.slice(8)+ClockIndicer.lpadding(row.clock_indice)];
+                row.css_classes = ["msgclock_"+row.created.slice(8)+ClockIndicer.lpadding(row.clock_indice)];
                 row.identity = {'title': row.user_agent, 'kind': 'anonymous', 'content': row.user_agent.slice(0,30)};
                 if(row.author__username){
                     row.identity.kind = 'authenticated';
                     row.identity.content = row.author__username;
                 }
                 // Compile template, add its result to html and attach it his data
-                $( templates.message_row(row) ).appendTo( $(".djangotribune_scroll ul", $this) ).data("djangotribune_row", row);
+                var element = $( templates.message_row(row) ).appendTo( $(".djangotribune_scroll ul", $this) ).data("djangotribune_row", row);
+                // Bind all related message events
+                events.bind_message($this, data, element, row);
                 
                 // Update the "future" new last_id
                 last_id = row.id;
@@ -354,12 +396,99 @@ DEBUG = false; // TEMP
             });
             
             return false;
+        },
+
+        /*
+         * Bind message events and add some sugar on message HTML
+         * 
+         * TODO: * much "DRY"
+         *       * bubble display for items out of screen
+         */
+        bind_message : function(djangotribune_element, djangotribune_data, message_element, message_data) {
+            // Force URL opening in a new window
+            $("span.content a", message_element).click( function() {
+                window.open($(this).attr("href"));
+                return false;
+            });
+            
+            // Display smiley images
+            // $("span.content a.smiley", message_element).mouseover( function() {
+            // //pass
+            // });
+            
+            // Update HTML content for some attributes/marks
+            $("span.content span.pointer", message_element).each(function(index) {
+                // Add flat clock as a class name on pointers
+                $(this).addClass("pointer_"+ClockIndicer.to_cssname($(this).text()))
+            });
+            if( message_data.web_render.toLowerCase().search(/moules&lt;/) != -1 || message_data.web_render.toLowerCase().search(/moules&#60;/) != -1 ){
+                // Mussle broadcasting
+                $(message_element).addClass("musslecast");
+            } else if ( djangotribune_data.settings.authenticated_username && ( message_data.web_render.toLowerCase().search( new RegExp(djangotribune_data.settings.authenticated_username+"&#60;") ) != -1 || message_data.web_render.toLowerCase().search( new RegExp(djangotribune_data.settings.authenticated_username+"&lt;") ) != -1 ) ){
+                // User broadcasting
+                $(message_element).addClass("usercast");
+            }
+                
+            // Message reference clock
+            $("span.clock", message_element).mouseover(function(){
+                $(this).parent().addClass("highlighted");
+                // Get related pointers in all messages and highlight them
+                var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
+                $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
+                    $(this).addClass("highlighted");
+                    $(this).parent().parent().addClass("highlighted");
+                });
+            });
+            $("span.clock", message_element).mouseout(function(){
+                $(this).parent().removeClass("highlighted");
+                // Get related pointers and un-highlight them
+                var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
+                $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
+                    $(this).removeClass("highlighted");
+                    $(this).parent().parent().removeClass("highlighted");
+                });
+            });
+            $("span.clock", message_element).click(function(){
+                clock = jQuery.trim($(this).text());
+                $("#id_content").insertAtCaret(clock+" ");
+            });
+            
+            // Clock pointers contained
+            $("span.content span.pointer", message_element).mouseover(function(){
+                $(this).addClass("highlighted");
+                // Get related pointers in all messages and highlight them
+                var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
+                $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
+                    $(this).addClass("highlighted");
+                });
+                // Get related messages and highlight them
+                var clock_name = "msgclock_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
+                $("li."+clock_name, djangotribune_element).each(function(index) {
+                    $(this).addClass("highlighted");
+                });
+            });
+            $("span.content span.pointer", message_element).mouseout(function(){
+                $(this).removeClass("highlighted");
+                // Get related pointers and un-highlight them
+                var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
+                $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
+                    $(this).removeClass("highlighted");
+                });
+                // Get related messages and un-highlight them
+                var clock_name = "msgclock_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
+                $("li."+clock_name, djangotribune_element).each(function(index) {
+                    $(this).removeClass("highlighted");
+                });
+            });
         }
     };
     
+    /*
+     * Various utilities
+     */
     var CoreTools = {
         /*
-         * Return an exposant indice from the given number (padded on two digit)
+         * Build and return a full url from the given args
          */
         get_request_url : function(host, path_view, options) {
             var url = host + path_view;
@@ -370,6 +499,9 @@ DEBUG = false; // TEMP
         }
     };
     
+    /*
+     * Clock utilities
+     */
     var ClockIndicer = {
         // Exposant indices characters map
         indices : '¹²³⁴⁵⁶⁷⁸⁹',
@@ -381,7 +513,6 @@ DEBUG = false; // TEMP
                 return ClockIndicer.indices[i-1];
             return '';
         },
-        
         /*
          * Return a padded number on two digit from the given exposant indice
          */
@@ -392,7 +523,6 @@ DEBUG = false; // TEMP
                 return ClockIndicer.lpadding(i+1);
             return '01';
         },
-        
         /*
          * Format to a padded number on two digits
          */
@@ -401,6 +531,32 @@ DEBUG = false; // TEMP
                 return '0'+indice;
             }
             return "01";
+        },
+        /*
+         * Parsing a clock "HH:MM[:SS[i]]" and return an array such 
+         * as "[clock, indice]". If there is no contained indice, it 
+         * default to 1.
+         */
+        parse_clock : function(clock) {
+            if(clock.length > 8) {
+                return [clock.substr(0,8), clock.substr(8,2)];
+            } else if(clock.length < 8) {
+                return [clock];
+            }
+            return [clock, 1];
+        },
+        /*
+         * Parse a clock "HH:MM[:SS[i]]" and return a "flat" version (without the ":") 
+         * suitable for class/id css name
+         * If not present in clock, default indice is "01"
+         */
+        to_cssname : function(clock) {
+            var indice = "01";
+            if(clock.length > 8){
+                indice = ClockIndicer.indice_to_number(clock.substr(8,2));
+                clock = clock.substr(0,8);
+            }
+            return clock.split(":").join("")+indice;
         }
     };
     

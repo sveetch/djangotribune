@@ -95,6 +95,7 @@ TRIBUNE_TITLES = getattr(settings, 'TRIBUNE_TITLES_AVAILABLE', (
     u'alt.tribune.dax',
     u'/b/',
     u"Only Classic Rock n' Roll",
+    u"Dollarmussels",
 ))
 
 # URL to the LastFM API to use the lastfm command action

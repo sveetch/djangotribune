@@ -194,10 +194,10 @@ class RemoteBaseMixin(object):
             this_date = item['created'].strftime('%Y%m%d%H%M%S')
             this_clock = item['clock'].strftime('%H:%M:%S')
             if this_date in duplicates:
-                item['clock_indice'] = ClockIndice(duplicates[this_date]).real
+                item['clock_indice'] = ClockIndice(duplicates[this_date])
                 duplicates[this_date] = duplicates[this_date]-1
             else:
-                item['clock_indice'] = ClockIndice(1).real
+                item['clock_indice'] = ClockIndice(1)
             self.patch_row(item)
         return backend
 
