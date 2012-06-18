@@ -2,7 +2,6 @@
 * The Django-tribune jQuery plugin
 * 
 * TODO: This lack of :
-*       * Display totoz;
 *       * Correctly register clocks and compute clock indices;
 *       * Bug with Chromium ?
 *       * Timer should be contained in plugin namespace or deprecated in favor of 
@@ -411,10 +410,15 @@ jQuery.fn.extend({
                 return false;
             });
             
-            // Display smiley images
-            // $("span.content a.smiley", message_element).mouseover( function() {
-            // //pass
-            // });
+            // Smiley images
+            $("span.content a.smiley", message_element).each(function(index) {
+                var preload = new Image();
+                preload.src = $(this).attr("href");
+            });
+            $("span.content a.smiley", message_element).mouseenter({"djangotribune": djangotribune_element}, events.display_smiley);
+            $("span.content a.smiley", message_element).mouseleave( function() {
+                $("p.smiley_container", djangotribune_element).remove();
+            });
             
             // Update HTML content for some attributes/marks
             $("span.content span.pointer", message_element).each(function(index) {
@@ -430,7 +434,7 @@ jQuery.fn.extend({
             }
                 
             // Message reference clock
-            $("span.clock", message_element).mouseover(function(){
+            $("span.clock", message_element).mouseenter(function(){
                 $(this).parent().addClass("highlighted");
                 // Get related pointers in all messages and highlight them
                 var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
@@ -439,7 +443,7 @@ jQuery.fn.extend({
                     $(this).parent().parent().addClass("highlighted");
                 });
             });
-            $("span.clock", message_element).mouseout(function(){
+            $("span.clock", message_element).mouseleave(function(){
                 $(this).parent().removeClass("highlighted");
                 // Get related pointers and un-highlight them
                 var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
@@ -454,7 +458,7 @@ jQuery.fn.extend({
             });
             
             // Clock pointers contained
-            $("span.content span.pointer", message_element).mouseover(function(){
+            $("span.content span.pointer", message_element).mouseenter(function(){
                 $(this).addClass("highlighted");
                 // Get related pointers in all messages and highlight them
                 var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
@@ -467,7 +471,7 @@ jQuery.fn.extend({
                     $(this).addClass("highlighted");
                 });
             });
-            $("span.content span.pointer", message_element).mouseout(function(){
+            $("span.content span.pointer", message_element).mouseleave(function(){
                 $(this).removeClass("highlighted");
                 // Get related pointers and un-highlight them
                 var pointer_name = "pointer_"+ClockIndicer.to_cssname(jQuery.trim($(this).text()));
@@ -480,6 +484,39 @@ jQuery.fn.extend({
                     $(this).removeClass("highlighted");
                 });
             });
+        },
+        /*
+         * Display the smiley in a "bubble tip" positionned from the element
+         */
+        display_smiley : function(event) {
+            var $this = $(event.target),
+                djangotribune_element = event.data.djangotribune,
+                url = $this.attr("href"),
+                alt = ($this.attr("alt")||''),
+                margin = 25,
+                top_pos = ($this.offset().top + margin),
+                left_pos = ($this.offset().left + margin);
+            // Remove all previous smiley if any
+            $("p.smiley_container", djangotribune_element).remove();
+            // Build container positionned at the bottom of the element source
+            var container = $("<p class=\"smiley_container\"><img src=\""+ url +"\" alt=\""+ (alt||'') +"\"/>"+"</p>").css({
+                "height": "",
+                "position":"absolute",
+                "padding":"0",
+                "top": top_pos+"px",
+                "bottom": "",
+                "left": left_pos+"px"
+            }).prependTo(djangotribune_element);
+            
+            // By default the image is positionned at the bottom of the element, but 
+            // if its bottom corner is "out of screen", we move it at the top of element.
+            var bottom_screen_pos = $(document).scrollTop() + $(window).height(),
+                image_height = container.height(),
+                bottom_image_pos = top_pos + image_height;
+            if(bottom_image_pos > bottom_screen_pos) {
+                top_pos = top_pos-image_height-(margin+10);
+                container.css("height", image_height+"px").css("top", top_pos).css("bottom", "");
+            }
         }
     };
     

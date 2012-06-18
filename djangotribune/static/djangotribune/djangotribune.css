@@ -76,6 +76,9 @@
 .djangotribune .message.usercast{
     border:1px solid #d0b060;
 }
+.djangotribune .message a.smiley{
+    text-decoration:none;
+}
 
 /* Temporary notice for CHANGES */
 .notice{
