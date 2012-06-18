@@ -69,14 +69,15 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
         messages = self.get_backend()
         backend = self.build_backend(messages)
         
-        return self.patch_response( http.HttpResponse(backend, mimetype=RemotePlainMixin.mimetype) )
+        return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
 
     def form_invalid(self, form):
         errors = []
         for k,v in form.errors.items():
             errors.append(u"{fieldname}: {errs}".format(fieldname=k, errs=" ".join(v)))
         errors_display = "* {0}".format("\n* ".join(errors))
-        return http.HttpResponseBadRequest(errors_display, mimetype=self.mimetype)
+        # Errors is always returned with the plain/text mimetype
+        return http.HttpResponseBadRequest(errors_display, mimetype=RemotePlainMixin.mimetype)
     
     def patch_response(self, response):
         response = super(PostRemoteBaseView, self).patch_response(response)
@@ -156,8 +157,6 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
 class PostBoardNoScriptView(PostBoardView):
     """
     HTML Interface view duplicata with different template
-    
-    TODO: Should not need an inherit just to change template name
     """
     template_name = "tribune/board_noscript.html"
 

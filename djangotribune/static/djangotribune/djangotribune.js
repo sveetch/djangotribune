@@ -165,7 +165,7 @@ jQuery.fn.extend({
                         "id": currentid,
                         "created": $("span.created", this).text(),
                         "clock": $("span.clock", this).text(),
-                        "clock_indice": $("span.clock_indice", this).text(),
+                        "clock_indice": parseInt( $("span.clock_indice", this).text() ),
                         "clockclass": $("span.clockclass", this).text(),
                         "user_agent": $("span.identity", this).attr('title'),
                         "author__username": identity_username,
@@ -280,8 +280,6 @@ jQuery.fn.extend({
             var last_id = $this.data("djangotribune_lastid");
             
             $.each(backend, function(index, row) {
-                if(DEBUG) console.log("current_message_length: "+ current_message_length);
-                if(DEBUG) console.log("data.settings.message_limit: "+ data.settings.message_limit);
                 // Drop the oldiest item if message list has allready reached the 
                 // display limit
                 if (current_message_length >= data.settings.message_limit) {

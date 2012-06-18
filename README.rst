@@ -18,15 +18,15 @@ A sample part of Tribune messages will look like this in a plain-text version : 
     18:39:05     <superman>            18:39:01 hello
     18:43:22     Anonymous coward      18:39:01 yo
 
-Actually the application includes all the needed batteries but it lack a *rich 
-interface*, this will come soon.
+The application has a rich interface, but is also accessible from third client 
+application (via a XML backend) and even in plain text.
 
 Links
 *****
 
 * Download his `PyPi package <http://pypi.python.org/pypi/djangotribune>`_;
 * Clone it on his `Github repository <https://github.com/sveetch/djangotribune>`_;
-* Documentation and demo to come on his `DjangoSveetchies page <http://sveetchies.sveetch.net/djangotribune/>`_.
+* Documentation and demo on `DjangoSveetchies page <http://sveetchies.sveetch.net/djangotribune/>`_.
 
 Requires
 ========
@@ -37,8 +37,7 @@ Requires
 Installation
 ============
 
-Actually Django-tribune doesn't requires any dependancy, just register the app in your 
-project settings like this : ::
+Just register the app in your project settings like this : ::
 
     INSTALLED_APPS = (
         ...
@@ -80,17 +79,18 @@ Formats
 
 Plain-text
     Very light, use the raw message, ascendant ordered by default. Url path from the 
-    tribune is ``remote/``.
+    tribune is ``remote/`` for backend and ``post/`` for post view.
 XML
     Very fast, use the remote message render, descendant ordered by default. Url path from 
-    the tribune is ``remote/xml/``.
+    the tribune is ``remote/xml/`` for backend and ``post/xml/`` for post view.
 CRAP XML
     The XML version *extended* to suit to old tribune application client. Actually the 
     only diff is the XML structure wich is indented. Url path from the tribune is 
-    ``remote/xml/crap/``.
+    ``remote/xml/crap/`` for backend and ``post/xml/crap/`` for post view.
 JSON
     Very *declarative*, use the web message render, descendant ordered by default. Url 
-    path from the tribune is ``remote/json/``.
+    path from the tribune is ``remote/json/`` for backend and ``post/json/`` for post 
+    view.
 
 Url arguments
 -------------
@@ -135,17 +135,23 @@ Message post
 From web interface
 ------------------
 
-The actual web interface is really simple and don't implement yet a "rich interface" with 
-Javascript, this is only a simple HTML form with the message list. The rich interface is 
-planned to be implemented in last.
+The web interface implement all features, just use the input field at the bottom of the message 
+list to post a new message and it will be appended. The interface perform a periodical request 
+on the remote backend to display other new message if any.
+
+If your message is not validated, the input field will be displayed with red borders, the borders will 
+be hidded just after a new validated post.
+
+Actually, the only option you can manage is the *Active refresh* than you can disable to avoid any 
+periodical request on the remote backend. But if you disable it and you post a new message, there will 
+still be a *POST* request that will refresh the message list.
 
 From remote client applications
 -------------------------------
 
 Remote clients can send a new message directly within a **POST** request and putting the 
 content in a ``content`` argument. Validated messages return the last updated backend (from 
-the *knowed* last id). Unvalid message return an Http error (thus it's not 
-implemented yet).
+the *knowed* last id). Unvalid message return an Http error.
 
 `Url arguments`_ options can be given for the POST request and they will be used for the returned 
 backend in success case.
@@ -154,8 +160,19 @@ In fact, remote client applications should always give the
 ``last_id`` option (taken from the last message they know just before sending the POST 
 request) to receive only messages they didn't know (and not the whole backend).
 
-If the **POST** request is invalidated (with the form) the returned response will be an 
-Http400 (*Bad Request*) with an explanation in Ascii.
+Dealing with errors
+...................
+
+* This is not really an error, but remote backend return a **Http304** (*NotModified*) when 
+  you try to fetch a backend where they are no new message;
+* If the *POST* request is invalidated (with the form) the returned response will be a 
+  **Http400** (*Bad Request*) with an explanation in Ascii;
+* A **Http404** is returned when you try to use a channel or a remote backend that 
+  doesn't exists;
+* You could receive a **Http500** (*Internal Server Error*) in case of bugs or bad 
+  configured server;
+* Eventually you can receive a **Http403** if you try to use a restricted command but 
+  there are not implemented yet.
 
 Action commands
 ***************
@@ -390,6 +407,5 @@ Planned
 =======
 
 * Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
-* A board with a *rich interface*;
 * Optional Captcha system to post new message to enable in settings;
 

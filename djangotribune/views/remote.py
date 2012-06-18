@@ -293,6 +293,7 @@ class RemoteJsonMixin(RemoteBaseMixin):
         ``clock_indice`` (padded on two digits)
         """
         row['clockclass'] = row['clock'].strftime("%H%M%S") + str(row.get('clock_indice', 1))
+        row['clock_indice'] = row['clock_indice'].real
         return row
 
 class RemoteHtmlMixin(RemoteJsonMixin):

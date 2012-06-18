@@ -53,7 +53,7 @@
         <li class="message msgclock_{{ row.clockclass }}">
             <span class="pk" style="display:none;">{{ row.id }}</span>
             <span class="created" style="display:none;">{{ row.created|date:"YmdHis" }}</span>
-            <span class="clock_indice" style="display:none;">{{ row.clock_indice|stringformat:"02d" }}</span>
+            <span class="clock_indice" style="display:none;">{{ row.clock_indice }}</span>
             <span class="clockclass" style="display:none;">{{ row.clockclass }}</span>
             <span class="clock">{{ row.clock|time:"H:i:s" }}{% ifnotequal row.clock_indice 1 %}<sup>{{ row.clock_indice }}</sup>{% else %}&nbsp;&nbsp;{% endifnotequal %}</span>
             <strong>{% spaceless %}{% if row.author__username %}
