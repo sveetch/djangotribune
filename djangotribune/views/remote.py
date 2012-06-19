@@ -306,10 +306,6 @@ class RemoteHtmlMixin(RemoteJsonMixin):
     def build_backend(self, messages):
         return messages
 
-    def patch_row(self, row):
-        row['user_agent'] = row['user_agent'][:30]
-        return super(RemoteHtmlMixin, self).patch_row(row)
-
     def get_last_id(self):
         """Ignore 'last_id' option"""
         return 0
