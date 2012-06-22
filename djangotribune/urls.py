@@ -10,12 +10,16 @@ from djangotribune.views.remote import (RemotePlainView, RemoteJsonView, RemoteX
 from djangotribune.views.post import (PostBoardView, PostBoardNoScriptView, 
                                         PostRemotePlainView, PostRemoteJsonView, 
                                         PostRemoteXmlView, PostRemoteCrapXmlView)
+from djangotribune.views.discovery import ConfigDiscoveryView
 
 urlpatterns = patterns('',
     url(r'^$', PostBoardView.as_view(), name='tribune-board'),
     url(r'^noscript/$', PostBoardNoScriptView.as_view(), name='tribune-board-noscript'),
     
     url(r'^readme/$', ReadmePage.as_view(), name='tribune-readme'),
+    
+    # For default tribune
+    url(r'^discovery.config$', ConfigDiscoveryView.as_view(), name='tribune-config'),
     
     url(r'^post/$', PostRemotePlainView.as_view(), name='tribune-post-plain'),
     url(r'^post/json/$', PostRemoteJsonView.as_view(), name='tribune-post-json'),
@@ -26,4 +30,20 @@ urlpatterns = patterns('',
     url(r'^remote/json/$', RemoteJsonView.as_view(), name='tribune-remote-json'),
     url(r'^remote/xml/$', RemoteXmlView.as_view(), name='tribune-remote-xml'),
     url(r'^remote/xml/crap/$', RemoteCrapXmlView.as_view(), name='tribune-remote-xml-crap'),
+    
+    # For channel tribunes
+    url(r'^(?P<channel_slug>[-\w]+)/$', PostBoardView.as_view(), name='tribune-channel-board'),
+    url(r'^(?P<channel_slug>[-\w]+)/noscript/$', PostBoardNoScriptView.as_view(), name='tribune-channel-board-noscript'),
+    
+    url(r'^(?P<channel_slug>[-\w]+)/discovery.config', ConfigDiscoveryView.as_view(), name='tribune-channel-config'),
+    
+    url(r'^(?P<channel_slug>[-\w]+)/post/$', PostRemotePlainView.as_view(), name='tribune-channel-post-plain'),
+    url(r'^(?P<channel_slug>[-\w]+)/post/json/$', PostRemoteJsonView.as_view(), name='tribune-channel-post-json'),
+    url(r'^(?P<channel_slug>[-\w]+)/post/xml/$', PostRemoteXmlView.as_view(), name='tribune-channel-post-xml'),
+    url(r'^(?P<channel_slug>[-\w]+)/post/xml/crap/$', PostRemoteCrapXmlView.as_view(), name='tribune-channel-post-xml-crap'),
+    
+    url(r'^(?P<channel_slug>[-\w]+)/remote/$', RemotePlainView.as_view(), name='tribune-channel-remote-plain'),
+    url(r'^(?P<channel_slug>[-\w]+)/remote/json/$', RemoteJsonView.as_view(), name='tribune-channel-remote-json'),
+    url(r'^(?P<channel_slug>[-\w]+)/remote/xml/$', RemoteXmlView.as_view(), name='tribune-channel-remote-xml'),
+    url(r'^(?P<channel_slug>[-\w]+)/remote/xml/crap/$', RemoteCrapXmlView.as_view(), name='tribune-channel-remote-xml-crap'),
 )

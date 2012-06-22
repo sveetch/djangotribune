@@ -108,9 +108,11 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
         kwargs = super(PostBoardView, self).get_context_data(**kwargs)
         kwargs.update({
             'board_title': self.get_board_title(),
-            'channel': self.get_channel(),
             'message_list': self.get_backend(),
             'message_display_limit': self.get_row_limit(), # used by rich interface as the display limit
+            'tribune_channel': self.get_channel(),
+            'tribune_backend_url': self.get_backend_view_url(),
+            'tribune_post_url': self.get_post_view_url(),
         })
         return kwargs
     

@@ -85,6 +85,7 @@ jQuery.fn.extend({
                 "host" : '',
                 "remote_path": '',
                 "post_path": '',
+                "channel": null,
                 "clockfinder_path": '',
                 "theme": 'default',
                 "message_limit": 30,
@@ -97,7 +98,7 @@ jQuery.fn.extend({
             // Build DjangoTribune for each selected element
             return this.each(function() {
                 var $this = $(this),
-                    djangotribune_key = $this.attr('id')||'default',
+                    djangotribune_key = "djangotribune-id-" + (settings.channel||'default'), // djangotribune instance ID, must be unique, reference to the current channel if any
                     djangotribune_scroll = $("<div class=\"djangotribune_scroll\"></div>").insertBefore("form", $this).append($("ul.messages", $this)),
                     input_checked = (settings.refresh_active) ? " checked=\"checked\"" : "",
                     refresh_active = $("<p class=\"refresh_active\"><label><input type=\"checkbox\" name=\"active\" value=\"1\"" +input_checked+ "/>Active refresh</label></p>").appendTo("form", $this);
@@ -180,9 +181,6 @@ jQuery.fn.extend({
                 
                 // First timer init
                 if(data.settings.refresh_active){
-                    // NOTE: To implement plugin multiple instances (like for each 
-                    //       channel) there will be need of a specific timer's key 
-                    //       naming (for each channel)
                     refreshTimer.setTimer(data.key, function(){ $this.djangotribune('refresh') }, data.settings.refresh_time_shifting)
                 }
                 

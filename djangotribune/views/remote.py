@@ -24,11 +24,12 @@ from django.http import HttpResponseNotModified
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
+from django.core.urlresolvers import reverse
 
 from djangotribune.settings_local import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
 from djangotribune.models import Channel, Message
 from djangotribune.clocks import ClockIndice
-from djangotribune.views import getmax_identity, BackendEncoder, LockView
+from djangotribune.views import getmax_identity, BackendEncoder, ChannelAwareMixin, LockView
 
 def last_modified_condition(request, *args, **kwargs):
     """
@@ -46,7 +47,7 @@ def last_modified_condition(request, *args, **kwargs):
         return last.created
     return None
 
-class RemoteBaseMixin(object):
+class RemoteBaseMixin(ChannelAwareMixin):
     """
     This Mixin implement all base stuff to generate a remote backend
     
@@ -57,19 +58,9 @@ class RemoteBaseMixin(object):
     http304_if_empty = True
     mimetype = "text/plain; charset=utf-8"
     default_row_direction = "desc"
+    backend_type = "json" # can be (plain|json|xml|xml-crap)
     # ``clock`` and ``created`` fields are required if ``clock_indexation`` is actived
     remote_fields = ('clock', 'created', 'author__username', 'user_agent', 'raw')
-
-    def get_channel(self):
-        """Get the channel to fetch messages"""
-        memokey = '_cache_get_channel'
-        if not hasattr(self, memokey):
-            if self.request.GET.get('channel', None):
-                channel = get_object_or_404(Channel, slug=self.request.GET['channel'])
-            else:
-                channel = None
-            setattr(self, memokey, channel)
-        return getattr(self, memokey)
 
     def get_last_id(self):
         """Get the id from wich to start row fetching"""
@@ -88,6 +79,18 @@ class RemoteBaseMixin(object):
         if direction.lower() in ('asc', 'desc'):
             return direction
         return self.default_row_direction
+    
+    def get_backend_view_url(self):
+        """Return the backend url, this is channel aware"""
+        if hasattr(self, 'get_channel') and getattr(self, 'get_channel')():
+            return reverse("tribune-channel-remote-{0}".format(self.backend_type), kwargs={'channel_slug':self.get_channel().slug})
+        return reverse("tribune-remote-{0}".format(self.backend_type))
+    
+    def get_post_view_url(self):
+        """Return the post url, this is channel aware"""
+        if hasattr(self, 'get_channel') and getattr(self, 'get_channel')():
+            return reverse("tribune-channel-post-{0}".format(self.backend_type), kwargs={'channel_slug':self.get_channel().slug})
+        return reverse("tribune-post-{0}".format(self.backend_type))
     
     def get_row_limit(self):
         """Get the row limit number to fetch"""
@@ -300,8 +303,9 @@ class RemoteHtmlMixin(RemoteJsonMixin):
     """
     Remote Html for template usage
     
-    There is no real builded backend as this is the queryset that is returned in the 
-    template. And some URL argument are ignored thus they have no sense in this context.
+    There is no real builded backend (as other backends) because it's the queryset that 
+    is directly returned in the template. And some URL arguments are ignored because they 
+    have no sense in this context.
     """
     def build_backend(self, messages):
         return messages

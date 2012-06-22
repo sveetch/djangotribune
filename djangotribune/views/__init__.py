@@ -4,8 +4,10 @@ import datetime, json
 from django import http
 from django.views.generic.base import View
 from django.utils.translation import ugettext as _
+from django.shortcuts import get_object_or_404
 
 from djangotribune.settings_local import TRIBUNE_LOCKED
+from djangotribune.models import Channel
 
 def getmax_identity(accumulated, current, ua_cmp=lambda x:x, username_cmp=lambda x:x):
     """
@@ -44,3 +46,18 @@ class LockView(View):
         if TRIBUNE_LOCKED and request.user.is_anonymous():
             return http.HttpResponseForbidden(_("The tribune is locked"), status="text/plain; charset=utf-8")
         return super(LockView, self).dispatch(request, *args, **kwargs)
+
+class ChannelAwareMixin(object):
+    """
+    Mixin to make views aware of channels
+    """
+    def get_channel(self):
+        """Get the channel to fetch messages"""
+        memokey = '_cache_get_channel'
+        if not hasattr(self, memokey):
+            if self.kwargs.get('channel_slug', None) is not None:
+                channel = get_object_or_404(Channel, slug=self.kwargs['channel_slug'])
+            else:
+                channel = None
+            setattr(self, memokey, channel)
+        return getattr(self, memokey)

@@ -15,6 +15,9 @@ TRIBUNE_MESSAGES_MAX_LIMIT = getattr(settings, 'TRIBUNE_MESSAGES_MAX_LIMIT', 100
 # Maximum length (in characters) for the content message
 TRIBUNE_MESSAGES_POST_MAX_LENGTH = getattr(settings, 'TRIBUNE_MESSAGES_POST_MAX_LENGTH', 500)
 
+# Default time refresh shifting to use on the board interface, time is in milli-seconds
+TRIBUNE_INTERFACE_REFRESH_SHIFTING = getattr(settings, 'TRIBUNE_INTERFACE_REFRESH_SHIFTING', 10000)
+
 # Name for the cookie which carry on the customized user agent
 TRIBUNE_MESSAGES_UA_COOKIE_NAME = getattr(settings, 'TRIBUNE_MESSAGES_UA_COOKIE_NAME', 'djangotribune_user-agent')
 # Maximum age time for the UserAgent cookie

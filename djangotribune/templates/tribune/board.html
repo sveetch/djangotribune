@@ -18,10 +18,11 @@
         {% if debug %}DEBUG = true;{% endif %}
         $(".djangotribune").djangotribune({
             "host" : '{{ SITE.web_url }}',
-            "remote_path": '{% url tribune-remote-json %}',
-            "post_path": '{% url tribune-post-json %}',
-            {% if user.is_authenticated %}"authenticated_username": "{{ user.username }}",{% endif %}
-            "message_limit": {{ message_display_limit }}
+            "remote_path": '{{ tribune_backend_url }}',
+            "post_path": '{{ tribune_post_url }}',
+            {% if tribune_channel %}"channel": "{{ tribune_channel.slug }}",
+            {% endif %}{% if user.is_authenticated %}"authenticated_username": "{{ user.username }}",
+            {% endif %}"message_limit": {{ message_display_limit }}
         });
     });
 //]]>
@@ -42,9 +43,10 @@
         <li>Action commands (<tt>name</tt> and <tt>lastfm</tt>);</li>
         <li>Mussle and user casting (<tt>moules&lt;</tt> and <tt>an_username&lt;</tt>);</li>
         <li>Smileys display;</li>
+        <li>Partial channel support;</li>
         <li>Simple clock and messages highlights.</li>
     </ul>
-    <p>There are currently no editable setting, no owner marks, no error notices, no channel support, etc.. And this need to be more tested on various browsers.</p>
+    <p>There are currently no editable setting, no owner marks, no error notices, etc.. And this need to be more tested on various browsers.</p>
 </div>
 
 <div class="djangotribune">
