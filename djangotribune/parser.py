@@ -295,7 +295,7 @@ class MessageParser(object):
                     totoz = chunk[13:-4]
                     totoz_url = self.smileys_url.format(totoz)
                     slipped_web.write('<a class="smiley" href="%s" rel="nofollow">[:%s]</a>' % (totoz_url, totoz))
-                    slipped_remote.write('<a href="%s" class="smiley">[:%s]</a>' % (totoz_url, totoz))
+                    slipped_remote.write('[:%s]'%totoz)
                 else:
                     slipped_web.write(chunk)
                     slipped_remote.write(chunk)
@@ -312,7 +312,7 @@ class MessageParser(object):
         }
         
     def validate(self, source):
-        ## TODO: invalid for words with a crazy length
+        ## TODO: invalidate for words with a crazy length
         #if len(source.strip()) < self.min_width:
             #return False
         return True
