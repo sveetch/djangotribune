@@ -35,8 +35,6 @@ class ContentMessageWidget(forms.TextInput):
 class MessageForm(forms.Form):
     """
     Message form
-    
-    TODO: minimum length required for content
     """
     content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=ContentMessageWidget(attrs={
         'class':'content_field',

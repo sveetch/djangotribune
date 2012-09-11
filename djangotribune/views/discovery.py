@@ -58,7 +58,7 @@ class ConfigDiscoveryView(ChannelAwareMixin, LockView):
         backend_element = ET.SubElement(board_element, "backend")
         backend_element.set('path', backend_url)
         backend_element.set('tags_encoded', "true")
-        backend_element.set('refresh', str((TRIBUNE_INTERFACE_REFRESH_SHIFTING/1000))) # conversion des ms en secondes
+        backend_element.set('refresh', str((TRIBUNE_INTERFACE_REFRESH_SHIFTING/1000))) # convert ms to secondes
         backend_element.set('public', str(not(TRIBUNE_LOCKED)).lower())
 
         post_element = ET.SubElement(board_element, "post")

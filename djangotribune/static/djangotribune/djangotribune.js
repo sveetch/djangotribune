@@ -2,32 +2,24 @@
 * The Django-tribune jQuery plugin
 * 
 * TODO: This lack of :
-*       * Correctly register clocks and compute clock indices;
-*       * Bug with Chromium ?
 *       * Timer should be contained in plugin namespace or deprecated in favor of 
 *         a jquery timer plugin;
 *       * Themes usage, like codemirror with appending a css class with the theme 
 *         slugname;
-*       * Use qTip2 implement "out of screen clocks" and totoz display with qTip2 ?
-*       * Option to use a view in modal window to edit custom settings;
-*       * ???
-* 
-* NOTE: This is developed with thinking about channels. The multiple instances plugin 
-*       possibility is respected so channels will be simply another djangotribune 
-*       instances with different #id used as their unique key for timer.
-*       When new channel is opened, the tribune interface should move on a tabbed 
-*       display.
-*       Core plugin must store all instance data in their element with elem.data().
+*       * User settings panel;
 */
-DEBUG = false; // TEMP
+DEBUG = false; // To enable/disable message logs with "console.log()"
 
-// TODO: to move in his own plugin file
 /*
- * jQuery method to insert text in an input at current cursor position
+ * Extend jQuery with a new method to insert text in an input at current cursor position
  * 
  * Stealed from :
  * 
  * http://stackoverflow.com/questions/946534/insert-text-into-textarea-with-jquery
+ * 
+ * Usage :
+ * 
+ *     $("input.myinput").insertAtCaret("My text");
  */
 jQuery.fn.extend({
     insertAtCaret: function(myValue){
@@ -57,7 +49,13 @@ jQuery.fn.extend({
     }
 });
 
-
+/* 
+ * The djangotribune plugin
+ * 
+ * Usage for first init :
+ * 
+ *     $(".mycontainer").djangotribune({options...});
+ */
 (function($){
     /*
      * Plugin extensions calling logic
@@ -173,9 +171,8 @@ jQuery.fn.extend({
                         "web_render": $("span.content", this).html()
                     };
                     
-                    // TODO: Put data in clock/timestamp/etc.. register and initialize 
-                    //       events (clock, links, totoz, etc..) on rows
-                    // ...
+                    // Put data in clock/timestamp/etc.. register and initialize 
+                    // events (clock, links, totoz, etc..) on rows
                     events.bind_message($this, data, this, message_data);
                 });
                 

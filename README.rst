@@ -1,9 +1,10 @@
 .. _Django internationalization system: https://docs.djangoproject.com/en/dev/topics/i18n/
+.. _LastFM API: http://www.lastfm.fr/api/intro
 
 Introduction
 ============
 
-This Django app is a *chat-like application* with some aspects from *IRC* but with a 
+This Django app is a *chat-like application* with some aspects of *IRC* but with a 
 strong usage of message clocks.
 
 **Message clocks** are always displayed and used in message to reference answer or 
@@ -18,8 +19,28 @@ A sample part of Tribune messages will look like this in a plain-text version : 
     18:39:05     <superman>            18:39:01 hello
     18:43:22     Anonymous coward      18:39:01 yo
 
-The application has a rich interface, but is also accessible from third client 
+The application has a rich interface but is also accessible from third client 
 application (via a XML backend) and even in plain text.
+
+Features
+********
+
+* Easy embedding in your Django webapp;
+* Various backends `Formats`_;
+* `Action commands`_;
+* `Message filtering`_ usually called a *BaK*;
+* A rich interface (currently in development);
+* Full localization for french and english language;
+* `Discovery`_ XML configuration file for third client applications (aka remote client 
+  or *coincoins*);
+* Channel support;
+* Heavily documented.
+
+Planned
+*******
+
+* Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
+* Optional Captcha system to post new message to enable in settings;
 
 Links
 *****
@@ -59,7 +80,7 @@ database.
 If needed you can change some `Application settings`_ in your settings file.
 
 .. NOTE:: The recommended database engine is **PostgreSQL**. With SQLite you could have 
-          problems because the application make usage of case-insensitive matching 
+          problems because the application makes usage of case-insensitive matching 
           notably in `Message filtering`_.
 
 Usage
@@ -70,7 +91,7 @@ The tribune can either be used from the web interface or via remote client appli
 Message backends
 ****************
 
-Backends are available under various formats, each format have his own specificity. 
+Backends are available with various formats, each format has its own specificity. 
 Generally, *JSON* is for webapp usage, *XML* for remote clients and *Plain* for some 
 nerdz.
 
@@ -84,7 +105,7 @@ XML
     Very fast, use the remote message render, descendant ordered by default. Url path from 
     the tribune is ``remote/xml/`` for backend and ``post/xml/`` for post view.
 CRAP XML
-    The XML version *extended* to suit to old tribune application client. Actually the 
+    The XML version *extended* to suit to old tribune application client. Currently the 
     only diff is the XML structure wich is indented. Url path from the tribune is 
     ``remote/xml/crap/`` for backend and ``post/xml/crap/`` for post view.
 JSON
@@ -92,18 +113,18 @@ JSON
     path from the tribune is ``remote/json/`` for backend and ``post/json/`` for post 
     view.
 
+.. NOTE:: For channel backend and post urls you must prepend the path with the channel 
+          slug, by example with a channel slug ``foo`` for the XML backend you will need 
+          to do ``foo/remote/xml/``.
+		  
+
 Url arguments
 -------------
 
 On backend URLs, you can set somes options by adding URL arguments like this : ::
     
-    /remote/?channel=foo&limit=42&direction=asc&last_id=77
+    /remote/?limit=42&direction=asc&last_id=77
 
-channel
-    A string to specify the channel *slug* to use to limit the backend to fetch messages 
-    only from the given channel. By default, when this argument is not specified, the 
-    default channel is used. If the specified channel does not exist, the response return 
-    a *Http404*.
 limit
     An integer to specify how much message can be retrieved, this value cannot be higher 
     than the setting value ``TRIBUNE_MESSAGES_MAX_LIMIT``. Default value come from 
@@ -111,7 +132,7 @@ limit
 direction
     Message listing direction specify if the list should be ordered on ``id`` in 
     ascendant or descendant way. Value can be ``asc`` for ascendant or ``desc`` for 
-    descendant. Each backend can have his own default direction.
+    descendant. Each backend can has its own default direction.
 last_id
     The last ``id`` from wich to retrieve the messages in the interval of the ``limit`` 
     option.
@@ -127,7 +148,7 @@ last_id
     * Requesting a backend with option ``limit`` to 5 and option ``last_id`` to 15 will 
       return messages from ``id`` 38 to 42;
     
-    No matter what direction you specify in option, the results will stays identical.
+    No matter what direction you specify in option, the results will stay identical.
 
 Message post
 ************
@@ -135,9 +156,9 @@ Message post
 From web interface
 ------------------
 
-The web interface implement all features, just use the input field at the bottom of the message 
-list to post a new message and it will be appended. The interface perform a periodical request 
-on the remote backend to display other new message if any.
+The web interface implements all features, just use the input field at the bottom of the message 
+list to post a new message and it will be appended. The interface performs a periodical request 
+on the remote backend to display any new message.
 
 If your message is not validated, the input field will be displayed with red borders, the borders will 
 be hidded just after a new validated post.
@@ -167,17 +188,17 @@ Dealing with errors
   you try to fetch a backend where they are no new message;
 * If the *POST* request is invalidated (with the form) the returned response will be a 
   **Http400** (*Bad Request*) with an explanation in Ascii;
-* A **Http404** is returned when you try to use a channel or a remote backend that 
+* A **Http404** is returned when you try to use a channel remote backend that 
   doesn't exists;
 * You could receive a **Http500** (*Internal Server Error*) in case of bugs or bad 
   configured server;
-* Eventually you can receive a **Http403** if you try to use a restricted command but 
+* Sometimes you can receive a **Http403** if you try to use a restricted command but 
   there are not implemented yet.
 
 Action commands
 ***************
 
-Action commands can be passed in message content, generally this result in doing the 
+Action commands can be passed in message content, generally this results in doing the 
 action without saving a new message although some actions can push a message to save.
 
 All action command must start with a ``/`` followed (without any separator) by the 
@@ -185,11 +206,11 @@ action name and then the action arguments if any. Unvalid action command will of
 result in saving the content as a new message.
 
 name
-    This allow anonymous users to display a custom name instead of their *User-Agent* in 
+    This allows anonymous users to display a custom name instead of their *User-Agent* in 
     messages.
     
-    Name saving is made by a special cookie, so if the user lose or delete his cookie, 
-    he lose his custom name.
+    Name saving is made by a special cookie, so if the user loses or deletes his cookie, 
+    he loses his custom name.
     
     Add new ua : ::
     
@@ -199,7 +220,7 @@ name
     
         /name
     
-    Note that this name will only be directly visible on anonymous user, because 
+    Note that this name will only be directly visible for anonymous user, because 
     registered users have their username displayed, but the name (or user-agent) is 
     visible on mouseover their username. This is behavior is only on HTML board, remote 
     clients have their own behaviors.
@@ -239,9 +260,9 @@ That being so an user can lose his session (by a very long inactivity or when lo
 so there are option to **save** the filters in your BaK in your profile in database then 
 after you can **load** them in your session when needed.
 
-There is two way to manage filter from your bak :
+There is two ways to manage filters from your bak :
 
-* You can use **the easy way** which always assume you use an exact pattern, this is the 
+* You can use **the easy way** which always assumes you use an exact pattern, this is the 
   purpose of options **add** and **del** than expects only two arguments, a target and 
   the pattern;
 * Or you can use **the verbose way** which expects three arguments respectively the target, 
@@ -302,7 +323,7 @@ save
     Saving your filters will overwrite all your previous saved filters, so if you just 
     want to add new filters, load the previously saved filters before.
     
-    This is option does not requires any argument : ::
+    This is option does not require any argument : ::
         
         /bak save
 load
@@ -336,7 +357,7 @@ reset
 
 .. NOTE:: Messages filters will not be retroactive on displays on remote clients, only 
           for new message to come after your command actions. So generally you will have 
-          to reload your client to see applyed filters on messages posted before your 
+          to reload your client to see applied filters on messages posted before your 
           command actions.
 
 Examples
@@ -357,7 +378,7 @@ You want to avoid displaying message from all user with an user-agent from ``Moz
 Application settings
 ====================
 
-All default app settings is located in the ``settings_local.py`` file of ``djangotribune``, you can modify them in your 
+All default app settings are located in the ``settings_local.py`` file of ``djangotribune``, you can modify them in your 
 project settings.
 
 .. NOTE:: All app settings are overwritten if present in your project settings with the exception of 
@@ -374,12 +395,12 @@ TRIBUNE_LOCKED
 TRIBUNE_MESSAGES_DEFAULT_LIMIT
     Default message limit to display in backend. 
     
-    Require an integer, by default this is set to 50.
+    Requires an integer, by default this is set to 50.
 TRIBUNE_MESSAGES_MAX_LIMIT
     The maximum value allowed for the message limit option. Limit option used beyond this 
     will be set to this maximum value. 
     
-    Require an integer, by default this is set to 100.
+    Requires an integer, by default this is set to 100.
 TRIBUNE_MESSAGES_POST_MAX_LENGTH
     Maximum length (in characters) for the content message. 
     
@@ -396,16 +417,35 @@ TRIBUNE_TITLES
     List of titles randomly displayed on tribune boards. 
     
     The default one allready contains many titles.
+TRIBUNE_LASTFM_API_URL
+    The URL to use to request the `LastFM API`_ used within ``lastfm`` action command.
+TRIBUNE_LASTFM_API_KEY
+    The Application key to use for on requests made to `LastFM API`_.
+TRIBUNE_INTERFACE_REFRESH_SHIFTING
+    The default time in milli-seconds between each backend refresh request on the interface.
+
+Discovery
+*********
+
+Discovery files describes the needed configuration to use a tribune with third client 
+applications.
+
+They are simple XML files for describe configuration to access to the remote backend and 
+to post new message, plus some other options and parameters.
+
+You can access them at location ``/discovery.config`` under the path of the tribune, 
+so for the default tribune this is usually : ::
+
+    /tribune/discovery.config
+
+And for a channel with the slug name "foo", it will be : ::
+
+    /tribune/foo/discovery.config
+
 
 Internationalization and localization
 =====================================
 
 This application make usage of the `Django internationalization system`_, see the Django documentation about this if 
 you want to add a new language translation.
-
-Planned
-=======
-
-* Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
-* Optional Captcha system to post new message to enable in settings;
 
