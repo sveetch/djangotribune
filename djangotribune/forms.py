@@ -11,32 +11,11 @@ from djangotribune.models import Channel, Message, Url
 from djangotribune.parser import MessageParser
 from djangotribune.actions import TRIBUNE_COMMANDS
 
-class ContentMessageWidget(forms.TextInput):
-    """
-    Message content widget
-    
-    This put a field with all medias related to his usage
-    """
-    input_type = 'text'
-    
-    def _media(self):
-        """
-        Adds necessary files (Js/CSS) to the widget's medias
-        """
-        css_items = []
-        js_items = []
-        
-        return forms.Media(
-            css={'all': tuple(css_items)},
-            js=tuple(js_items),
-        )
-    media = property(_media)
-
 class MessageForm(forms.Form):
     """
     Message form
     """
-    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=ContentMessageWidget(attrs={
+    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=forms.TextInput(attrs={
         'class':'content_field',
         'size':'50',
         'accesskey':'T'

@@ -3,30 +3,25 @@
 
 {% block head_title %}{{ board_title }}{% endblock %}
 {% block head_more_links %}
-    <link rel="stylesheet" href="{{ STATIC_URL }}sveedocuments/css/content.css" type="text/css" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}djangotribune/djangotribune.css" type="text/css" />
+    {% include "tribune/include_css.html" %}
 {% endblock %}
 {% block head_more_js %}
-<script type="text/javascript" src="{{ STATIC_URL }}jquery/plugins/jquery.querystring.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}jquery/plugins/jquery.cookies.2.2.0.min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}djangotribune/timer.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}djangotribune/csrf.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}djangotribune/djangotribune.js"></script>
-<script language="JavaScript" type="text/javascript">
-//<![CDATA[
-    $(document).ready(function() {
-        {% if debug %}DEBUG = true;{% endif %}
-        $(".djangotribune").djangotribune({
-            "host" : '{{ SITE.web_url }}',
-            "remote_path": '{{ tribune_backend_url }}',
-            "post_path": '{{ tribune_post_url }}',
-            {% if tribune_channel %}"channel": "{{ tribune_channel.slug }}",
-            {% endif %}{% if user.is_authenticated %}"authenticated_username": "{{ user.username }}",
-            {% endif %}"message_limit": {{ message_display_limit }}
+    {% include "tribune/include_js.html" %}
+    <script language="JavaScript">
+    //<![CDATA[
+        $(document).ready(function() {
+            {% if debug %}DEBUG = true;{% endif %}
+            $(".djangotribune").djangotribune({
+                "host" : '{{ SITE.web_url }}',
+                "remote_path": '{{ tribune_backend_url }}',
+                "post_path": '{{ tribune_post_url }}',
+                {% if tribune_channel %}"channel": "{{ tribune_channel.slug }}",
+                {% endif %}{% if user.is_authenticated %}"authenticated_username": "{{ user.username }}",
+                {% endif %}"message_limit": {{ message_display_limit }}
+            });
         });
-    });
-//]]>
-</script>
+    //]]>
+    </script>
 {% endblock %}
 
 {% block body_attr %} class="fixed_width absolute_width"{% endblock %}
@@ -34,9 +29,9 @@
 {% block content %}
 <h2>{{ board_title }}</h2>
 
-<div class="notice">
+<div class="alert-box">
     <p>This is the early staging for a <em>rich</em> interface. Actually implemented features are :</p>
-    <ul>
+    <ul class="disc">
         <li>Refresh backend using a timer;</li>
         <li>Checkbox to disable/enable the automatic refresh;</li>
         <li><em>Ajax</em> post;</li>
@@ -47,6 +42,7 @@
         <li>Simple clock and messages highlights.</li>
     </ul>
     <p>There are currently no editable setting, no owner marks, no error notices, etc.. And this need to be more tested on various browsers.</p>
+  <a href="" class="close">&times;</a>
 </div>
 
 <div class="djangotribune">
@@ -76,6 +72,5 @@
             <input type="submit" value="Ok" />
         </p>
     </form>
-    
 </div>
 {% endblock %}
