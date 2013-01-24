@@ -1,0 +1,91 @@
+/*
+* Base styles for Django-tribune
+* Created by David THENON in May 2012
+*/
+/* line 6, ../../scss/djangotribune/frontend.scss */
+.djangotribune_scroll,
+.djangotribune ul.messages {
+  margin: 0;
+  padding: 0;
+}
+
+/* line 11, ../../scss/djangotribune/frontend.scss */
+.djangotribune {
+  margin: 0;
+  padding: .1em;
+  /* Content input */
+  /* Highlights for clock events */
+}
+/* line 15, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message {
+  margin: 0.2em;
+  padding: 0;
+  font-size: .9em;
+  list-style-type: none;
+  /* For owned reference clocks */
+}
+/* line 21, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message span.clock {
+  padding-right: 0.5em;
+  color: #FF0000;
+  text-decoration: none;
+  /*    border-left:3px solid transparent;
+      border-bottom:1px solid transparent;*/
+}
+/* line 28, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message span.identity.authenticated {
+  padding-right: 0.5em;
+  color: green;
+  text-decoration: none;
+}
+/* line 33, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message span.identity.anonymous {
+  padding-right: 0.5em;
+  font-style: italic;
+  color: #660000;
+  text-decoration: none;
+}
+/* line 39, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message span.pointer {
+  color: blue;
+}
+/* line 43, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message span.mine {
+  border-left: 3px solid #E0B080;
+  border-bottom: 1px solid #E0B080;
+}
+/* line 49, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message.musslecast, .djangotribune .message.usercast {
+  border: 1px solid #d0b060;
+}
+/* line 52, ../../scss/djangotribune/frontend.scss */
+.djangotribune .message a.smiley {
+  text-decoration: none;
+}
+/* line 59, ../../scss/djangotribune/frontend.scss */
+.djangotribune form input.content_field {
+  font-size: .9em;
+  border: 1px solid #aaa;
+  color: #000000;
+  background-color: #ffffff;
+}
+/* line 65, ../../scss/djangotribune/frontend.scss */
+.djangotribune form input.content_field.disabled {
+  border: 1px solid #606060;
+  color: #606060;
+  background-color: #C0C0C0;
+}
+/* line 70, ../../scss/djangotribune/frontend.scss */
+.djangotribune form input.content_field.error {
+  border: 1px solid #ff0000;
+}
+/* line 78, ../../scss/djangotribune/frontend.scss */
+.djangotribune li.message.highlighted,
+.djangotribune span.clock.highlighted {
+  background-color: #e2d5d4;
+}
+/* line 81, ../../scss/djangotribune/frontend.scss */
+.djangotribune span.content span.pointer.highlighted {
+  background-color: #e2d5d4;
+  text-decoration: underline;
+}

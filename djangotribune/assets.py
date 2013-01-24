@@ -10,16 +10,16 @@ else:
 
     AVALAIBLE_BUNDLES = {
         'djangotribune_css': Bundle(
-            "djangotribune/djangotribune.css",
+            "css/djangotribune/frontend.css",
             filters='yui_css',
             output='css/djangotribune.min.css'
         ),
         'djangotribune_js': Bundle(
-            "jquery/plugins/jquery.querystring.js",
-            "jquery/plugins/jquery.cookies.2.2.0.min.js",
-            "djangotribune/timer.js",
-            "djangotribune/csrf.js",
-            "djangotribune/djangotribune.js",
+            "js/jquery/jquery.querystring.js",
+            "js/jquery/jquery.cookies.2.2.0.js",
+            "js/djangotribune/timer.js",
+            "js/djangotribune/csrf.js",
+            "js/djangotribune/main.js",
             filters='yui_js',
             output='js/djangotribune.min.js'
         ),

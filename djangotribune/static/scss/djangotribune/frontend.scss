@@ -2,91 +2,84 @@
 * Base styles for Django-tribune
 * Created by David THENON in May 2012
 */
-.djangotribune{
-    margin:0;
-    padding: .1em;
-}
 .djangotribune_scroll,
 .djangotribune ul.messages{
     margin: 0;
     padding:0;
 }
 
-.djangotribune .message{
-    margin:0.2em;
-    padding:0;
-    font-size: .9em;
-    list-style-type:none;
-}
+.djangotribune{
+    margin:0;
+    padding: .1em;
+    
+    .message{
+        margin:0.2em;
+        padding:0;
+        font-size: .9em;
+        list-style-type:none;
+        
+        span.clock{
+            padding-right:0.5em;
+            color:#FF0000;
+            text-decoration:none;
+        /*    border-left:3px solid transparent;
+            border-bottom:1px solid transparent;*/
+        }
+        span.identity.authenticated{
+            padding-right:0.5em;
+            color:green;
+            text-decoration:none;
+        }
+        span.identity.anonymous{
+            padding-right:0.5em;
+            font-style:italic;
+            color:#660000;
+            text-decoration:none;
+        }
+        span.pointer{
+            color:blue;
+        }
+        /* For owned reference clocks */
+        span.mine{
+            border-left:3px solid #E0B080;
+            border-bottom:1px solid #E0B080;
+        }
 
-.djangotribune .message span.clock{
-    padding-right:0.5em;
-    color:#FF0000;
-    text-decoration:none;
-/*    border-left:3px solid transparent;
-    border-bottom:1px solid transparent;*/
-}
-.djangotribune .message span.identity.authenticated{
-    padding-right:0.5em;
-    color:green;
-    text-decoration:none;
-}
-.djangotribune .message span.identity.anonymous{
-    padding-right:0.5em;
-    font-style:italic;
-    color:#660000;
-    text-decoration:none;
-}
-.djangotribune .message span.pointer{
-    color:blue;
-}
-
-/* For owned reference clocks */
-.djangotribune .message span.mine{
-    border-left:3px solid #E0B080;
-    border-bottom:1px solid #E0B080;
-}
-
-/* Content input */
-.djangotribune form input.content_field{
-    font-size: .9em;
-    border: 1px solid #aaa;
-    color:#000000;
-    background-color:#ffffff;
-}
-.djangotribune form input.content_field.disabled{
-    border: 1px solid #606060;
-    color:#606060;
-    background-color:#C0C0C0;
-}
-.djangotribune form input.content_field.error{
-    border: 1px solid #ff0000;
-}
-
-/* Highlights for clock events */
-.djangotribune li.message.highlighted,
-.djangotribune span.clock.highlighted{
-    background-color:#e2d5d4;
-}
-.djangotribune span.content span.pointer.highlighted{
-    background-color:#e2d5d4;
-    text-decoration:underline;
-}
-.djangotribune .message.musslecast,
-.djangotribune .message.usercast{
-    border:1px solid #d0b060;
-}
-.djangotribune .message a.smiley{
-    text-decoration:none;
-}
-
-/* Temporary notice for CHANGES */
-.notice{
-    padding: .5em;
-    border: 1px solid #cdd9f7;
-    background-color: #e8efff;
-    font-size:.9em;
-    color:#384976;
-    background-repeat: no-repeat;
-    background-position: .7em .7em;
+        &.musslecast,
+        &.usercast{
+            border:1px solid #d0b060;
+        }
+        a.smiley{
+            text-decoration:none;
+        }
+    }
+    
+    /* Content input */
+    form{
+        input.content_field{
+            font-size: .9em;
+            border: 1px solid #aaa;
+            color:#000000;
+            background-color:#ffffff;
+            
+            &.disabled{
+                border: 1px solid #606060;
+                color:#606060;
+                background-color:#C0C0C0;
+            }
+            &.error{
+                border: 1px solid #ff0000;
+            }
+        }
+    }
+    
+    /* Highlights for clock events */
+    li.message.highlighted,
+    span.clock.highlighted{
+        background-color:#e2d5d4;
+    }
+    span.content span.pointer.highlighted{
+        background-color:#e2d5d4;
+        text-decoration:underline;
+    }
 }
