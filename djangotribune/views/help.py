@@ -18,7 +18,8 @@ class DummySourceParser(object):
         return "<DummySourceParser>"
 
 try:
-    from sveedocuments.parser import SourceParser
+    # TODO: Do not rely anymore on sveedocuments, but use rstview instead
+    from rstview.parser import SourceParser
 except ImportError:
     class SourceParser(DummySourceParser): pass
 
@@ -34,7 +35,7 @@ class ConditionalParserView(TemplateView):
     
     L'encoding attendu du document source est *utf-8*.
     """
-    template_name = "tribune/help.html"
+    template_name = "djangotribune/help.html"
     source_doc_name = "README.rst"
     source_doc_title = "README"
     

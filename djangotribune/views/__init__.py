@@ -26,7 +26,7 @@ def getmax_identity(accumulated, current, ua_cmp=lambda x:x, username_cmp=lambda
     return accumulated
 
 class BackendEncoder(json.JSONEncoder):
-    """Complex encoder for backend needs"""
+    """Complex JSON encoder for backend needs"""
     def default(self, obj):
         if isinstance(obj, datetime.datetime):
             return obj.strftime('%Y%m%d%H%M%S')

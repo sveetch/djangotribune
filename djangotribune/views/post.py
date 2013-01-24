@@ -100,7 +100,7 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
     methods
     """
     http_method_names = ['get', 'post', 'put', 'delete', 'head', 'options', 'trace']
-    template_name = "tribune/board.html"
+    template_name = "djangotribune/board.html"
     clock_indexation = True
     
     def get_context_data(self, **kwargs):
@@ -160,7 +160,7 @@ class PostBoardNoScriptView(PostBoardView):
     """
     HTML Interface view duplicata with different template
     """
-    template_name = "tribune/board_noscript.html"
+    template_name = "djangotribune/board_noscript.html"
 
 class PostRemotePlainView(RemotePlainMixin, PostRemoteBaseView):
     """
