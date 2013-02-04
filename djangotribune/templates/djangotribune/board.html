@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n autobreadcrumb %}
+{% load i18n autobreadcrumb tribune %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
 {% block head_more_links %}
@@ -24,8 +24,6 @@
     </script>
 {% endblock %}
 
-{% block body_attr %} class="fixed_width absolute_width"{% endblock %}
-
 {% block content %}
 <h2>{{ board_title }}</h2>
 
@@ -39,21 +37,18 @@
         <li>Mussle and user casting (<tt>moules&lt;</tt> and <tt>an_username&lt;</tt>);</li>
         <li>Smileys display;</li>
         <li>Partial channel support;</li>
-        <li>Simple clock and messages highlights.</li>
+        <li>Simple clock and messages highlights;</li>
+        <li>Owner marks.</li>
     </ul>
-    <p>There are currently no editable setting, no owner marks, no error notices, etc.. And this need to be more tested on various browsers.</p>
+    <p>There are currently no editable setting, no error notices and no rollover display for clocks pointing message out of the screen or history. And this need to be more tested on various browsers.</p>
   <a href="" class="close">&times;</a>
 </div>
 
 <div class="djangotribune">
     <ul class="messages">
         {% for row in message_list %}
-        <li class="message msgclock_{{ row.clockclass }}">
-            <span class="pk" style="display:none;">{{ row.id }}</span>
-            <span class="created" style="display:none;">{{ row.created|date:"YmdHis" }}</span>
-            <span class="clock_indice" style="display:none;">{{ row.clock_indice }}</span>
-            <span class="clockclass" style="display:none;">{{ row.clockclass }}</span>
-            <span class="clock">{{ row.clock|time:"H:i:s" }}{% ifnotequal row.clock_indice 1 %}<sup>{{ row.clock_indice }}</sup>{% else %}&nbsp;&nbsp;{% endifnotequal %}</span>
+        <li class="message msgclock_{{ row.clockclass }}{% if row.owned %} owned{% endif %}" data-tribune-pk="{{ row.id }}" data-tribune-created="{{ row.created|date:"YmdHis" }}" data-tribune-clock_indice="{{ row.clock_indice }}" data-tribune-clockclass="{{ row.clockclass }}" data-tribune-owned="{% if row.owned %}true{% else %}false{% endif %}">
+            <span class="clock">{{ row.clock|time:"H:i:s" }}<sup>{% ifnotequal row.clock_indice 1 %}{{ row.clock_indice|indice_unicode }}{% else %}&nbsp;{% endifnotequal %}</sup></span>
             <strong>{% spaceless %}{% if row.author__username %}
                 <span class="identity authenticated" title="{{ row.user_agent }}">{{ row.author__username }}</span>
             {% else %}
@@ -67,10 +62,14 @@
     </ul>
 
     <form action="." method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <p>
-            <input type="submit" value="Ok" />
-        </p>
+        <div class="row collapse">
+            <div class="ten mobile-three columns">
+                {{ form.as_p }}
+            </div>
+            <div class="two mobile-one columns">
+                <input type="submit" class="button expand postfix" value="Ok">
+            </div>
+        </div>
     </form>
 </div>
 {% endblock %}

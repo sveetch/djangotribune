@@ -140,14 +140,6 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
             self.command.patch_response(response)
         
         return response
-
-    #def patch_row(self, row):
-        #"""
-        #Add a *clockclass* suitable in ``class=""``, it's a combination of ``clock`` and 
-        #``clock_indice`` (padded on two digits)
-        #"""
-        #row['clockclass'] = row['clock'].strftime("%H%M%S") + str(row.get('clock_indice', 1))
-        #return row
         
     def get_success_url(self):
         """

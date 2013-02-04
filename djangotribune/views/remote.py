@@ -297,6 +297,10 @@ class RemoteJsonMixin(RemoteBaseMixin):
         """
         row['clockclass'] = row['clock'].strftime("%H%M%S") + str(row.get('clock_indice', 1))
         row['clock_indice'] = row['clock_indice'].real
+        # Add the owned mark if the message is authored by the current user
+        row['owned'] = False
+        if self.request.user.is_authenticated() and row['author__username'] and self.request.user.username == row['author__username']:
+            row['owned'] = True
         return row
 
 class RemoteHtmlMixin(RemoteJsonMixin):

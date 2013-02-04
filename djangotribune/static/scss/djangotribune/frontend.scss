@@ -5,52 +5,52 @@
 .djangotribune_scroll,
 .djangotribune ul.messages{
     margin: 0;
-    padding:0;
+    padding: 0;
 }
 
 .djangotribune{
-    margin:0;
+    margin: 0;
     padding: .1em;
     
     .message{
-        margin:0.2em;
-        padding:0;
+        margin: .2em;
+        padding: 0 0 0 5px;
         font-size: .9em;
-        list-style-type:none;
+        list-style-type: none;
+        border-left: 3px solid transparent;
+        border-bottom: 1px solid transparent;
         
         span.clock{
-            padding-right:0.5em;
-            color:#FF0000;
-            text-decoration:none;
-        /*    border-left:3px solid transparent;
-            border-bottom:1px solid transparent;*/
+            padding-right: 0.5em;
+            color: #FF0000;
+            text-decoration: none;
         }
         span.identity.authenticated{
-            padding-right:0.5em;
-            color:green;
-            text-decoration:none;
+            padding-right: 0.5em;
+            color: green;
+            text-decoration: none;
         }
         span.identity.anonymous{
-            padding-right:0.5em;
-            font-style:italic;
-            color:#660000;
-            text-decoration:none;
+            padding-right: 0.5em;
+            font-style: italic;
+            color: #660000;
+            text-decoration: none;
         }
         span.pointer{
-            color:blue;
+            color: blue;
         }
         /* For owned reference clocks */
-        span.mine{
-            border-left:3px solid #E0B080;
-            border-bottom:1px solid #E0B080;
+        &.owned{
+            border-left: 3px solid #E0B080;
+            border-bottom: 1px solid #E0B080;
         }
 
         &.musslecast,
         &.usercast{
-            border:1px solid #d0b060;
+            border: 1px solid #d0b060;
         }
         a.smiley{
-            text-decoration:none;
+            text-decoration: none;
         }
     }
     
@@ -59,13 +59,13 @@
         input.content_field{
             font-size: .9em;
             border: 1px solid #aaa;
-            color:#000000;
-            background-color:#ffffff;
+            color: #000000;
+            background-color: #ffffff;
             
             &.disabled{
                 border: 1px solid #606060;
-                color:#606060;
-                background-color:#C0C0C0;
+                color: #606060;
+                background-color: #C0C0C0;
             }
             &.error{
                 border: 1px solid #ff0000;
@@ -76,10 +76,10 @@
     /* Highlights for clock events */
     li.message.highlighted,
     span.clock.highlighted{
-        background-color:#e2d5d4;
+        background-color: #e2d5d4;
     }
     span.content span.pointer.highlighted{
-        background-color:#e2d5d4;
-        text-decoration:underline;
+        background-color: #e2d5d4;
+        text-decoration: underline;
     }
 }

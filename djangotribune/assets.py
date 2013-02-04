@@ -17,7 +17,7 @@ else:
         'djangotribune_js': Bundle(
             "js/jquery/jquery.querystring.js",
             "js/jquery/jquery.cookies.2.2.0.js",
-            "js/djangotribune/timer.js",
+            #"js/djangotribune/timer.js",
             "js/djangotribune/csrf.js",
             "js/djangotribune/main.js",
             filters='yui_js',

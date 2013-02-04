@@ -18,19 +18,19 @@
 }
 /* line 15, ../../scss/djangotribune/frontend.scss */
 .djangotribune .message {
-  margin: 0.2em;
-  padding: 0;
+  margin: .2em;
+  padding: 0 0 0 5px;
   font-size: .9em;
   list-style-type: none;
+  border-left: 3px solid transparent;
+  border-bottom: 1px solid transparent;
   /* For owned reference clocks */
 }
-/* line 21, ../../scss/djangotribune/frontend.scss */
+/* line 23, ../../scss/djangotribune/frontend.scss */
 .djangotribune .message span.clock {
   padding-right: 0.5em;
   color: #FF0000;
   text-decoration: none;
-  /*    border-left:3px solid transparent;
-      border-bottom:1px solid transparent;*/
 }
 /* line 28, ../../scss/djangotribune/frontend.scss */
 .djangotribune .message span.identity.authenticated {
@@ -50,7 +50,7 @@
   color: blue;
 }
 /* line 43, ../../scss/djangotribune/frontend.scss */
-.djangotribune .message span.mine {
+.djangotribune .message.owned {
   border-left: 3px solid #E0B080;
   border-bottom: 1px solid #E0B080;
 }
