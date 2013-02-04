@@ -39,6 +39,7 @@ Features
 Planned
 *******
 
+* Rich interface;
 * Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
 * Optional Captcha system to post new message to enable in settings;
 
@@ -116,7 +117,7 @@ JSON
 .. NOTE:: For channel backend and post urls you must prepend the path with the channel 
           slug, by example with a channel slug ``foo`` for the XML backend you will need 
           to do ``foo/remote/xml/``.
-		  
+                  
 
 Url arguments
 -------------
@@ -448,4 +449,3 @@ Internationalization and localization
 
 This application make usage of the `Django internationalization system`_, see the Django documentation about this if 
 you want to add a new language translation.
-
