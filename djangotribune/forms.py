@@ -5,6 +5,10 @@ Forms
 from django import forms
 from django.utils.html import escape as html_escape
 from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext
+
+from crispy_forms.helper import FormHelper
+from crispy_forms_foundation.layout import Layout, Row, Column, Submit
 
 from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN
 from djangotribune.models import Channel, Message, Url
@@ -15,7 +19,7 @@ class MessageForm(forms.Form):
     """
     Message form
     """
-    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=forms.TextInput(attrs={
+    content = forms.CharField(label=ugettext("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=forms.TextInput(attrs={
         'class':'content_field',
         'size':'50',
         'accesskey':'T'
@@ -29,6 +33,32 @@ class MessageForm(forms.Form):
         self.author = author
         self.parser = None
         self.command = None
+        
+        """
+        <div class="row collapse">
+            <div class="ten mobile-three columns">
+                FIELD
+            </div>
+            <div class="two mobile-one columns">
+                SUBMIT
+            </div>
+        </div>
+        """
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            Row(
+                Column(
+                    'content',
+                    css_class='ten mobile-three input-column'
+                ),
+                Column(
+                    Submit('post_submit', ugettext('Ok'), css_class='expand postfix'),
+                    css_class='two mobile-one'
+                ),
+                css_class='collapse'
+            ),
+        )
         
         super(MessageForm, self).__init__(*args, **kwargs)
 
@@ -79,7 +109,7 @@ class MessageForm(forms.Form):
         if not self.command or self.command.need_to_push_data:
             self.parser = MessageParser()
             if not self.parser.validate(content):
-                raise forms.ValidationError(_('Unvalid post content'))
+                raise forms.ValidationError(ugettext('Unvalid post content'))
         
         return content
     

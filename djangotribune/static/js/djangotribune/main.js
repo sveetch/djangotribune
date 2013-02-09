@@ -2,9 +2,13 @@
 * The Django-tribune jQuery plugin
 * 
 * TODO: This lack of :
+*       * Finalize all clock features;
+*       * Use the header "X-Post-Id" to retrieve owned message posted and enable owner 
+*         mark for anonymous;
+*       * "clock_store" cleaning when dropping messages from the list
+*       * User settings panel;
 *       * Themes usage, like codemirror with appending a css class with the theme 
 *         slugname;
-*       * User settings panel;
 */
 DEBUG = false; // To enable/disable message logs with "console.log()"
 
@@ -144,6 +148,12 @@ jQuery.fn.extend({
                 console.log( clock_store._count_timestamp[key] );
                 console.log( "@@ _count_short_clock @@" );
                 console.log( clock_store._count_short_clock[key] );
+                console.log( "@@ _index_user_ids @@" );
+                console.log( clock_store._index_user_ids[key] );
+                console.log( "@@ _index_user_timestamps @@" );
+                console.log( clock_store._index_user_timestamps[key] );
+                console.log( "@@ _index_user_clocks @@" );
+                console.log( clock_store._index_user_clocks[key] );
                 console.log( "@@ _map_clock @@" );
                 console.log( clock_store._map_clock[key] );
                 console.log( "@@ _map_clockids @@" );
@@ -175,8 +185,9 @@ jQuery.fn.extend({
                 var $this = $(this),
                     djangotribune_key = "djangotribune-id-" + (settings.channel||'default'), // djangotribune instance ID, must be unique, reference to the current channel if any
                     djangotribune_scroll = $("<div class=\"djangotribune_scroll\"></div>").insertBefore("form", $this).append($("ul.messages", $this)),
-                    input_checked = (settings.refresh_active) ? " checked=\"checked\"" : "",
-                    refresh_active = $("<p class=\"refresh_active\"><label><input type=\"checkbox\" name=\"active\" value=\"1\"" +input_checked+ "/>Active refresh</label></p>").appendTo("form", $this),
+                    refresh_input = templates.refresh_checkbox(settings).insertBefore("form .input-column .ctrlHolder", $this),
+                    refresh_spinner = $('<i class="icon-refresh icon-spin within-input backend-refresh-spinner"></i>').insertBefore("form input.submit", $this).hide(),
+                    refresh_error = $('<i class="icon-warning-sign within-input backend-refresh-error"></i>').insertBefore("form input.submit", $this).hide(),
                     extra_context = {};
                 
                 // Attach element's data
@@ -184,11 +195,13 @@ jQuery.fn.extend({
                     "djangotribune" : $this,
                     "key" : djangotribune_key,
                     "scroller" : djangotribune_scroll,
+                    "refresh_spinner" : refresh_spinner,
+                    "refresh_error" : refresh_error,
                     "settings": settings
                 });
                 $this.data("djangotribune_lastid", 0);
                 
-                // Create the tribune registry
+                // Open a new store for the current channel or default channel
                 clock_store.new_store(djangotribune_key);
                 
                 // Default Ajax request settings
@@ -204,7 +217,7 @@ jQuery.fn.extend({
                 // Bind djangotribune's specific events
                 extra_context.djangotribune = $this;
                 $(window).bind("update_backend_display.djangotribune", events.update);
-                $("input", refresh_active).change(extra_context, events.change_refresh_active);
+                $("input", refresh_input).change(extra_context, events.change_refresh_active);
                 $("form input[type='submit']", $this).click(extra_context, events.submit);
                 $("input.content_field", $this).keydown( extra_context, function(e){
                     if(e.keyCode == '13'){
@@ -283,7 +296,9 @@ jQuery.fn.extend({
                 var $this = $(this),
                     data = $this.data("djangotribune"),
                     last_id = $this.data("djangotribune_lastid"),
-                    query = $.QueryString;
+                    query = $.QueryString,
+                    refresh_spinner = data.refresh_spinner,
+                    refresh_error = data.refresh_error;
                     
                 // Custom options if any
                 options = options||{};
@@ -307,10 +322,11 @@ jQuery.fn.extend({
                     url: url,
                     data: {},
                     beforeSend: function(req){
-                        $(".backend_loading", $this).show();
+                        refresh_spinner.show();
                     },
                     success: function (backend, textStatus) {
                         if(DEBUG) console.log("Djangotribune Request textStatus: "+textStatus);
+                        refresh_error.hide();
                         
                         if(textStatus == "notmodified") return false;
                         
@@ -323,10 +339,10 @@ jQuery.fn.extend({
                     error: function(XMLHttpRequest, textStatus, errorThrown){
                         if(DEBUG) console.log("Djangotribune Error request textStatus: "+textStatus);
                         if(DEBUG) console.log("Djangotribune Error request errorThrown: "+textStatus);
-                       
+                        refresh_error.show();
                     },
                     complete: function (XMLHttpRequest, textStatus) {
-                        $(".backend_loading", $this).hide();
+                        refresh_spinner.hide();
                         // Relaunch timer
                         if(data.settings.refresh_active){
                             Timer.setTimer(data.key, function(){ $this.djangotribune('refresh'); }, data.settings.refresh_time_shifting);
@@ -435,6 +451,7 @@ jQuery.fn.extend({
             var $this = $(event.data.djangotribune),
                 data = $this.data("djangotribune"),
                 last_id = $this.data("djangotribune_lastid"),
+                refresh_spinner = data.refresh_spinner,
                 query = $.QueryString;
             
             if(DEBUG) console.log("Djangotribune events.submit");
@@ -457,7 +474,7 @@ jQuery.fn.extend({
                     Timer.stopTimer(data.key);
                     $("form input[type='submit']", $this).attr("disabled", "disabled");
                     $("input.content_field", $this).addClass("disabled");
-                    $(".backend_loading", $this).show();
+                    refresh_spinner.show();
                 },
                 success: function (backend, textStatus) {
                     if(DEBUG) console.log("Djangotribune Request textStatus: "+textStatus);
@@ -482,7 +499,7 @@ jQuery.fn.extend({
                 complete: function (XMLHttpRequest, textStatus) {
                     $("form input[type='submit']", $this).removeAttr("disabled");
                     $("input.content_field", $this).removeClass("disabled");
-                    $(".backend_loading", $this).hide();
+                    refresh_spinner.hide();
                     
                     // Relaunch timer
                     if(data.settings.refresh_active){
@@ -507,6 +524,12 @@ jQuery.fn.extend({
                 clock_name,
                 initial = (initial) ? true : false;
             
+            // TODO: move to the djangotribune data
+            // NOTE: initial HTML use entity reference and JSON backend use decimal 
+            // reference, so for now we need to support both of them
+            var regex_cast_initial = new RegExp(djangotribune_data.settings.authenticated_username+"&#60;");
+            var regex_cast_backend = new RegExp(djangotribune_data.settings.authenticated_username+"&lt;");
+            
             // Add event to force URL opening in a new window
             $("span.content a", message_element).click( function() {
                 window.open($(this).attr("href"));
@@ -523,37 +546,41 @@ jQuery.fn.extend({
                 $("p.smiley_container", djangotribune_element).remove();
             });
             
-            // Update HTML content for some attributes/marks
+            // Add flat clock as a class name on pointers
             $("span.content span.pointer", message_element).each(function(index) {
-                // Add flat clock as a class name on pointers
                 $(this).addClass("pointer_"+clock_store.plainclock_to_cssname($(this).text()));
             });
+            
+            // Broadcasting
             if( message_data.web_render.toLowerCase().search(/moules&lt;/) != -1 || message_data.web_render.toLowerCase().search(/moules&#60;/) != -1 ){
                 // Global mussles broadcasting
                 $(message_element).addClass("musslecast");
-            } else if ( djangotribune_data.settings.authenticated_username && ( message_data.web_render.toLowerCase().search( new RegExp(djangotribune_data.settings.authenticated_username+"&#60;") ) != -1 || message_data.web_render.toLowerCase().search( new RegExp(djangotribune_data.settings.authenticated_username+"&lt;") ) != -1 ) ){
+                $('span.marker', message_element).html("<i class=\"icon-asterisk\"></i>")
+            } else if ( djangotribune_data.settings.authenticated_username && ( message_data.web_render.toLowerCase().search( regex_cast_initial ) != -1 || message_data.web_render.toLowerCase().search( regex_cast_backend ) != -1 ) ){
                 // User broadcasting
                 $(message_element).addClass("usercast");
+                $('span.marker', message_element).html("<i class=\"icon-asterisk\"></i>")
             }
                 
             // Message reference clock
             $("span.clock", message_element).mouseenter(function(){
-                $(this).parent().addClass("highlighted");
                 // Get related pointers in all messages and highlight them
+                $(this).parent().addClass("highlighted");
                 pointer_name = "pointer_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
                 $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
                     $(this).addClass("highlighted");
                     $(this).parent().parent().addClass("highlighted");
                 });
             }).mouseleave(function(){
-                $(this).parent().removeClass("highlighted");
                 // Get related pointers and un-highlight them
+                $(this).parent().removeClass("highlighted");
                 pointer_name = "pointer_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
                 $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
                     $(this).removeClass("highlighted");
                     $(this).parent().parent().removeClass("highlighted");
                 });
             }).click(function(){
+                // Focus in input and add the clock to answer it
                 clock = jQuery.trim($(this).text());
                 $("#id_content").insertAtCaret(clock+" ");
             });
@@ -584,6 +611,17 @@ jQuery.fn.extend({
                     $(this).removeClass("highlighted");
                 });
             });
+            
+            // Mark answers to current user messages
+            // TODO: this use directly clock without checking, so this will also mark 
+            //       same clock from another day if they are somes in history
+            if (djangotribune_data.settings.authenticated_username){
+                $("span.content span.pointer", message_element).each( function(i){
+                    if( clock_store.is_user_clock(djangotribune_data.key, $(this).text()) ) {
+                        $(this).addClass("pointer-answer").parent().parent().addClass("answer").find('span.marker').html("<i class=\"icon-comment\"></i>");
+                    }
+                });
+            }
         },
         /*
          * Display the smiley in a "bubble tip" positionned from the element
@@ -717,9 +755,9 @@ jQuery.fn.extend({
             
             // Flag as a owned clock if true
             if(user_owned){ 
-                if(this._index_user_ids[key].indexOf(id) > -1 ) this._index_user_ids[key].push(id);
-                if(this._index_user_timestamps[key].indexOf(timestamp) > -1 ) this._index_user_timestamps[key].push(timestamp);
-                if(this._index_user_clocks[key].indexOf(clock) > -1 ) this._index_user_clocks[key].push(clock);
+                if(this._index_user_ids[key].indexOf(id) == -1 ) this._index_user_ids[key].push(id);
+                if(this._index_user_timestamps[key].indexOf(timestamp) == -1 ) this._index_user_timestamps[key].push(timestamp);
+                if(this._index_user_clocks[key].indexOf(clock) == -1 ) this._index_user_clocks[key].push(clock);
             }
             
             return {'id':id, 'timestamp':timestamp, 'date':date, 'clock':clock, 'indice':indice, 'short_clock':short_clock};
@@ -732,7 +770,7 @@ jQuery.fn.extend({
         */
         'remove' : function(key, timestamp, indice) {
             // TODO: full clean of given timestamp in indexes and map
-            //       Needed to clear history and avoid too much memory usage when user stay a long time
+            //       Needed to clear history to avoid too much memory usage when user stay a long time
             //       This is not finished, but not used also for now, we need before to 
             //       see what index/count/map is really useful
             var id = timestamp+this.lpadding(indice),
@@ -763,12 +801,19 @@ jQuery.fn.extend({
             // Identical timestamp count incremented by one
             return this._count_timestamp[key][ts]+1;
         },
+        // Check if a clock is owned by the current user
+        // Attempt a "simple" clock in argument, not a "full" clock
+        is_user_clock : function(key, clock) {
+            clock = this.clock_to_full_clock(clock);
+            return (this._index_user_clocks[key].indexOf(clock) > -1 );
+        },
+ 
  
         /* ********** PUBLIC STATICS ********** */
         /*
          * timestamp: 20130124005502
          * id: 2013012400550201 (the two last digits are the indice)
-         * clock: 00:55:02
+         * clock: 00:55:02 or 00:55 or 00:55:02²
          * clockclass: 005502
          * full clock: 00:55:02:01 (':01' is the indice padded on 2 digits)
          * short clock: 00:55 (seconds are stripped)
@@ -797,6 +842,17 @@ jQuery.fn.extend({
         // Sépare en deux parties : date et time
         split_timestamp : function(ts) {
             return [ts.substr(0,8), ts.substr(8)];
+        },
+ 
+        // Convert a clock HH:MM[:SS[i]] to a full clock
+        clock_to_full_clock : function(clock) {
+            if(clock.length > 8) {
+                return clock.substr(0,8)+":"+this.indice_to_number(clock.substr(8,2));
+            } else if(clock.length < 8) {
+                // short clock is assumed to be at second 00
+                return clock+":00:01";
+            }
+            return clock+":01";
         },
  
         // Format to a padded number on two digits
@@ -869,17 +925,25 @@ jQuery.fn.extend({
          * Message row template
          * @content is an object with all needed attributes for the template
          */
+        refresh_checkbox: function(settings) {
+            var input_checked = (settings.refresh_active) ? " checked=\"checked\"" : "";
+ 
+            //return $('<p class="refresh_active"><label><input type="checkbox" name="active" value="1"'+ input_checked +'/>Active refresh</label></p>');
+            return $('<p class="refresh_active"><input type="checkbox" name="active" value="1"'+ input_checked +'/></p>');
+        },
+ 
+        /*
+         * Message row template
+         * @content is an object with all needed attributes for the template
+         */
         message_row: function(content) {
+            var clock_indice = "&nbsp;",
+                css_classes = content.css_classes||[];
             // Display clock indice only if greater than 1
-            var clock_indice = "&nbsp;&nbsp;";
-            if(content.clock_indice > 1) {
-                clock_indice = "<sup>"+ clock_store.number_to_indice(content.clock_indice) +"</sup>";
-            } else {
-                clock_indice = "<sup>&nbsp;</sup>";
-            }
-            var css_classes = content.css_classes||[];
-            return "<li class=\"message "+ css_classes.join(" ") +"\">" +
-                "<span class=\"clock\">"+ content.clock+clock_indice +"</span> " + 
+            if(content.clock_indice > 1) clock_indice = clock_store.number_to_indice(content.clock_indice);
+ 
+            return "<li class=\"message "+ css_classes.join(" ") +"\"><span class=\"marker\"></span>" +
+                "<span class=\"clock\">"+ content.clock+"<sup>"+clock_indice +"</sup></span> " + 
                 "<strong><span class=\"identity "+ content.identity.kind +"\" title=\""+ content.identity.title +"\">"+ content.identity.content +"</span></strong> " + 
                 "<span class=\"content\">"+ content.web_render +"</span>" + 
             "</li>";

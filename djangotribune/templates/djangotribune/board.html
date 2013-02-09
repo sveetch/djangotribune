@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n autobreadcrumb tribune %}
+{% load i18n autobreadcrumb crispy_forms_tags tribune %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
 {% block head_more_links %}
@@ -25,29 +25,14 @@
 {% endblock %}
 
 {% block content %}
+<div class="row">
 <h2>{{ board_title }}</h2>
-
-<div class="alert-box">
-    <p>This is the early staging for a <em>rich</em> interface. Actually implemented features are :</p>
-    <ul class="disc">
-        <li>Refresh backend using a timer;</li>
-        <li>Checkbox to disable/enable the automatic refresh;</li>
-        <li><em>Ajax</em> post;</li>
-        <li>Action commands (<tt>name</tt> and <tt>lastfm</tt>);</li>
-        <li>Mussle and user casting (<tt>moules&lt;</tt> and <tt>an_username&lt;</tt>);</li>
-        <li>Smileys display;</li>
-        <li>Partial channel support;</li>
-        <li>Simple clock and messages highlights;</li>
-        <li>Owner marks.</li>
-    </ul>
-    <p>There are currently no editable setting, no error notices and no rollover display for clocks pointing message out of the screen or history. And this need to be more tested on various browsers.</p>
-  <a href="" class="close">&times;</a>
-</div>
 
 <div class="djangotribune">
     <ul class="messages">
         {% for row in message_list %}
         <li class="message msgclock_{{ row.clockclass }}{% if row.owned %} owned{% endif %}" data-tribune-pk="{{ row.id }}" data-tribune-created="{{ row.created|date:"YmdHis" }}" data-tribune-clock_indice="{{ row.clock_indice }}" data-tribune-clockclass="{{ row.clockclass }}" data-tribune-owned="{% if row.owned %}true{% else %}false{% endif %}">
+            <span class="marker"></span>
             <span class="clock">{{ row.clock|time:"H:i:s" }}<sup>{% ifnotequal row.clock_indice 1 %}{{ row.clock_indice|indice_unicode }}{% else %}&nbsp;{% endifnotequal %}</sup></span>
             <strong>{% spaceless %}{% if row.author__username %}
                 <span class="identity authenticated" title="{{ row.user_agent }}">{{ row.author__username }}</span>
@@ -60,16 +45,8 @@
             <li class="notice empty">{% trans 'There is no message yet, you should post the first one !' %}</li>
         {% endfor %}
     </ul>
-
-    <form action="." method="post">{% csrf_token %}
-        <div class="row collapse">
-            <div class="ten mobile-three columns">
-                {{ form.as_p }}
-            </div>
-            <div class="two mobile-one columns">
-                <input type="submit" class="button expand postfix" value="Ok">
-            </div>
-        </div>
-    </form>
+    
+    {% crispy form %}
+</div>
 </div>
 {% endblock %}

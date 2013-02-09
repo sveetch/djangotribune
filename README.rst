@@ -39,7 +39,21 @@ Features
 Planned
 *******
 
-* Rich interface;
+* Finalized interface :
+
+  * **Done** Refresh backend using a timer;
+  * **Done** Checkbox to disable/enable the automatic refresh;
+  * **Done** Ajax post;
+  * **Done** Action commands (``name`` and ``lastfm``);
+  * **Done** Mussle and user casting (``moules<`` and ``an_username<``);
+  * **Done** Smileys display;
+  * **Done** Partial channel support;
+  * **Done** Simple clock and messages highlights;
+  * **Done** Owner marks;
+  * **Done** Error notices;
+  * Rollover display for clocks pointing message out of the screen or history;
+  * Editable settings;
+
 * Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
 * Optional Captcha system to post new message to enable in settings;
 

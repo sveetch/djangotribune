@@ -2,6 +2,8 @@
 * Base styles for Django-tribune
 * Created by David THENON in May 2012
 */
+@import "compass/css3/text-shadow";
+
 .djangotribune_scroll,
 .djangotribune ul.messages{
     margin: 0;
@@ -12,55 +14,102 @@
     margin: 0;
     padding: .1em;
     
-    .message{
-        margin: .2em;
-        padding: 0 0 0 5px;
-        font-size: .9em;
-        list-style-type: none;
-        border-left: 3px solid transparent;
-        border-bottom: 1px solid transparent;
-        
-        span.clock{
-            padding-right: 0.5em;
-            color: #FF0000;
-            text-decoration: none;
-        }
-        span.identity.authenticated{
-            padding-right: 0.5em;
-            color: green;
-            text-decoration: none;
-        }
-        span.identity.anonymous{
-            padding-right: 0.5em;
-            font-style: italic;
-            color: #660000;
-            text-decoration: none;
-        }
-        span.pointer{
-            color: blue;
-        }
-        /* For owned reference clocks */
-        &.owned{
-            border-left: 3px solid #E0B080;
-            border-bottom: 1px solid #E0B080;
-        }
+    .messages{
+        .message{
+            margin: 3px 3px 3px 17px;
+            padding: 0 0 0 5px;
+            position: relative;
+            list-style-type: none;
+            
+            span.clock{
+                padding: 3px;
+                color: #FF0000;
+                text-decoration: none;
+                border-left: 3px solid transparent;
+                border-bottom: 1px solid transparent;
+            }
+            span.identity.authenticated{
+                padding-right: 3px;
+                color: green;
+                text-decoration: none;
+            }
+            span.identity.anonymous{
+                padding-right: 3px;
+                font-style: italic;
+                color: #660000;
+                text-decoration: none;
+            }
+            span.pointer{
+                color: blue;
+            }
+            span.marker{
+                font-size: 14px;
+                position: absolute;
+                left: -17px;
+                @include text-shadow(rgba(black, 0.2) 1px 1px 0);
+                
+                i.icon-asterisk{
+                    color: #5da423;
+                }
+                
+                i.icon-comment{
+                    color: #2ba6cb;
+                }
+            }
+            /* For owned reference clocks */
+            &.owned{
+                span.clock{
+                    border-left: 3px solid #E0B080;
+                    border-bottom: 1px solid #E0B080;
+                }
+            }
+            
+            /* For message that answering to user's clock */
+            &.answer{
+                span.content span.pointer.pointer-answer{
+                    font-weight: bold;
+                }
+            }
 
-        &.musslecast,
-        &.usercast{
-            border: 1px solid #d0b060;
-        }
-        a.smiley{
-            text-decoration: none;
+            &.musslecast,
+            &.usercast{
+                //border: 1px solid #d0b060;
+            }
+            a.smiley{
+                text-decoration: none;
+            }
         }
     }
     
     /* Content input */
     form{
+        margin-top: 15px;
+        
+        label[for='id_content']{
+            display: none;
+        }
+        
+        .refresh_active{
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 20px;
+            text-align: center;
+            font-size: 14px;
+            line-height: 14px;
+            
+            input{
+                margin: 0;
+                padding: 0;
+                font-size: 14px;
+            }
+        }
+        
         input.content_field{
-            font-size: .9em;
-            border: 1px solid #aaa;
-            color: #000000;
-            background-color: #ffffff;
+            margin-left: 25px;
+            padding-right: 25px;
             
             &.disabled{
                 border: 1px solid #606060;
@@ -70,6 +119,20 @@
             &.error{
                 border: 1px solid #ff0000;
             }
+        }
+        
+        .within-input{
+            position: absolute;
+            top: 10px;
+            font-size: 14px;
+        }
+        .backend-refresh-spinner{
+            left: -40px;
+            color: #a0a0a0;
+        }
+        .backend-refresh-error{
+            left: -20px;
+            color: red;
         }
     }
     
