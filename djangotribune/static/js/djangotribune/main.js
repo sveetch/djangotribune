@@ -188,15 +188,17 @@ jQuery.fn.extend({
                     refresh_input = templates.refresh_checkbox(settings).insertBefore("form .input-column .ctrlHolder", $this),
                     refresh_spinner = $('<i class="icon-refresh icon-spin within-input backend-refresh-spinner"></i>').insertBefore("form input.submit", $this).hide(),
                     refresh_error = $('<i class="icon-warning-sign within-input backend-refresh-error"></i>').insertBefore("form input.submit", $this).hide(),
+                    absolute_container = $('<div class="absolute-message-container"><div class="content"></div></div>').css({"display": "none"}).appendTo("body"),
                     extra_context = {};
                 
                 // Attach element's data
                 $this.data("djangotribune", {
-                    "djangotribune" : $this,
-                    "key" : djangotribune_key,
-                    "scroller" : djangotribune_scroll,
-                    "refresh_spinner" : refresh_spinner,
-                    "refresh_error" : refresh_error,
+                    "djangotribune": $this,
+                    "key": djangotribune_key,
+                    "scroller": djangotribune_scroll,
+                    "refresh_spinner": refresh_spinner,
+                    "refresh_error": refresh_error,
+                    "absolute_container": absolute_container,
                     "settings": settings
                 });
                 $this.data("djangotribune_lastid", 0);
@@ -381,13 +383,14 @@ jQuery.fn.extend({
             if(options.extra_settings){
                 current_settings = $.extend({}, current_settings, options.extra_settings);
             }
-            
+            // Get the current knowed last post ID
             last_id = $this.data("djangotribune_lastid");
             
             $.each(backend, function(index, row) {
-                // Check if the post is owned by the current user, works only with authenticated users
                 // Drop the oldiest item if message list has allready reached the 
                 // display limit
+                // TODO: This should drop also item clocks references from the 
+                // "clock_store"
                 if (current_message_length >= data.settings.message_limit) {
                     $(".djangotribune_scroll li", $this).slice(0,1).remove();
                 }
@@ -422,7 +425,8 @@ jQuery.fn.extend({
 
         /*
          * Change the settings "refresh_active" from the checkbox
-         * TODO: This should be memorized in a cookie or something else more persistent than a page instance
+         * TODO: This should be memorized in a cookie or something else more persistent 
+         * (like user personnal settings) than a page instance
          */
         change_refresh_active : function(event) {
             var $this = $(event.data.djangotribune),
@@ -522,9 +526,10 @@ jQuery.fn.extend({
                 clock,
                 pointer_name,
                 clock_name,
+                css_attrs,
                 initial = (initial) ? true : false;
             
-            // TODO: move to the djangotribune data
+            // TODO: move in the djangotribune data
             // NOTE: initial HTML use entity reference and JSON backend use decimal 
             // reference, so for now we need to support both of them
             var regex_cast_initial = new RegExp(djangotribune_data.settings.authenticated_username+"&#60;");
@@ -587,16 +592,52 @@ jQuery.fn.extend({
             
             // Clock pointers contained
             $("span.content span.pointer", message_element).mouseenter(function(){
-                $(this).addClass("highlighted");
+                var $this_pointer = $(this),
+                    clock_pointer = jQuery.trim($this_pointer.text());
+                $this_pointer.addClass("highlighted");
+                
                 // Get related pointers in all messages and highlight them
-                pointer_name = "pointer_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
+                pointer_name = "pointer_"+clock_store.plainclock_to_cssname(clock_pointer);
                 $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
                     $(this).addClass("highlighted");
                 });
+                
                 // Get related messages and highlight them
-                clock_name = "msgclock_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
+                clock_name = "msgclock_"+clock_store.plainclock_to_cssname(clock_pointer);
                 $("li."+clock_name, djangotribune_element).each(function(index) {
                     $(this).addClass("highlighted");
+                    if(DEBUG) {
+                        console.group("Pointer event for message: %s", clock_pointer)
+                        console.log("Window scrollTop: "+ $(window).scrollTop());
+                        console.log("Pointer offset: "+ $this_pointer.offset().top);
+                        console.log("Reference offset from pointer: "+ $(this).offset().top);
+                    }
+                    // Display messages that are out of screen
+                    if($(window).scrollTop() > $(this).offset().top) {
+                        // Append html now so we can know about his future height
+                        djangotribune_data.absolute_container.html( $(this).html() );
+                        css_attrs = { "left":djangotribune_data.scroller.offset().left };
+                        // Calculate the coordinates of the bottom container displayed 
+                        // at top by default
+                        var container_bottom_position = $(window).scrollTop() + djangotribune_data.absolute_container.outerHeight(true);
+                        
+                        // Display at top of the screen by default
+                        if( $this_pointer.offset().top > container_bottom_position) {
+                            css_attrs.top = 0;
+                            css_attrs.bottom = "";
+                            djangotribune_data.absolute_container.removeClass("at-bottom").addClass("at-top");
+                            if(DEBUG) console.info("Absolute display at top");
+                        // Display at bottom of the screen
+                        } else {
+                            css_attrs.top = "";
+                            css_attrs.bottom = 0;
+                            djangotribune_data.absolute_container.removeClass("at-top").addClass("at-bottom");
+                            if(DEBUG) console.info("Absolute display at bottom");
+                        }
+                        // Apply css position and show it
+                        djangotribune_data.absolute_container.css(css_attrs).show()
+                    }
+                    if(DEBUG) console.groupEnd();
                 });
             }).mouseleave(function(){
                 $(this).removeClass("highlighted");
@@ -610,11 +651,15 @@ jQuery.fn.extend({
                 $("li."+clock_name, djangotribune_element).each(function(index) {
                     $(this).removeClass("highlighted");
                 });
+                
+                // Allways empty the absolute display container
+                djangotribune_data.absolute_container.html("").hide()
             });
             
             // Mark answers to current user messages
-            // TODO: this use directly clock without checking, so this will also mark 
-            //       same clock from another day if they are somes in history
+            // TODO: this use "simple" clocks as references without checking, so this 
+            //       will also mark same clock from another day if they are somes in 
+            //       history
             if (djangotribune_data.settings.authenticated_username){
                 $("span.content span.pointer", message_element).each( function(i){
                     if( clock_store.is_user_clock(djangotribune_data.key, $(this).text()) ) {

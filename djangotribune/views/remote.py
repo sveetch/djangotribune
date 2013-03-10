@@ -49,9 +49,9 @@ def last_modified_condition(request, *args, **kwargs):
 
 class RemoteBaseMixin(ChannelAwareMixin):
     """
-    This Mixin implement all base stuff to generate a remote backend
+    Remote base mixin implement all base stuff to generate a remote backend
     
-    But a view must implement his correct ``build_backend`` methods.
+    A view that inherit it must implement a correct ``build_backend`` methods.
     """
     http_method_names = ['get']
     clock_indexation = True
@@ -279,7 +279,7 @@ class RemotePlainMixin(RemoteBaseMixin):
 
 class RemoteJsonMixin(RemoteBaseMixin):
     """
-    Remote JSON
+    Remote JSON mixin
     """
     mimetype = "application/json; charset=utf-8"
     remote_fields = ('id', 'created', 'clock', 'author__username', 'user_agent', 'web_render')
@@ -305,7 +305,7 @@ class RemoteJsonMixin(RemoteBaseMixin):
 
 class RemoteHtmlMixin(RemoteJsonMixin):
     """
-    Remote Html for template usage
+    Remote Html mixin for template usage
     
     There is no real builded backend (as other backends) because it's the queryset that 
     is directly returned in the template. And some URL arguments are ignored because they 
@@ -324,7 +324,7 @@ class RemoteHtmlMixin(RemoteJsonMixin):
 
 class RemoteXmlMixin(RemoteBaseMixin):
     """
-    Remote XML
+    Remote XML mixin
     """
     clock_indexation = False
     prettify_backend = False

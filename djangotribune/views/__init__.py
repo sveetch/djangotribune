@@ -49,7 +49,7 @@ class LockView(View):
 
 class ChannelAwareMixin(object):
     """
-    Mixin to make views aware of channels
+    Mixin to make views aware of channels with a ``get_channel`` method
     """
     def get_channel(self):
         """Get the channel to fetch messages"""

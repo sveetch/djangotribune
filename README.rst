@@ -51,10 +51,10 @@ Planned
   * **Done** Simple clock and messages highlights;
   * **Done** Owner marks;
   * **Done** Error notices;
-  * Rollover display for clocks pointing message out of the screen or history;
+  * **Done** Rollover display for clocks pointing message out of the screen;
   * Editable settings;
 
-* Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
+* **Done** Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
 * Optional Captcha system to post new message to enable in settings;
 
 Links

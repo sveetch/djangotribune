@@ -117,8 +117,8 @@ class MessageManagerMixin(object):
     """
     def get_backend(self, channel=None, filters=None, last_id=None):
         """
-        A all-in-one method to fetch messages with attempted behavior from a tribune 
-        backend
+        A all-in-one method to fetch messages with all attempted behaviors from 
+        a tribune backend
         """
         q = self.from_chan(channel=channel)
         # Add the user message filters if any
@@ -145,6 +145,8 @@ class MessageManagerMixin(object):
     def apply_filters(self, filters):
         """
         Apply messages filtering from the given filters
+        
+        This is exclude filters only, used to exclude some messages
         
         Filters are tuple (target, pattern, kind)
         """
@@ -183,7 +185,7 @@ class MessageManagerMixin(object):
         """Return only IDs, for debug purpose"""
         return self.values_list('id', flat=True)
 
-# Need stuff to have manager chaining methods
+# Needed stuff to have manager chaining methods
 class MessageQuerySet(QuerySet, MessageManagerMixin): pass
 class MessageBackendManager(models.Manager, MessageManagerMixin):
     def get_query_set(self):

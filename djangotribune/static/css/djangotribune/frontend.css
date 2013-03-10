@@ -2,92 +2,155 @@
 * Base styles for Django-tribune
 * Created by David THENON in May 2012
 */
-/* line 8, ../../scss/djangotribune/frontend.scss */
-.djangotribune_scroll,
-.djangotribune ul.messages {
-  margin: 0;
-  padding: 0;
-}
-
-/* line 13, ../../scss/djangotribune/frontend.scss */
-.djangotribune {
-  margin: 0;
-  padding: .1em;
-  /* Content input */
-  /* Highlights for clock events */
-}
-/* line 18, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message {
-  margin: 3px 3px 3px 17px;
-  padding: 0 0 0 5px;
-  position: relative;
-  list-style-type: none;
+/* line 9, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message,
+.absolute-message-container {
   /* For owned reference clocks */
   /* For message that answering to user's clock */
 }
-/* line 24, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.clock {
+/* line 10, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.clock,
+.absolute-message-container span.clock {
   padding: 3px;
   color: #FF0000;
   text-decoration: none;
   border-left: 3px solid transparent;
   border-bottom: 1px solid transparent;
 }
-/* line 31, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.identity.authenticated {
+/* line 17, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.identity.authenticated,
+.absolute-message-container span.identity.authenticated {
   padding-right: 3px;
   color: green;
   text-decoration: none;
 }
-/* line 36, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.identity.anonymous {
+/* line 22, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.identity.anonymous,
+.absolute-message-container span.identity.anonymous {
   padding-right: 3px;
   font-style: italic;
   color: #660000;
   text-decoration: none;
 }
-/* line 42, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.pointer {
+/* line 28, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.pointer,
+.absolute-message-container span.pointer {
   color: blue;
 }
-/* line 45, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.marker {
+/* line 31, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.marker,
+.absolute-message-container span.marker {
   font-size: 14px;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;
 }
-/* line 51, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.marker i.icon-asterisk {
+/* line 37, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.marker i.icon-asterisk,
+.absolute-message-container span.marker i.icon-asterisk {
   color: #5da423;
 }
-/* line 55, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message span.marker i.icon-comment {
+/* line 41, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message span.marker i.icon-comment,
+.absolute-message-container span.marker i.icon-comment {
   color: #2ba6cb;
 }
-/* line 61, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message.owned span.clock {
+/* line 47, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message.owned span.clock,
+.absolute-message-container.owned span.clock {
   border-left: 3px solid #E0B080;
   border-bottom: 1px solid #E0B080;
 }
-/* line 69, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message.answer span.content span.pointer.pointer-answer {
+/* line 55, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message.answer span.content span.pointer.pointer-answer,
+.absolute-message-container.answer span.content span.pointer.pointer-answer {
   font-weight: bold;
 }
-/* line 78, ../../scss/djangotribune/frontend.scss */
-.djangotribune .messages .message a.smiley {
+/* line 64, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message a.smiley,
+.absolute-message-container a.smiley {
   text-decoration: none;
 }
-/* line 85, ../../scss/djangotribune/frontend.scss */
-.djangotribune form {
+
+/* line 70, ../../scss/djangotribune/frontend.scss */
+.djangotribune {
+  margin: 0;
+  padding: .1em;
+  /* Highlights for clock events */
+}
+/* line 76, ../../scss/djangotribune/frontend.scss */
+.djangotribune li.message.highlighted,
+.djangotribune span.clock.highlighted {
+  background-color: #e2d5d4;
+}
+/* line 79, ../../scss/djangotribune/frontend.scss */
+.djangotribune span.content span.pointer.highlighted {
+  background-color: #e2d5d4;
+  text-decoration: underline;
+}
+/* line 84, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages {
+  margin: 0;
+  padding: 0;
+}
+/* line 87, ../../scss/djangotribune/frontend.scss */
+.djangotribune .messages .message {
+  margin: 3px 3px 3px 17px;
+  padding: 0 0 0 5px;
+  position: relative;
+  list-style-type: none;
+}
+
+/* line 97, ../../scss/djangotribune/frontend.scss */
+.absolute-message-container {
+  position: fixed;
+  z-index: 5000;
+  width: 1000px;
+  min-width: 768px;
+  max-width: 100%;
+  background-color: #f0f0f0;
+  padding: 10px;
+  border: 1px solid #000000;
+  -webkit-box-shadow: 0px 0px 5px #333333;
+  -moz-box-shadow: 0px 0px 5px #333333;
+  box-shadow: 0px 0px 5px #333333;
+}
+/* line 108, ../../scss/djangotribune/frontend.scss */
+.absolute-message-container.at-top {
+  border-top: 0;
+  -moz-border-radius-bottomleft: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -webkit-border-bottom-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+/* line 112, ../../scss/djangotribune/frontend.scss */
+.absolute-message-container.at-bottom {
+  border-bottom: 0;
+  -moz-border-radius-topleft: 5px;
+  -webkit-border-top-left-radius: 5px;
+  border-top-left-radius: 5px;
+  -moz-border-radius-topright: 5px;
+  -webkit-border-top-right-radius: 5px;
+  border-top-right-radius: 5px;
+}
+/* line 117, ../../scss/djangotribune/frontend.scss */
+.absolute-message-container span.marker {
+  position: static;
+  left: auto;
+}
+
+/* line 124, ../../scss/djangotribune/frontend.scss */
+form {
   margin-top: 15px;
 }
-/* line 88, ../../scss/djangotribune/frontend.scss */
-.djangotribune form label[for='id_content'] {
+/* line 127, ../../scss/djangotribune/frontend.scss */
+form label[for='id_content'] {
   display: none;
 }
-/* line 92, ../../scss/djangotribune/frontend.scss */
-.djangotribune form .refresh_active {
+/* line 131, ../../scss/djangotribune/frontend.scss */
+form .refresh_active {
   margin: 0;
   padding: 0;
   position: absolute;
@@ -98,50 +161,40 @@
   font-size: 14px;
   line-height: 14px;
 }
-/* line 103, ../../scss/djangotribune/frontend.scss */
-.djangotribune form .refresh_active input {
+/* line 142, ../../scss/djangotribune/frontend.scss */
+form .refresh_active input {
   margin: 0;
   padding: 0;
   font-size: 14px;
 }
-/* line 110, ../../scss/djangotribune/frontend.scss */
-.djangotribune form input.content_field {
+/* line 149, ../../scss/djangotribune/frontend.scss */
+form input.content_field {
   margin-left: 25px;
   padding-right: 25px;
 }
-/* line 114, ../../scss/djangotribune/frontend.scss */
-.djangotribune form input.content_field.disabled {
+/* line 153, ../../scss/djangotribune/frontend.scss */
+form input.content_field.disabled {
   border: 1px solid #606060;
   color: #606060;
   background-color: #C0C0C0;
 }
-/* line 119, ../../scss/djangotribune/frontend.scss */
-.djangotribune form input.content_field.error {
+/* line 158, ../../scss/djangotribune/frontend.scss */
+form input.content_field.error {
   border: 1px solid #ff0000;
 }
-/* line 124, ../../scss/djangotribune/frontend.scss */
-.djangotribune form .within-input {
+/* line 163, ../../scss/djangotribune/frontend.scss */
+form .within-input {
   position: absolute;
   top: 10px;
   font-size: 14px;
 }
-/* line 129, ../../scss/djangotribune/frontend.scss */
-.djangotribune form .backend-refresh-spinner {
+/* line 168, ../../scss/djangotribune/frontend.scss */
+form .backend-refresh-spinner {
   left: -40px;
   color: #a0a0a0;
 }
-/* line 133, ../../scss/djangotribune/frontend.scss */
-.djangotribune form .backend-refresh-error {
+/* line 172, ../../scss/djangotribune/frontend.scss */
+form .backend-refresh-error {
   left: -20px;
   color: red;
-}
-/* line 141, ../../scss/djangotribune/frontend.scss */
-.djangotribune li.message.highlighted,
-.djangotribune span.clock.highlighted {
-  background-color: #e2d5d4;
-}
-/* line 144, ../../scss/djangotribune/frontend.scss */
-.djangotribune span.content span.pointer.highlighted {
-  background-color: #e2d5d4;
-  text-decoration: underline;
 }

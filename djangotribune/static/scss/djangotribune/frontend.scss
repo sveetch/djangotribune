@@ -2,139 +2,74 @@
 * Base styles for Django-tribune
 * Created by David THENON in May 2012
 */
-@import "compass/css3/text-shadow";
+@import "compass/css3";
 
-.djangotribune_scroll,
-.djangotribune ul.messages{
-    margin: 0;
-    padding: 0;
+// Common message display properties for messages containers
+.djangotribune .messages .message,
+.absolute-message-container{
+    span.clock{
+        padding: 3px;
+        color: #FF0000;
+        text-decoration: none;
+        border-left: 3px solid transparent;
+        border-bottom: 1px solid transparent;
+    }
+    span.identity.authenticated{
+        padding-right: 3px;
+        color: green;
+        text-decoration: none;
+    }
+    span.identity.anonymous{
+        padding-right: 3px;
+        font-style: italic;
+        color: #660000;
+        text-decoration: none;
+    }
+    span.pointer{
+        color: blue;
+    }
+    span.marker{
+        font-size: 14px;
+        position: absolute;
+        left: -17px;
+        @include text-shadow(rgba(black, 0.2) 1px 1px 0);
+        
+        i.icon-asterisk{
+            color: #5da423;
+        }
+        
+        i.icon-comment{
+            color: #2ba6cb;
+        }
+    }
+    /* For owned reference clocks */
+    &.owned{
+        span.clock{
+            border-left: 3px solid #E0B080;
+            border-bottom: 1px solid #E0B080;
+        }
+    }
+    
+    /* For message that answering to user's clock */
+    &.answer{
+        span.content span.pointer.pointer-answer{
+            font-weight: bold;
+        }
+    }
+
+    //&.musslecast,
+    //&.usercast{
+        //border: 1px solid #d0b060;
+    //}
+    a.smiley{
+        text-decoration: none;
+    }
 }
 
+// Messages list
 .djangotribune{
     margin: 0;
     padding: .1em;
-    
-    .messages{
-        .message{
-            margin: 3px 3px 3px 17px;
-            padding: 0 0 0 5px;
-            position: relative;
-            list-style-type: none;
-            
-            span.clock{
-                padding: 3px;
-                color: #FF0000;
-                text-decoration: none;
-                border-left: 3px solid transparent;
-                border-bottom: 1px solid transparent;
-            }
-            span.identity.authenticated{
-                padding-right: 3px;
-                color: green;
-                text-decoration: none;
-            }
-            span.identity.anonymous{
-                padding-right: 3px;
-                font-style: italic;
-                color: #660000;
-                text-decoration: none;
-            }
-            span.pointer{
-                color: blue;
-            }
-            span.marker{
-                font-size: 14px;
-                position: absolute;
-                left: -17px;
-                @include text-shadow(rgba(black, 0.2) 1px 1px 0);
-                
-                i.icon-asterisk{
-                    color: #5da423;
-                }
-                
-                i.icon-comment{
-                    color: #2ba6cb;
-                }
-            }
-            /* For owned reference clocks */
-            &.owned{
-                span.clock{
-                    border-left: 3px solid #E0B080;
-                    border-bottom: 1px solid #E0B080;
-                }
-            }
-            
-            /* For message that answering to user's clock */
-            &.answer{
-                span.content span.pointer.pointer-answer{
-                    font-weight: bold;
-                }
-            }
-
-            &.musslecast,
-            &.usercast{
-                //border: 1px solid #d0b060;
-            }
-            a.smiley{
-                text-decoration: none;
-            }
-        }
-    }
-    
-    /* Content input */
-    form{
-        margin-top: 15px;
-        
-        label[for='id_content']{
-            display: none;
-        }
-        
-        .refresh_active{
-            margin: 0;
-            padding: 0;
-            position: absolute;
-            top: 5px;
-            left: 0;
-            width: 20px;
-            text-align: center;
-            font-size: 14px;
-            line-height: 14px;
-            
-            input{
-                margin: 0;
-                padding: 0;
-                font-size: 14px;
-            }
-        }
-        
-        input.content_field{
-            margin-left: 25px;
-            padding-right: 25px;
-            
-            &.disabled{
-                border: 1px solid #606060;
-                color: #606060;
-                background-color: #C0C0C0;
-            }
-            &.error{
-                border: 1px solid #ff0000;
-            }
-        }
-        
-        .within-input{
-            position: absolute;
-            top: 10px;
-            font-size: 14px;
-        }
-        .backend-refresh-spinner{
-            left: -40px;
-            color: #a0a0a0;
-        }
-        .backend-refresh-error{
-            left: -20px;
-            color: red;
-        }
-    }
     
     /* Highlights for clock events */
     li.message.highlighted,
@@ -144,5 +79,98 @@
     span.content span.pointer.highlighted{
         background-color: #e2d5d4;
         text-decoration: underline;
+    }
+    
+    .messages{
+        margin: 0;
+        padding: 0;
+        .message{
+            margin: 3px 3px 3px 17px;
+            padding: 0 0 0 5px;
+            position: relative;
+            list-style-type: none;
+        }
+    }
+}
+
+// Message container to display in absolute position
+.absolute-message-container{
+    position: fixed;
+    z-index: 5000;
+    width: 1000px;
+    min-width: 768px;
+    max-width: 100%;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border: 1px solid #000000;
+    @include single-box-shadow;
+    
+    &.at-top{
+        border-top: 0;
+        @include border-bottom-radius(5px);
+    }
+    &.at-bottom{
+        border-bottom: 0;
+        @include border-top-radius(5px);
+    }
+    
+    span.marker{
+        position: static;
+        left: auto;
+    }
+}
+
+// The message form
+form{
+    margin-top: 15px;
+    
+    label[for='id_content']{
+        display: none;
+    }
+    
+    .refresh_active{
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 5px;
+        left: 0;
+        width: 20px;
+        text-align: center;
+        font-size: 14px;
+        line-height: 14px;
+        
+        input{
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+    }
+    
+    input.content_field{
+        margin-left: 25px;
+        padding-right: 25px;
+        
+        &.disabled{
+            border: 1px solid #606060;
+            color: #606060;
+            background-color: #C0C0C0;
+        }
+        &.error{
+            border: 1px solid #ff0000;
+        }
+    }
+    
+    .within-input{
+        position: absolute;
+        top: 10px;
+        font-size: 14px;
+    }
+    .backend-refresh-spinner{
+        left: -40px;
+        color: #a0a0a0;
+    }
+    .backend-refresh-error{
+        left: -20px;
+        color: red;
     }
 }
