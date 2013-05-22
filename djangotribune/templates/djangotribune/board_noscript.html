@@ -2,7 +2,7 @@
 {% load i18n autobreadcrumb %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
-{% block head_more_links %}
+{% block html_more_links %}{{ block.super }}
     {% include "djangotribune/include_css.html" %}
 {% endblock %}
 

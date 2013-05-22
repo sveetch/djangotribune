@@ -2,12 +2,12 @@
 {% load i18n crispy_forms_tags autobreadcrumb tribune %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
-{% block head_more_links %}
+{% block html_more_links %}{{ block.super }}
     {% include "djangotribune/include_css.html" %}
 {% endblock %}
-{% block head_more_js %}
+{% block html_more_js %}{{ block.super }}
     {% include "djangotribune/include_js.html" %}
-    <script language="JavaScript">
+    <script type="text/javascript">
     //<![CDATA[
         $(document).ready(function() {
             {% if debug %}DEBUG = true;{% endif %}
