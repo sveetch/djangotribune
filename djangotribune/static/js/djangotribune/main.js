@@ -196,6 +196,7 @@ jQuery.fn.extend({
                     "djangotribune": $this,
                     "key": djangotribune_key,
                     "scroller": djangotribune_scroll,
+                    "refresh_input": refresh_input.find('input'),
                     "refresh_spinner": refresh_spinner,
                     "refresh_error": refresh_error,
                     "absolute_container": absolute_container,
@@ -219,7 +220,7 @@ jQuery.fn.extend({
                 // Bind djangotribune's specific events
                 extra_context.djangotribune = $this;
                 $(window).bind("update_backend_display.djangotribune", events.update);
-                $("input", refresh_input).change(extra_context, events.change_refresh_active);
+                refresh_input.find('input').change(extra_context, events.change_refresh_active);
                 $("form input[type='submit']", $this).click(extra_context, events.submit);
                 $("input.content_field", $this).keydown( extra_context, function(e){
                     if(e.keyCode == '13'){
@@ -434,7 +435,7 @@ jQuery.fn.extend({
             
             if(DEBUG) console.log("Djangotribune events.change_refresh_active");
             
-            if( $(this).attr("checked") ){
+            if( data.refresh_input.is(':checked') ){
                 // Enable refresh
                 Timer.setTimer(data.key, function(){ $this.djangotribune('refresh'); }, data.settings.refresh_time_shifting);
                 data.settings.refresh_active = true;
@@ -446,6 +447,8 @@ jQuery.fn.extend({
             
             // Update settings
             $this.data("djangotribune", data);
+            
+            return true;
         },
 
         /*
@@ -517,9 +520,6 @@ jQuery.fn.extend({
 
         /*
          * Bind message events and add some sugar on message HTML
-         * 
-         * TODO: * much "DRY"
-         *       * bubble display for items out of screen
          */
         bind_message : function(djangotribune_element, djangotribune_data, message_element, message_data, initial) {
             var preload,
@@ -973,7 +973,6 @@ jQuery.fn.extend({
         refresh_checkbox: function(settings) {
             var input_checked = (settings.refresh_active) ? " checked=\"checked\"" : "";
  
-            //return $('<p class="refresh_active"><label><input type="checkbox" name="active" value="1"'+ input_checked +'/>Active refresh</label></p>');
             return $('<p class="refresh_active"><input type="checkbox" name="active" value="1"'+ input_checked +'/></p>');
         },
  
