@@ -98,6 +98,13 @@ If needed you can change some `Application settings`_ in your settings file.
           problems because the application makes usage of case-insensitive matching 
           notably in `Message filtering`_.
 
+Project templates
+-----------------
+
+A simple note about templates, djangotribune templates use a base template ``djangotribune/base.html`` to include some common HTML to fit contents in your layout, and all other templates extend it to insert their content.
+
+This base template is made to extend a ``skeleton.html`` template that should be the root base of your project layout. Therefore if you don't use a base template or use it with another name, just override ``djangotribune/base.html`` in project templates to fit it right within your project.
+
 Usage
 =====
 
