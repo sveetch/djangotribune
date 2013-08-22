@@ -1,5 +1,5 @@
 {% extends "djangotribune/base.html" %}
-{% load i18n crispy_forms_tags autobreadcrumb tribune %}
+{% load i18n crispy_forms_tags tribune %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
 {% block html_more_links %}{{ block.super }}
@@ -23,8 +23,6 @@
     //]]>
     </script>
 {% endblock %}
-
-{% block breadcrumbs_content %}{% autobreadcrumbs_tag %}{% endblock %}
 
 {% block content_part %}
 <h2>{{ board_title }}</h2>

@@ -22,7 +22,10 @@ setup(
         'Topic :: Communications :: Chat',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    install_requires=['texttable==0.8.1'],
+    install_requires=[
+        'texttable==0.8.1',
+        'crispy-forms-foundation==0.2.3',
+    ],
     include_package_data=True,
     zip_safe=False
 )

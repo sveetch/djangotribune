@@ -1,12 +1,10 @@
 {% extends "djangotribune/base.html" %}
-{% load i18n autobreadcrumb %}
+{% load i18n crispy_forms_tags %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
 {% block html_more_links %}{{ block.super }}
     {% include "djangotribune/include_css.html" %}
 {% endblock %}
-
-{% block breadcrumbs_content %}{% autobreadcrumbs_tag %}{% endblock %}
 
 {% block content_part %}
 <h2>{{ board_title }}</h2>
@@ -28,11 +26,6 @@
         {% endfor %}
     </ul>
 
-    <form action="." method="post">{% csrf_token %}
-        {{ form.as_p }}
-        <p>
-            <input type="submit" value="Ok" />
-        </p>
-    </form>
+    {% crispy form %}
 </div>
 {% endblock %}
