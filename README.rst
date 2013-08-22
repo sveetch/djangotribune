@@ -99,7 +99,7 @@ If needed you can change some `Application settings`_ in your settings file.
           notably in `Message filtering`_.
 
 Project templates
------------------
+*****************
 
 A simple note about templates, djangotribune templates use a base template ``djangotribune/base.html`` to include some common HTML to fit contents in your layout, and all other templates extend it to insert their content.
 
