@@ -1,5 +1,7 @@
 .. _Django internationalization system: https://docs.djangoproject.com/en/dev/topics/i18n/
 .. _LastFM API: http://www.lastfm.fr/api/intro
+.. _texttable: http://pypi.python.org/pypi/texttable/0.8.1
+.. _crispy-forms-foundation: https://github.com/sveetch/crispy-forms-foundation
 
 Introduction
 ============
@@ -67,8 +69,8 @@ Links
 Requires
 ========
 
-* `texttable <http://pypi.python.org/pypi/texttable/0.8.1>`_ (used to display 
-  plain-text backends);
+* `texttable`_ (used to display plain-text backends);
+* `crispy-forms-foundation`_ (used to display nice forms);
 
 Installation
 ============
