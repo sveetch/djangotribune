@@ -105,3 +105,5 @@ TRIBUNE_TITLES = getattr(settings, 'TRIBUNE_TITLES_AVAILABLE', (
 TRIBUNE_LASTFM_API_URL = getattr(settings, 'TRIBUNE_LASTFM_API_URL', 'http://ws.audioscrobbler.com/2.0/')
 # API Key used by djangotribune with the LastFM API
 TRIBUNE_LASTFM_API_KEY = getattr(settings, 'TRIBUNE_LASTFM_API_KEY', '07f44b8af0c8fbf981b064ff04b3bce5')
+
+TRIBUNE_SHOW_TRUNCATED_URL = getattr(settings, 'TRIBUNE_SHOW_TRUNCATED_URL', False)
