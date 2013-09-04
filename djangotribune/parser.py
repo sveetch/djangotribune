@@ -5,8 +5,9 @@ Message parser
 import re
 from datetime import datetime
 from StringIO import StringIO
+from django.template.defaultfilters import truncatechars
 
-from djangotribune.settings_local import TRIBUNE_SMILEYS_URL
+from djangotribune.settings_local import TRIBUNE_SMILEYS_URL, TRIBUNE_SHOW_TRUNCATED_URL
 
 POST_CLEANER_TAG_RE = '<(?P<tag>/?(?:b|i|s|u|tt|m|code))>'
 POST_CLEANER_SCHEME_RE = '(?P<scheme>(?:http|ftp|https|chrome|gopher|git|git+ssh|svn|svn+ssh)://)'
@@ -230,10 +231,16 @@ class PostCleaner(GenericPostCleaner):
         self.append('</clock>')
         self.matched_clocks.append(time + sel)
 
+    def truncate_link(self, scheme, url):
+        return truncatechars(url.replace(scheme + '://', ''), 100)
+
     def link_formatter(self, scheme, url):
         """
         Parse l'url pour en déterminer le titre
         """
+        if TRIBUNE_SHOW_TRUNCATED_URL:
+            return self.truncate_link(scheme, url)
+
         # Label par défaut des urls
         title = scheme
         if title == 'http':

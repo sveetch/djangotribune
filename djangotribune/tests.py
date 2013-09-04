@@ -5,6 +5,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from djangotribune.models import Message
+from djangotribune.parser import PostCleaner
 
 class MessagesAPITest(TestCase):
     """Test the queryset API to fetch messages"""
@@ -38,3 +39,12 @@ class MessagesAPITest(TestCase):
 
     def tearDown(self):
         pass
+
+
+class ParserTest(TestCase):
+
+    def test_show_truncated_url(self):
+        link = 'http://example.com/' + 200*'a' + '/b/'
+        pc = PostCleaner(link)
+        truncated = pc.truncate_link('http', link)
+        self.assertEqual(truncated, 'example.com/' + 85*'a' + '...')
