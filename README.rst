@@ -447,6 +447,8 @@ TRIBUNE_LASTFM_API_KEY
     The Application key to use for on requests made to `LastFM API`_.
 TRIBUNE_INTERFACE_REFRESH_SHIFTING
     The default time in milli-seconds between each backend refresh request on the interface.
+TRIBUNE_SHOW_TRUNCATED_URL
+    A boolean to define (if ``True``) if URLs should be displayed as a truncated url of 100 characters maximum. Default behavior (when ``False`` or not in your settings) is to display them like ``[url]`` if it does not match any regex in the dictionnary ``parser.URL_SUBSTITUTION``.
 
 Discovery
 *********
