@@ -2,24 +2,28 @@
 """
 Clock backends views
 """
-
 from django import http
-from django.views.generic.edit import BaseFormView, FormView
-from django.views.decorators.csrf import csrf_exempt
-from django.core.urlresolvers import reverse
-from django.utils.decorators import method_decorator
-
-from djangotribune.models import Channel, Message
+from djangotribune.models import Message
 from djangotribune.settings_local import TRIBUNE_BAK_SESSION_NAME
-from djangotribune.views.remote import RemoteBaseView, RemoteJsonMixin
-from djangotribune.clocks import ClockstampManipulator
+from djangotribune.views.remote import RemoteBaseView, RemotePlainMixin, RemoteJsonMixin
+from djangotribune.clocks import PARSER_EXCEPTION_TYPERROR_EXPLAIN, ClockParser
 
 class ClockJsonView(RemoteJsonMixin, RemoteBaseView):
     """
     Remote JSON view for targeted clock
-    
-    In fact this more than a clock, this can be a flat clock or even a full timestamp
     """
+    http304_if_empty = False
+    
+    def get(self, request, *args, **kwargs):
+        """
+        Overwrite get method to perform clock format validation then raise a 
+        Http400 if not valid
+        """
+        _p = ClockParser()
+        if not _p.is_valid(self.kwargs['clock']):
+            return http.HttpResponseBadRequest(PARSER_EXCEPTION_TYPERROR_EXPLAIN, mimetype=RemotePlainMixin.mimetype)
+        return super(ClockJsonView, self).get(request, *args, **kwargs)
+
     def get_backend_queryset(self, channel, last_id, direction, limit):
         """
         Get the queryset to fetch messages with options from args/kwargs
@@ -36,14 +40,10 @@ class ClockJsonView(RemoteJsonMixin, RemoteBaseView):
             filters = bak.get_filters()
         
         # Lecture et reconnaissance du timestamp
-        self.clock = ClockstampManipulator(clockstamp=self.kwargs['clock'])
-        print "is_valid:", self.clock.is_valid
-        print "is_datetime:", self.clock.is_datetime
-        print "get_clock_object:", self.clock.get_clock_object()
+        _p = ClockParser()
         
         q = Message.objects
-        if self.clock.is_valid:
-            q = q.filter(**self.clock.get_lookup())
+        q = q.filter(**_p.get_time_lookup(self.kwargs['clock']))
         
-        # TODO: raise error if clock is invalid ?
+        # TODO: raise error if clock is invalid
         return q.get_backend(channel=channel, filters=filters, last_id=last_id).values(*self.remote_fields)[:limit]

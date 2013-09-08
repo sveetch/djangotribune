@@ -23,7 +23,7 @@ urlpatterns = patterns('',
     url(r'^discovery.config$', ConfigDiscoveryView.as_view(), name='tribune-config'),
     
     # Remote backend for specific targeted clocks
-    url(r'^clock/(?P<clock>\d+)/$', ClockJsonView.as_view(), name='tribune-clock-remote'),
+    url(r'^clock/(?P<clock>[:\d]{5,9})/$', ClockJsonView.as_view(), name='tribune-clock-remote'),
     
     # Message posting views
     url(r'^post/$', PostRemotePlainView.as_view(), name='tribune-post-plain'),
