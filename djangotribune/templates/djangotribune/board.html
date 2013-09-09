@@ -15,6 +15,7 @@
                 "host" : '{{ SITE.web_url }}',
                 "remote_path": '{{ tribune_backend_url }}',
                 "post_path": '{{ tribune_post_url }}',
+                "clockfinder_path": '{{ clockfinder_url }}',
                 {% if tribune_channel %}"channel": "{{ tribune_channel.slug }}",
                 {% endif %}{% if user.is_authenticated %}"authenticated_username": "{{ user.username }}",
                 {% endif %}"message_limit": {{ message_display_limit }}

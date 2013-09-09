@@ -11,6 +11,7 @@ from djangotribune.settings_local import TRIBUNE_SMILEYS_URL, TRIBUNE_SHOW_TRUNC
 
 POST_CLEANER_TAG_RE = '<(?P<tag>/?(?:b|i|s|u|tt|m|code))>'
 POST_CLEANER_SCHEME_RE = '(?P<scheme>(?:http|ftp|https|chrome|gopher|git|git+ssh|svn|svn+ssh)://)'
+# TODO: think about to implement clock format with date aka "mm/jj#HH:MM:SS"
 POST_CLEANER_CLOCK_RE = u'(?<![0-9])(?P<clock>(?P<h>2[0-3]|[01][0-9])(?P<c>(?=[0-5][0-9][:0-9])|:)(?P<m>[0-5][0-9])(?:(?P=c)(?P<s>[0-5][0-9])(?:(?P<sel>[¹²³⁴⁵⁶⁷⁸⁹][⁰¹²³⁴⁵⁶⁷⁸⁹]?|[\^:][1-9][0-9]?))?)?)(?![0-9:@])'
 POST_CLEANER_TOTOZ_RE = '(?P<totoz>\[\:[A-Za-z0-9-_@ ]+(?:\:[0-9]+)?\])'
 POST_CLEANER_RE = re.compile('(' + POST_CLEANER_TOTOZ_RE + '|(?P<sep>[\(\)\[\]"])|' + POST_CLEANER_TAG_RE + '|' + POST_CLEANER_SCHEME_RE + '|' + POST_CLEANER_CLOCK_RE + ')')

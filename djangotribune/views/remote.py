@@ -92,6 +92,18 @@ class RemoteBaseMixin(ChannelAwareMixin):
             return reverse("tribune-channel-post-{0}".format(self.backend_type), kwargs={'channel_slug':self.get_channel().slug})
         return reverse("tribune-post-{0}".format(self.backend_type))
     
+    def get_clockfinder_view_url(self):
+        """
+        Return the clock finder url, this is channel aware
+        
+        We put the 00:00 clock pattern as a default, this is required to make a proper 
+        reverse. This default pattern should be stripped by clients to use the 
+        clockfinder url correctly.
+        """
+        if hasattr(self, 'get_channel') and getattr(self, 'get_channel')():
+            return reverse("tribune-channel-clock-remote", kwargs={'clock': '00:00', 'channel_slug':self.get_channel().slug})
+        return reverse("tribune-clock-remote", kwargs={'clock': '00:00'})
+    
     def get_row_limit(self):
         """Get the row limit number to fetch"""
         try:

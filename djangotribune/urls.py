@@ -43,7 +43,7 @@ urlpatterns = patterns('',
     
     url(r'^(?P<channel_slug>[-\w]+)/discovery.config', ConfigDiscoveryView.as_view(), name='tribune-channel-config'),
     
-    url(r'^(?P<channel_slug>[-\w]+)/clock/(?P<clock>\d+)/$', ClockJsonView.as_view(), name='tribune-channel-clock-remote'),
+    url(r'^(?P<channel_slug>[-\w]+)/clock/(?P<clock>[:\d]{5,9})/$', ClockJsonView.as_view(), name='tribune-channel-clock-remote'),
     
     url(r'^(?P<channel_slug>[-\w]+)/post/$', PostRemotePlainView.as_view(), name='tribune-channel-post-plain'),
     url(r'^(?P<channel_slug>[-\w]+)/post/json/$', PostRemoteJsonView.as_view(), name='tribune-channel-post-json'),

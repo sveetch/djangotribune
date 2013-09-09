@@ -113,6 +113,7 @@ class PostBoardView(RemoteHtmlMixin, PostBaseView):
             'tribune_channel': self.get_channel(),
             'tribune_backend_url': self.get_backend_view_url(),
             'tribune_post_url': self.get_post_view_url(),
+            'clockfinder_url': self.get_clockfinder_view_url(),
         })
         return kwargs
     

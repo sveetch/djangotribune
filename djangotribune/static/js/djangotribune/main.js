@@ -391,7 +391,7 @@ jQuery.fn.extend({
                 // Drop the oldiest item if message list has allready reached the 
                 // display limit
                 // TODO: This should drop also item clocks references from the 
-                // "clock_store"
+                // "clock_store" (to avoid too much memory usage)
                 if (current_message_length >= data.settings.message_limit) {
                     $(".djangotribune_scroll li", $this).slice(0,1).remove();
                 }
@@ -403,14 +403,7 @@ jQuery.fn.extend({
                 row.clockclass = clock_store.clock_to_cssname(element_ts.clock);
                 
                 // Compute some additionals row data
-                row.css_classes = ["msgclock_"+row.clockclass];
-                if(row.owned) row.css_classes.push("owned");
-                row.identity = {'title': row.user_agent, 'kind': 'anonymous', 'content': row.user_agent.slice(0,30)};
-                row.owned = owned;
-                if(row.author__username){
-                    row.identity.kind = 'authenticated';
-                    row.identity.content = row.author__username;
-                }
+                row = CoreTools.compute_extra_row_datas(row, owned);
                 // Compile template, add its result to html and attach it his data
                 element = $( templates.message_row(row) ).appendTo( $(".djangotribune_scroll ul", $this) ).data("djangotribune_row", row);
                 // Bind all related message events
@@ -423,11 +416,12 @@ jQuery.fn.extend({
             // Push the last message id as reference for next backend requests
             $this.data("djangotribune_lastid", last_id);
         },
+ 
 
         /*
          * Change the settings "refresh_active" from the checkbox
          * TODO: This should be memorized in a cookie or something else more persistent 
-         * (like user personnal settings) than a page instance
+         * (like user personnal settings) instead of local variables in a page instance
          */
         change_refresh_active : function(event) {
             var $this = $(event.data.djangotribune),
@@ -593,7 +587,8 @@ jQuery.fn.extend({
             // Clock pointers contained
             $("span.content span.pointer", message_element).mouseenter(function(){
                 var $this_pointer = $(this),
-                    clock_pointer = jQuery.trim($this_pointer.text());
+                    clock_pointer = jQuery.trim($this_pointer.text()),
+                    _clock_pointer_match_count;
                 $this_pointer.addClass("highlighted");
                 
                 // Get related pointers in all messages and highlight them
@@ -604,6 +599,8 @@ jQuery.fn.extend({
                 
                 // Get related messages and highlight them
                 clock_name = "msgclock_"+clock_store.plainclock_to_cssname(clock_pointer);
+                _clock_pointer_match_count = 0;
+                if(DEBUG) console.info("Clock pointer hover for: %s", clock_name);
                 $("li."+clock_name, djangotribune_element).each(function(index) {
                     $(this).addClass("highlighted");
                     if(DEBUG) {
@@ -614,31 +611,49 @@ jQuery.fn.extend({
                     }
                     // Display messages that are out of screen
                     if($(window).scrollTop() > $(this).offset().top) {
-                        // Append html now so we can know about his future height
-                        djangotribune_data.absolute_container.html( $(this).html() );
-                        css_attrs = { "left":djangotribune_data.scroller.offset().left };
-                        // Calculate the coordinates of the bottom container displayed 
-                        // at top by default
-                        var container_bottom_position = $(window).scrollTop() + djangotribune_data.absolute_container.outerHeight(true);
-                        
-                        // Display at top of the screen by default
-                        if( $this_pointer.offset().top > container_bottom_position) {
-                            css_attrs.top = 0;
-                            css_attrs.bottom = "";
-                            djangotribune_data.absolute_container.removeClass("at-bottom").addClass("at-top");
-                            if(DEBUG) console.info("Absolute display at top");
-                        // Display at bottom of the screen
-                        } else {
-                            css_attrs.top = "";
-                            css_attrs.bottom = 0;
-                            djangotribune_data.absolute_container.removeClass("at-top").addClass("at-bottom");
-                            if(DEBUG) console.info("Absolute display at bottom");
-                        }
-                        // Apply css position and show it
-                        djangotribune_data.absolute_container.css(css_attrs).show()
+                        events.display_message_popin(djangotribune_data, $this_pointer, $(this).html());
                     }
+                    _clock_pointer_match_count += 1;
                     if(DEBUG) console.groupEnd();
                 });
+                // So there is no matched clock in the current history.. what if we try 
+                // to find them out of the history ?
+                //if(DEBUG) console.info("Clock pointer matched: %s", _clock_pointer_match_count);
+                if(_clock_pointer_match_count == 0){
+                    if(DEBUG) console.warn("No matched clock %s in current history", clock_pointer);
+                    var today = new Date(),
+                        item_id = today.getFullYear().toString() + today.getMonth().toString() + today.getDay().toString() + clock_store.plainclock_to_cssname(clock_pointer),
+                        url = CoreTools.get_request_url(djangotribune_data.settings.host, djangotribune_data.settings.clockfinder_path).replace(/00:00\//,clock_pointer+"/"),
+                        html = "";
+                    if(DEBUG) console.info("Trying to find clock '%s' (id=%s) on url : %s", clock_pointer, item_id, url);
+                    $.ajax({
+                        cache: true,
+                        url: url,
+                        data: {},
+                        success: function (backend, textStatus) {
+                            if(DEBUG) console.log("Djangotribune Request textStatus: "+textStatus);
+                            
+                            if(textStatus == "notmodified"){
+                                // Fill "backend" with cache value for the item_id
+                                backend = backends_store[item_id];
+                            } else {
+                                // Fill item_id cache with the backend
+                                backends_store[item_id] = backend;
+                            }
+                            if(backend.length==0) return false;
+                            
+                            $.each(backend, function(index, row) {
+                                row = CoreTools.compute_extra_row_datas(row, false);
+                                html += templates.message_row(row, true);
+                            });
+                            events.display_message_popin(djangotribune_data, $this_pointer, "<ul>"+html+"</ul>");
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown){
+                            if(DEBUG) console.log("Djangotribune Error request textStatus: "+textStatus);
+                            if(DEBUG) console.log("Djangotribune Error request errorThrown: "+textStatus);
+                        }
+                    });
+                }
             }).mouseleave(function(){
                 $(this).removeClass("highlighted");
                 // Get related pointers and un-highlight them
@@ -653,7 +668,10 @@ jQuery.fn.extend({
                 });
                 
                 // Allways empty the absolute display container
-                djangotribune_data.absolute_container.html("").hide()
+                // NOTE: Mouse leaving event seems to be throwed to soon in some case like with the 
+                // clock out of history feature. The absolute_container seems to be created AFTER 
+                // the mouseleave event is throwed. (to confirm)
+                djangotribune_data.absolute_container.html("").hide();
             });
             
             // Mark answers to current user messages
@@ -700,11 +718,50 @@ jQuery.fn.extend({
                 top_pos = top_pos-image_height-(margin+10);
                 container.css("height", image_height+"px").css("top", top_pos).css("bottom", "");
             }
+        },
+        /*
+        * Display message(s) in an absolute pop-in
+         */
+        display_message_popin : function(djangotribune_data, pointer, html) {
+            // Append html now so we can know about his future height
+            djangotribune_data.absolute_container.html( html );
+            css_attrs = { "left":djangotribune_data.scroller.offset().left };
+            // Calculate the coordinates of the bottom container displayed 
+            // at top by default
+            var container_bottom_position = $(window).scrollTop() + djangotribune_data.absolute_container.outerHeight(true);
+            
+            // Display at top of the screen by default
+            if( pointer.offset().top > container_bottom_position) {
+                css_attrs.top = 0;
+                css_attrs.bottom = "";
+                djangotribune_data.absolute_container.removeClass("at-bottom").addClass("at-top");
+                if(DEBUG) console.info("Absolute display at top");
+            // Display at bottom of the screen
+            } else {
+                css_attrs.top = "";
+                css_attrs.bottom = 0;
+                djangotribune_data.absolute_container.removeClass("at-top").addClass("at-bottom");
+                if(DEBUG) console.info("Absolute display at bottom");
+            }
+            // Apply css position and show it
+            djangotribune_data.absolute_container.css(css_attrs).show()
         }
     };
     
     
-
+    /*
+     * Backends store
+     * 
+     * Store fetched backend from special method like clock finding
+     * 
+     * This is not for storing all the fetched backend by the refresh event.
+     * 
+     * Backends are store on their id that is a full timestamp
+     */
+    var backends_store = {
+        _map_backends : {}
+    };
+    
     /*
      * Clock date store
      * 
@@ -955,6 +1012,20 @@ jQuery.fn.extend({
                 url += "?" + $.param(options);
             }
             return url;
+        },
+        /*
+         * Compute some extra datas from the row data from a backend
+         */
+        compute_extra_row_datas: function(row, owned){
+            row.css_classes = ["msgclock_"+row.clockclass];
+            if(row.owned) row.css_classes.push("owned");
+            row.identity = {'title': row.user_agent, 'kind': 'anonymous', 'content': row.user_agent.slice(0,30)};
+            row.owned = owned;
+            if(row.author__username){
+                row.identity.kind = 'authenticated';
+                row.identity.content = row.author__username;
+            }
+            return row;
         }
     };
     
@@ -980,13 +1051,15 @@ jQuery.fn.extend({
          * Message row template
          * @content is an object with all needed attributes for the template
          */
-        message_row: function(content) {
+        message_row: function(content, noclasses) {
             var clock_indice = "&nbsp;",
-                css_classes = content.css_classes||[];
+                noclass = (noclasses) ? true : false,
+                css_classes = content.css_classes||[],
+                row_classes = (noclasses) ? "" : " class=\"message "+ css_classes.join(" ") +"\"";
             // Display clock indice only if greater than 1
             if(content.clock_indice > 1) clock_indice = clock_store.number_to_indice(content.clock_indice);
  
-            return "<li class=\"message "+ css_classes.join(" ") +"\"><span class=\"marker\"></span>" +
+            return "<li"+ row_classes +"><span class=\"marker\"></span>" +
                 "<span class=\"clock\">"+ content.clock+"<sup>"+clock_indice +"</sup></span> " + 
                 "<strong><span class=\"identity "+ content.identity.kind +"\" title=\""+ content.identity.title +"\">"+ content.identity.content +"</span></strong> " + 
                 "<span class=\"content\">"+ content.web_render +"</span>" + 

@@ -104,7 +104,7 @@
 /* line 97, ../../scss/djangotribune/frontend.scss */
 .absolute-message-container {
   position: fixed;
-  z-index: 5000;
+  z-index: 9000;
   width: 1000px;
   min-width: 768px;
   max-width: 100%;
@@ -140,16 +140,21 @@
   position: static;
   left: auto;
 }
+/* line 122, ../../scss/djangotribune/frontend.scss */
+.absolute-message-container ul {
+  margin: 0;
+  list-style-type: none;
+}
 
-/* line 124, ../../scss/djangotribune/frontend.scss */
+/* line 129, ../../scss/djangotribune/frontend.scss */
 form {
   margin-top: 15px;
 }
-/* line 127, ../../scss/djangotribune/frontend.scss */
+/* line 132, ../../scss/djangotribune/frontend.scss */
 form label[for='id_content'] {
   display: none;
 }
-/* line 131, ../../scss/djangotribune/frontend.scss */
+/* line 136, ../../scss/djangotribune/frontend.scss */
 form .refresh_active {
   margin: 0;
   padding: 0;
@@ -161,39 +166,39 @@ form .refresh_active {
   font-size: 14px;
   line-height: 14px;
 }
-/* line 142, ../../scss/djangotribune/frontend.scss */
+/* line 147, ../../scss/djangotribune/frontend.scss */
 form .refresh_active input {
   margin: 0;
   padding: 0;
   font-size: 14px;
 }
-/* line 149, ../../scss/djangotribune/frontend.scss */
+/* line 154, ../../scss/djangotribune/frontend.scss */
 form input.content_field {
   margin-left: 25px;
   padding-right: 25px;
 }
-/* line 153, ../../scss/djangotribune/frontend.scss */
+/* line 158, ../../scss/djangotribune/frontend.scss */
 form input.content_field.disabled {
   border: 1px solid #606060;
   color: #606060;
   background-color: #C0C0C0;
 }
-/* line 158, ../../scss/djangotribune/frontend.scss */
+/* line 163, ../../scss/djangotribune/frontend.scss */
 form input.content_field.error {
   border: 1px solid #ff0000;
 }
-/* line 163, ../../scss/djangotribune/frontend.scss */
+/* line 168, ../../scss/djangotribune/frontend.scss */
 form .within-input {
   position: absolute;
   top: 10px;
   font-size: 14px;
 }
-/* line 168, ../../scss/djangotribune/frontend.scss */
+/* line 173, ../../scss/djangotribune/frontend.scss */
 form .backend-refresh-spinner {
   left: -40px;
   color: #a0a0a0;
 }
-/* line 172, ../../scss/djangotribune/frontend.scss */
+/* line 177, ../../scss/djangotribune/frontend.scss */
 form .backend-refresh-error {
   left: -20px;
   color: red;
