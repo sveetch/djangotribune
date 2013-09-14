@@ -2,13 +2,11 @@
 * The Django-tribune jQuery plugin
 * 
 * TODO: This lack of :
-*       * Finalize all clock features;
 *       * Use the header "X-Post-Id" to retrieve owned message posted and enable owner 
 *         mark for anonymous;
 *       * "clock_store" cleaning when dropping messages from the list
 *       * User settings panel;
-*       * Themes usage, like codemirror with appending a css class with the theme 
-*         slugname;
+*       * Think about themes usage;
 */
 DEBUG = false; // To enable/disable message logs with "console.log()"
 

@@ -2,6 +2,7 @@
 .. _LastFM API: http://www.lastfm.fr/api/intro
 .. _texttable: http://pypi.python.org/pypi/texttable/0.8.1
 .. _crispy-forms-foundation: https://github.com/sveetch/crispy-forms-foundation
+.. _South: http://south.readthedocs.org/en/latest/
 
 Introduction
 ============
@@ -33,10 +34,10 @@ Features
 * `Message filtering`_ usually called a *BaK*;
 * A rich interface (currently in development);
 * Full localization for french and english language;
-* `Discovery`_ XML configuration file for third client applications (aka remote client 
-  or *coincoins*);
+* `Discovery`_ XML configuration file for third client applications (aka remote client or *coincoins*);
 * Channel support;
-* Heavily documented.
+* `South`_ support;
+* Largely documented.
 
 Planned
 *******
@@ -64,7 +65,6 @@ Links
 
 * Download his `PyPi package <http://pypi.python.org/pypi/djangotribune>`_;
 * Clone it on his `Github repository <https://github.com/sveetch/djangotribune>`_;
-* Documentation and demo on `DjangoSveetchies page <http://sveetchies.sveetch.net/djangotribune/>`_.
 
 Requires
 ========
@@ -91,7 +91,7 @@ Of course you can use another mounting directory than the default ``tribune/`` o
 use your own app urls, look at the provided ``djangotribune.urls`` to see what you have 
 to map.
 
-And finally don't forget to do the Django's *syncdb command* to synchronise models in your 
+And finally don't forget to do the Django's *syncdb command* to synchronize models in your 
 database.
 
 If needed you can change some `Application settings`_ in your settings file.
@@ -106,6 +106,15 @@ Project templates
 A simple note about templates, djangotribune templates use a base template ``djangotribune/base.html`` to include some common HTML to fit contents in your layout, and all other templates extend it to insert their content.
 
 This base template is made to extend a ``skeleton.html`` template that should be the root base of your project layout. Therefore if you don't use a base template or use it with another name, just override ``djangotribune/base.html`` in project templates to fit it right within your project.
+
+Updates
+*******
+
+Since 0.6.6 version, `South`_ support is implemented, so for future updates you will have to use something like : ::
+
+    ./manage.py migrate djangotribune
+
+And model changes will be automatically applied to your database.
 
 Usage
 =====
