@@ -67,10 +67,6 @@
         }
     }
 
-    //&.musslecast,
-    //&.usercast{
-        //border: 1px solid #d0b060;
-    //}
     a.smiley{
         text-decoration: none;
     }
@@ -101,6 +97,10 @@
             list-style-type: none;
         }
     }
+}
+
+.smiley_container{
+    z-index: 8000;
 }
 
 // Message container to display in absolute position

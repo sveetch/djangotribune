@@ -546,7 +546,7 @@ jQuery.fn.extend({
             }).mouseenter(
                 {"djangotribune": djangotribune_element}, events.display_smiley
             ).mouseleave( function() {
-                $("p.smiley_container", djangotribune_element).remove();
+                $("p.smiley_container").remove();
             });
             
             // Add flat clock as a class name on pointers
@@ -701,31 +701,43 @@ jQuery.fn.extend({
                 djangotribune_element = event.data.djangotribune,
                 url = $this.attr("href"),
                 alt = ($this.attr("alt")||''),
-                margin = 25,
-                top_pos = ($this.offset().top + margin),
-                left_pos = ($this.offset().left + margin);
+                top_offset = ($this.offset().top + $this.outerHeight()),
+                left_offset = ($this.offset().left + $this.outerWidth()),
+                bottom_screen_pos = $(document).scrollTop() + $(window).height(),
+                image_height,
+                bottom_image_pos,
+                container;
             // Remove all previous smiley if any
             $("p.smiley_container", djangotribune_element).remove();
             // Build container positionned at the bottom of the element source
-            var container = $("<p class=\"smiley_container\"><img src=\""+ url +"\" alt=\""+ (alt||'') +"\"/>"+"</p>").css({
+            container = $("<p class=\"smiley_container\"><img src=\""+ url +"\" alt=\""+ (alt||'') +"\"/>"+"</p>").css({
                 "height": "",
                 "position":"absolute",
                 "padding":"0",
-                "top": top_pos+"px",
+                "top": top_offset+"px",
                 "bottom": "",
-                "left": left_pos+"px"
-            }).prependTo(djangotribune_element);
+                "left": left_offset+"px"
+            }).prependTo("body");
+            
+            /*console.group("Smiley datas");
+                console.group("Link container");
+                console.info("outerHeight : " + $this.outerHeight());
+                console.info("outerWidth : " + $this.outerWidth());
+                console.groupEnd();
+            console.info("top_offset : " + $this.offset().top);
+            console.info("left_offset : " + $this.offset().left);
+            console.groupEnd();*/
             
             // By default the image is positionned at the bottom of the element, but 
             // if its bottom corner is "out of screen", we move it at the top of element.
-            var bottom_screen_pos = $(document).scrollTop() + $(window).height(),
-                image_height = container.height(),
-                bottom_image_pos = top_pos + image_height;
+            image_height = container.height();
+            bottom_image_pos = top_offset + image_height;
             if(bottom_image_pos > bottom_screen_pos) {
-                top_pos = top_pos-image_height-(margin+10);
-                container.css("height", image_height+"px").css("top", top_pos).css("bottom", "");
+                top_offset = top_offset-image_height-$this.outerHeight();
+                container.css("height", image_height+"px").css("top", top_offset).css("bottom", "");
             }
         },
+
         /*
         * Display message(s) in an absolute pop-in
          */
