@@ -14,17 +14,27 @@
         border-left: 3px solid transparent;
         border-bottom: 1px solid transparent;
     }
-    span.identity.authenticated{
-        padding-right: 3px;
-        color: green;
-        text-decoration: none;
+    span.identity{
+        &.authenticated{
+            padding-right: 3px;
+            color: #008000;
+            text-decoration: none;
+        }
+        &.anonymous{
+            padding-right: 3px;
+            font-style: italic;
+            color: #660000;
+            text-decoration: none;
+        }
     }
-    span.identity.anonymous{
-        padding-right: 3px;
-        font-style: italic;
-        color: #660000;
-        text-decoration: none;
+    
+    &.me-action{
+        span.content{
+            color: #008000;
+            font-weight: bold;
+        }
     }
+    
     span.pointer{
         color: blue;
     }

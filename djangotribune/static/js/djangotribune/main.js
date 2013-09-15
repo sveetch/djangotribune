@@ -255,7 +255,7 @@ jQuery.fn.extend({
                     
                     // Chech message author identity
                     var identity_username = null;
-                    if( $("span.identity", this).hasClass('username') ) {
+                    if( $("span.identity", this).hasClass('authenticated') ) {
                         identity_username = $("span.identity", this).html();
                     }
                     // Compile message datas as a message object
@@ -273,6 +273,12 @@ jQuery.fn.extend({
             
                     // Store the clock
                     clock_store.add(data.key, message_data.created, message_data.clock_indice, message_data.owned);
+                    
+                    // Detect /me action
+                    if(message_data.author__username && message_data.web_render.search(/^\/me /) >= 0){
+                        $(this).addClass('me-action');
+                        $("span.content", this).html(message_data.web_render.replace(/^\/me /, ''));
+                    }
                     
                     // Put data in clock/timestamp/etc.. register and initialize 
                     // events (clock, links, totoz, etc..) on rows
@@ -583,10 +589,31 @@ jQuery.fn.extend({
             });
             
             // Clock pointers contained
-            $("span.content span.pointer", message_element).mouseenter(function(){
+            $("span.content span.pointer", message_element).mouseout(function(){
+                
+                $(this).removeClass("highlighted");
+                // Get related pointers and un-highlight them
+                pointer_name = "pointer_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
+                $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
+                    $(this).removeClass("highlighted");
+                });
+                // Get related messages and un-highlight them
+                clock_name = "msgclock_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
+                $("li."+clock_name, djangotribune_element).each(function(index) {
+                    $(this).removeClass("highlighted");
+                });
+                
+                // Allways empty the absolute display container
+                // NOTE: Mouseout event seems to be throwed to soon in some case like with the 
+                // clock out of history feature. The absolute_container seems to be created AFTER 
+                // the mouseout event is throwed. (to confirm)
+                djangotribune_data.absolute_container.html("").hide();
+                
+            }).mouseover(function(){
+                
                 var $this_pointer = $(this),
                     clock_pointer = jQuery.trim($this_pointer.text()),
-                    _clock_pointer_match_count;
+                    _clock_pointer_match_count = 0;
                 $this_pointer.addClass("highlighted");
                 
                 // Get related pointers in all messages and highlight them
@@ -597,9 +624,9 @@ jQuery.fn.extend({
                 
                 // Get related messages and highlight them
                 clock_name = "msgclock_"+clock_store.plainclock_to_cssname(clock_pointer);
-                _clock_pointer_match_count = 0;
                 if(DEBUG) console.info("Clock pointer hover for: %s", clock_name);
                 $("li."+clock_name, djangotribune_element).each(function(index) {
+                    _clock_pointer_match_count += 1;
                     $(this).addClass("highlighted");
                     if(DEBUG) {
                         console.group("Pointer event for message: %s", clock_pointer)
@@ -611,7 +638,6 @@ jQuery.fn.extend({
                     if($(window).scrollTop() > $(this).offset().top) {
                         events.display_message_popin(djangotribune_data, $this_pointer, $(this).html());
                     }
-                    _clock_pointer_match_count += 1;
                     if(DEBUG) console.groupEnd();
                 });
                 // So there is no matched clock in the current history.. what if we try 
@@ -652,24 +678,7 @@ jQuery.fn.extend({
                         }
                     });
                 }
-            }).mouseleave(function(){
-                $(this).removeClass("highlighted");
-                // Get related pointers and un-highlight them
-                pointer_name = "pointer_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
-                $("li.message span.pointer."+pointer_name, djangotribune_element).each(function(index) {
-                    $(this).removeClass("highlighted");
-                });
-                // Get related messages and un-highlight them
-                clock_name = "msgclock_"+clock_store.plainclock_to_cssname(jQuery.trim($(this).text()));
-                $("li."+clock_name, djangotribune_element).each(function(index) {
-                    $(this).removeClass("highlighted");
-                });
                 
-                // Allways empty the absolute display container
-                // NOTE: Mouse leaving event seems to be throwed to soon in some case like with the 
-                // clock out of history feature. The absolute_container seems to be created AFTER 
-                // the mouseleave event is throwed. (to confirm)
-                djangotribune_data.absolute_container.html("").hide();
             });
             
             // Mark answers to current user messages
@@ -742,8 +751,51 @@ jQuery.fn.extend({
                 if(DEBUG) console.info("Absolute display at bottom");
             }
             // Apply css position and show it
-            djangotribune_data.absolute_container.css(css_attrs).show()
+            djangotribune_data.absolute_container.css(css_attrs).show();
         }
+ 
+        /*
+         * Periodic check to control mouse position is still in the pointer area, else 
+         * force remove the popin
+         * 
+         * This is to avoid a bug where it seems an Ajax request can drop the coming 
+         * mouseleave event that is needed to drop the absolute popin container
+         * 
+         * DEPRECATED: bloated stuff that doesn't do the job
+         
+        _check_mousepos_for_popin : function(djangotribune_data, pointer) {
+            var pageCoords = "( " + window.mouseXPos + ", " + window.mouseYPos + " )";
+            var pointerArea = {
+                'top': pointer.offset().top,
+                'left': pointer.offset().left
+            };
+            pointerArea['right'] = pointerArea.left + pointer.outerWidth();
+            pointerArea['bottom'] = pointerArea.top + pointer.outerHeight();
+            var pointerFoo = "( left:" + pointerArea.left + ", right:" + pointerArea.right + ", top:" + pointerArea.top + ", bottom:" + pointerArea.bottom + " )";
+            var pointerDim = "( " + pointer.outerWidth() + ", " + pointer.outerHeight() + " )";
+            console.group("Popin check");
+            console.info("Mouse Coords : " + pageCoords);
+            console.info("Pointer Area : " + pointerFoo);
+            console.info("Pointer Dims : " + pointerDim);
+            console.groupEnd();
+            
+            // If the cursor is out of the pointer area
+            if(
+                (window.mouseXPos < pointerArea.left || window.mouseXPos > pointerArea.right) || 
+                (window.mouseYPos < pointerArea.top || window.mouseYPos > pointerArea.bottom)
+            ) {
+                Timer.stopTimer("popin");
+                $("body").unbind("mousemove.popin");
+                console.warn("Unbind mousemove.popin");
+                djangotribune_data.absolute_container.html("").hide();
+            // Else we continue to do a periodic check
+            } else {
+                // Timer.setTimer("popin", function(){
+                //     events._check_mousepos_for_popin(djangotribune_data, pointer);
+                // }, 250);
+            }
+            
+        }*/
     };
     
     
@@ -1053,10 +1105,15 @@ jQuery.fn.extend({
             var clock_indice = "&nbsp;",
                 noclass = (noclasses) ? true : false,
                 css_classes = content.css_classes||[],
-                row_classes = (noclasses) ? "" : " class=\"message "+ css_classes.join(" ") +"\"";
+                row_classes;
             // Display clock indice only if greater than 1
             if(content.clock_indice > 1) clock_indice = clock_store.number_to_indice(content.clock_indice);
- 
+            // Detect /me action only for authenticated message
+            if(content.identity.kind == 'authenticated' && content.web_render.search(/^\/me /) >= 0){
+                css_classes.push('me-action');
+                content.web_render = content.web_render.replace(/^\/me /, '');
+            }
+            row_classes = (noclasses) ? "" : " class=\"message "+ css_classes.join(" ") +"\""
             return "<li"+ row_classes +"><span class=\"marker\"></span>" +
                 "<span class=\"clock\">"+ content.clock+"<sup>"+clock_indice +"</sup></span> " + 
                 "<strong><span class=\"identity "+ content.identity.kind +"\" title=\""+ content.identity.title +"\">"+ content.identity.content +"</span></strong> " + 
