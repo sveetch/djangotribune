@@ -74,8 +74,8 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
     def form_invalid(self, form):
         errors = []
         for k,v in form.errors.items():
-            errors.append(u"{fieldname}: {errs}".format(fieldname=k, errs=" ".join(v)))
-        errors_display = "* {0}".format("\n* ".join(errors))
+            errors.append(u"{fieldname}: {errs}".format(fieldname=k, errs=u" ".join(v)))
+        errors_display = u"* {0}".format("\n* ".join(errors))
         # Errors is always returned with the plain/text mimetype
         return http.HttpResponseBadRequest(errors_display, mimetype=RemotePlainMixin.mimetype)
     
