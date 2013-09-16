@@ -184,8 +184,31 @@ jQuery.fn.extend({
                     djangotribune_key = "djangotribune-id-" + (settings.channel||'default'), // djangotribune instance ID, must be unique, reference to the current channel if any
                     djangotribune_scroll = $("<div class=\"djangotribune_scroll\"></div>").insertBefore("form", $this).append($("ul.messages", $this)),
                     refresh_input = templates.refresh_checkbox(settings).insertBefore("form .input-column .ctrlHolder", $this),
-                    refresh_spinner = $('<i class="icon-refresh icon-spin within-input backend-refresh-spinner"></i>').insertBefore("form input.submit", $this).hide(),
-                    refresh_error = $('<i class="icon-warning-sign within-input backend-refresh-error"></i>').insertBefore("form input.submit", $this).hide(),
+                    // This can ben overriden to make custom refresh indicator display
+                    refresh_indicator = {
+                        start: function(instance){
+                            $("input.content_field", instance).removeClass("backend-refresh-error").addClass("backend-refresh-spinner");
+                        },
+                        stop: function(instance){
+                            $("input.content_field", instance).removeClass("backend-refresh-spinner");
+                        },
+                        error: function(instance){
+                            $("input.content_field", instance).removeClass("backend-refresh-spinner").addClass("backend-refresh-error");
+                        },
+                    },
+                    // This can ben overriden to make custom submit indicator display
+                    submit_indicator = {
+                        start: function(instance){
+                            $("input.content_field", instance).removeClass("error").addClass("disabled");
+                        },
+                        stop: function(instance){
+                            $("input.content_field", instance).removeClass("disabled");
+                        },
+                        error: function(instance){
+                            $("input.content_field", instance).removeClass("disabled").addClass("error");
+                            $("input.content_field", instance).removeClass("disabled").addClass("error");
+                        },
+                    },
                     absolute_container = $('<div class="absolute-message-container"><div class="content"></div></div>').css({"display": "none"}).appendTo("body"),
                     extra_context = {};
                 
@@ -195,8 +218,8 @@ jQuery.fn.extend({
                     "key": djangotribune_key,
                     "scroller": djangotribune_scroll,
                     "refresh_input": refresh_input.find('input'),
-                    "refresh_spinner": refresh_spinner,
-                    "refresh_error": refresh_error,
+                    "refresh_indicator": refresh_indicator,
+                    "submit_indicator": submit_indicator,
                     "absolute_container": absolute_container,
                     "settings": settings
                 });
@@ -304,8 +327,7 @@ jQuery.fn.extend({
                     data = $this.data("djangotribune"),
                     last_id = $this.data("djangotribune_lastid"),
                     query = $.QueryString,
-                    refresh_spinner = data.refresh_spinner,
-                    refresh_error = data.refresh_error;
+                    refresh_indicator = data.refresh_indicator;
                     
                 // Custom options if any
                 options = options||{};
@@ -329,11 +351,11 @@ jQuery.fn.extend({
                     url: url,
                     data: {},
                     beforeSend: function(req){
-                        refresh_spinner.show();
+                        refresh_indicator.start($this);
                     },
                     success: function (backend, textStatus) {
                         if(DEBUG) console.log("Djangotribune Request textStatus: "+textStatus);
-                        refresh_error.hide();
+                        refresh_indicator.stop($this);
                         
                         if(textStatus == "notmodified") return false;
                         
@@ -346,10 +368,9 @@ jQuery.fn.extend({
                     error: function(XMLHttpRequest, textStatus, errorThrown){
                         if(DEBUG) console.log("Djangotribune Error request textStatus: "+textStatus);
                         if(DEBUG) console.log("Djangotribune Error request errorThrown: "+textStatus);
-                        refresh_error.show();
+                        refresh_indicator.error($this);
                     },
                     complete: function (XMLHttpRequest, textStatus) {
-                        refresh_spinner.hide();
                         // Relaunch timer
                         if(data.settings.refresh_active){
                             Timer.setTimer(data.key, function(){ $this.djangotribune('refresh'); }, data.settings.refresh_time_shifting);
@@ -456,7 +477,7 @@ jQuery.fn.extend({
             var $this = $(event.data.djangotribune),
                 data = $this.data("djangotribune"),
                 last_id = $this.data("djangotribune_lastid"),
-                refresh_spinner = data.refresh_spinner,
+                submit_indicator = data.submit_indicator,
                 query = $.QueryString;
             
             if(DEBUG) console.log("Djangotribune events.submit");
@@ -478,13 +499,12 @@ jQuery.fn.extend({
                     // Stop timer and put display marks on content field input
                     Timer.stopTimer(data.key);
                     $("form input[type='submit']", $this).attr("disabled", "disabled");
-                    $("input.content_field", $this).addClass("disabled");
-                    refresh_spinner.show();
+                    submit_indicator.start();
                 },
                 success: function (backend, textStatus) {
                     if(DEBUG) console.log("Djangotribune Request textStatus: "+textStatus);
                    
-                    $("input.content_field", $this).removeClass("error");
+                    submit_indicator.stop();
                     $("input.content_field", $this).val("");
                         
                     if(textStatus == "notmodified") return false;
@@ -498,14 +518,10 @@ jQuery.fn.extend({
                 error: function(XMLHttpRequest, textStatus, errorThrown){
                     if(DEBUG) console.log("Djangotribune Error request textStatus: "+textStatus);
                     if(DEBUG) console.log("Djangotribune Error request errorThrown: "+textStatus);
-                   
-                    $("input.content_field", $this).removeClass("disabled").addClass("error");
+                    submit_indicator.error();
                 },
                 complete: function (XMLHttpRequest, textStatus) {
                     $("form input[type='submit']", $this).removeAttr("disabled");
-                    $("input.content_field", $this).removeClass("disabled");
-                    refresh_spinner.hide();
-                    
                     // Relaunch timer
                     if(data.settings.refresh_active){
                         Timer.setTimer(data.key, function(){ $this.djangotribune('refresh'); }, data.settings.refresh_time_shifting);

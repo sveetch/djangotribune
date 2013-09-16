@@ -161,17 +161,32 @@ form{
         }
     }
     
-    input.content_field{
-        margin-left: 25px;
-        padding-right: 25px;
-        
-        &.disabled{
-            border: 1px solid #606060;
-            color: #606060;
-            background-color: #C0C0C0;
-        }
-        &.error{
-            border: 1px solid #ff0000;
+    #div_id_content{
+        padding-left: 25px;
+       
+        input.content_field{
+            padding-right: 25px;
+            position: relative;
+            transition: none 0s ease 0s;
+            
+            &.disabled{
+                border: 1px solid #606060;
+                color: #606060;
+                background-color: #C0C0C0;
+            }
+            &.error{
+                border: 1px solid #ff0000;
+            }
+            &.backend-refresh-spinner{
+                background-image: image-url('spinner_arrows.gif');
+                background-position: center right;
+                background-repeat: no-repeat;
+            }
+            &.backend-refresh-error{
+                background-image: image-url('alert.png');
+                background-position: center right;
+                background-repeat: no-repeat;
+            }
         }
     }
     
@@ -179,13 +194,5 @@ form{
         position: absolute;
         top: 10px;
         font-size: 14px;
-    }
-    .backend-refresh-spinner{
-        left: -40px;
-        color: #a0a0a0;
-    }
-    .backend-refresh-error{
-        left: -20px;
-        color: red;
     }
 }

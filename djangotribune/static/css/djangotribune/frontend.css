@@ -184,33 +184,40 @@ form .refresh_active input {
   font-size: 14px;
 }
 /* line 164, ../../../../compass/scss/frontend.scss */
-form input.content_field {
-  margin-left: 25px;
-  padding-right: 25px;
+form #div_id_content {
+  padding-left: 25px;
 }
-/* line 168, ../../../../compass/scss/frontend.scss */
-form input.content_field.disabled {
+/* line 167, ../../../../compass/scss/frontend.scss */
+form #div_id_content input.content_field {
+  padding-right: 25px;
+  position: relative;
+  transition: none 0s ease 0s;
+}
+/* line 172, ../../../../compass/scss/frontend.scss */
+form #div_id_content input.content_field.disabled {
   border: 1px solid #606060;
   color: #606060;
   background-color: #C0C0C0;
 }
-/* line 173, ../../../../compass/scss/frontend.scss */
-form input.content_field.error {
+/* line 177, ../../../../compass/scss/frontend.scss */
+form #div_id_content input.content_field.error {
   border: 1px solid #ff0000;
 }
-/* line 178, ../../../../compass/scss/frontend.scss */
+/* line 180, ../../../../compass/scss/frontend.scss */
+form #div_id_content input.content_field.backend-refresh-spinner {
+  background-image: url('../../images/djangotribune/spinner_arrows.gif?1379276614');
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+/* line 185, ../../../../compass/scss/frontend.scss */
+form #div_id_content input.content_field.backend-refresh-error {
+  background-image: url('../../images/djangotribune/alert.png?1379278349');
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+/* line 193, ../../../../compass/scss/frontend.scss */
 form .within-input {
   position: absolute;
   top: 10px;
   font-size: 14px;
-}
-/* line 183, ../../../../compass/scss/frontend.scss */
-form .backend-refresh-spinner {
-  left: -40px;
-  color: #a0a0a0;
-}
-/* line 187, ../../../../compass/scss/frontend.scss */
-form .backend-refresh-error {
-  left: -20px;
-  color: red;
 }
