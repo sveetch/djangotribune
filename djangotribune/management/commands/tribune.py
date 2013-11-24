@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Tribune command line
+
+DEPRECATED
 """
 import json
 
