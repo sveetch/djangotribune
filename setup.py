@@ -25,6 +25,7 @@ setup(
     install_requires=[
         'texttable==0.8.1',
         'crispy-forms-foundation==0.2.3',
+        'pytz',
     ],
     include_package_data=True,
     zip_safe=False

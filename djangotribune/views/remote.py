@@ -10,7 +10,7 @@ Further, the views are simple binding of RemoteBaseView plus their format mixins
 This is a simple system that allow to more flexible, besides the post views use the 
 mixins to implement their formats.
 """
-import json, texttable
+import json, texttable, pytz
 
 try:
     import xml.etree.cElementTree as ET
@@ -18,13 +18,15 @@ except ImportError:
     import xml.etree.ElementTree as ET
 
 from django import http
-from django.db.models.query import QuerySet
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
+from django.db.models.query import QuerySet
 from django.http import HttpResponseNotModified
 from django.shortcuts import get_object_or_404
-from django.utils.decorators import method_decorator
 from django.views.decorators.http import condition
-from django.core.urlresolvers import reverse
+from django.utils.decorators import method_decorator
+from django.utils import timezone
 
 from djangotribune.settings_local import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
 from djangotribune.models import Channel, Message
@@ -61,6 +63,14 @@ class RemoteBaseMixin(ChannelAwareMixin):
     backend_type = "json" # can be (plain|json|xml|xml-crap)
     # ``clock`` and ``created`` fields are required if ``clock_indexation`` is actived
     remote_fields = ('clock', 'created', 'author__username', 'user_agent', 'raw')
+    # Get the timezone to enforce, default to the defined one in settings, don't play with this
+    current_tz = pytz.timezone(settings.TIME_ZONE)
+    
+    def force_datetime_tz(self, value):
+        """
+        Force timezone on datetime object
+        """
+        return value.astimezone(self.current_tz)
 
     def get_last_id(self):
         """Get the id from wich to start row fetching"""
@@ -165,7 +175,7 @@ class RemoteBaseMixin(ChannelAwareMixin):
         channel = self.get_channel()
         # Build the queryset with filtering, base order, limit, etc..
         q = self.get_backend_queryset(channel, last_id, direction, limit)
-        # Clock indexation
+        # Do we enforce the clock indexation or not ?
         if self.clock_indexation:
             q = self.clock_indexing(q)
         else:
@@ -199,15 +209,15 @@ class RemoteBaseMixin(ChannelAwareMixin):
         # Count all duplicate clock and store them in a registry
         duplicates = {}
         for item in backend:
-            this_date = item['created'].strftime('%Y%m%d%H%M%S')
+            this_date = self.force_datetime_tz(item['created']).strftime('%Y%m%d%H%M%S')
+
             if this_date in duplicates:
                 duplicates[this_date] += 1
             else:
                 duplicates[this_date] = 1
         # Apply the "real" indice to duplicates
         for item in backend:
-            this_date = item['created'].strftime('%Y%m%d%H%M%S')
-            this_clock = item['clock'].strftime('%H:%M:%S')
+            this_date = self.force_datetime_tz(item['created']).strftime('%Y%m%d%H%M%S')
             if this_date in duplicates:
                 item['clock_indice'] = ClockIndice(duplicates[this_date])
                 duplicates[this_date] = duplicates[this_date]-1
@@ -218,8 +228,33 @@ class RemoteBaseMixin(ChannelAwareMixin):
 
     def patch_row(self, row):
         """
-        For patching rows after just after the backend has been fetched
+        For patching rows just after the backend has been fetched
+        
+        The problem :
+        
+        Because datetime objects are timezone aware and not time objects, it causes 
+        trouble in backend because created (datetime) serve to generate to the id 
+        (time attribute in XML, created in others) then we use the clock (time) to 
+        display the clock. So the datetime is resolved with a different timezone 
+        from the clock, and it results to have a different hour in id and clock. 
+        This cause troubles for highlighted post, answer notification, and client 
+        parsing.
+        
+        The solution :
+        
+        * Force the configured timezone settings on used datetime from the database 
+            (else django try to resolve them from +0000)
+        * Will be nice in Message entries to save the clock extracted from the 
+            datetime to ensure they allways be exactly the same (actually they differs 
+            only on microseconds)
+        * The clock message stay to be used in specific queryset filters and instead 
+            we only use clock extraced from the localized datetime
         """
+        # Allways forcing timezone
+        row['created'] = self.force_datetime_tz(row['created'])
+        # Replace the saved clock with the one from created to assure they allways are identical
+        # TODO: so the clock model attribute should be totally removed ?
+        row['clock'] = row['created'].time()
         return row
     
     def patch_response(self, response):
@@ -239,6 +274,7 @@ class RemotePlainMixin(RemoteBaseMixin):
     default_row_direction = "asc"
 
     def patch_row(self, row):
+        row = super(RemotePlainMixin, self).patch_row(row)
         row['user_agent'] = row['user_agent'][:30]
         return row
     
@@ -307,7 +343,9 @@ class RemoteJsonMixin(RemoteBaseMixin):
         Add a *clockclass* suitable in ``class=""``, it's a combination of ``clock`` and 
         ``clock_indice`` (padded on two digits)
         """
-        row['clockclass'] = row['clock'].strftime("%H%M%S") + str(row.get('clock_indice', 1))
+        row = super(RemoteJsonMixin, self).patch_row(row)
+        clock = row['clock'].strftime("%H%M%S")
+        row['clockclass'] = clock + str(row.get('clock_indice', 1))
         row['clock_indice'] = row['clock_indice'].real
         # Add the owned mark if the message is authored by the current user
         row['owned'] = False
@@ -346,7 +384,7 @@ class RemoteXmlMixin(RemoteBaseMixin):
     def build_backend(self, messages):
         root = ET.Element("board")
         root.set('site', "http://{0}".format(Site.objects.get_current().domain))
-
+        
         for item in messages:
             message_item = ET.SubElement(root, "post")
             message_item.set('id', str(item['id']))
@@ -361,7 +399,7 @@ class RemoteXmlMixin(RemoteBaseMixin):
             
             content = ET.SubElement(message_item, "message")
             content.text = item['remote_render']
-
+        
         if self.prettify_backend:
             self._prettify(root)
         
