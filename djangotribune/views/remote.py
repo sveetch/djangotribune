@@ -232,28 +232,21 @@ class RemoteBaseMixin(ChannelAwareMixin):
         
         The problem :
         
-        Because datetime objects are timezone aware and not time objects, it causes 
-        trouble in backend because created (datetime) serve to generate to the id 
-        (time attribute in XML, created in others) then we use the clock (time) to 
-        display the clock. So the datetime is resolved with a different timezone 
-        from the clock, and it results to have a different hour in id and clock. 
-        This cause troubles for highlighted post, answer notification, and client 
-        parsing.
+        Because datetime objects are timezone aware and not time objects, it causes trouble in backend because created (datetime) is used to generate the id (time attribute in XML, created in others) then we use the clock (time) to display the clock. 
+        
+        So the datetime is resolved with a different timezone from the clock, and it results to have a different hour in id and clock. 
+        
+        This cause troubles for highlighted post, answer notification, and client parsing.
         
         The solution :
         
-        * Force the configured timezone settings on used datetime from the database 
-            (else django try to resolve them from +0000)
-        * Will be nice in Message entries to save the clock extracted from the 
-            datetime to ensure they allways be exactly the same (actually they differs 
-            only on microseconds)
-        * The clock message stay to be used in specific queryset filters and instead 
-            we only use clock extraced from the localized datetime
+        * Force the configured timezone settings on used datetime from the database (else django try to resolve them from +0000)
+        * Will be nice in Message entries to save the clock extracted from the datetime to ensure they allways be exactly the same (actually they differs only on microseconds)
+        * The clock message stay to be used in specific queryset filters and instead we only use clock extraced from the localized datetime
         """
         # Allways forcing timezone
         row['created'] = self.force_datetime_tz(row['created'])
         # Replace the saved clock with the one from created to assure they allways are identical
-        # TODO: so the clock model attribute should be totally removed ?
         row['clock'] = row['created'].time()
         return row
     

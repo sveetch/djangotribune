@@ -2,6 +2,9 @@
 """
 Forms
 """
+import datetime, pytz
+
+from django.conf import settings
 from django import forms
 from django.utils.html import escape as html_escape
 from django.utils.translation import ugettext as _
@@ -14,6 +17,7 @@ from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBU
 from djangotribune.models import Channel, Message, Url
 from djangotribune.parser import MessageParser
 from djangotribune.actions import TRIBUNE_COMMANDS
+from django.utils.timezone import utc
 
 class MessageForm(forms.Form):
     """
@@ -146,11 +150,15 @@ class MessageForm(forms.Form):
         new_message = None
         author = self.author
         rendered = self.parser.render(self.cleaned_data['content'])
+        created = datetime.datetime.utcnow().replace(tzinfo=utc)
         
         if not author.is_authenticated():
             author = None
         
         new_message = Message(
+            created=created,
+            # Enforce the same time that the one stored in created
+            clock=created.astimezone(pytz.timezone(settings.TIME_ZONE)).time(),
             channel=self.channel,
             author=author,
             user_agent=self.cleaned_data['user_agent'][:150],

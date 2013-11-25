@@ -197,11 +197,14 @@ class Message(models.Model):
     
     Message without Channel relation is on the default channel. The default channel is 
     not a Channel object, just the starting entry for the tribune.
+    
+    The clock attribute is filled from the created attribute, and its purpose is 
+    mainly for some specific queryset filters.
     """
     channel = models.ForeignKey(Channel, verbose_name=_('channel'), blank=True, null=True, default=None)
     author = models.ForeignKey(User, verbose_name=_('identified author'), blank=True, null=True, default=None)
-    created = models.DateTimeField(_('created date'), auto_now_add=True)
-    clock = models.TimeField(_('clock'), auto_now_add=True)
+    created = models.DateTimeField(_('created date'))#, auto_now_add=True)
+    clock = models.TimeField(_('clock'))#, auto_now_add=True)
     user_agent = models.CharField(_('User Agent'), max_length=150)
     ip = models.IPAddressField(_('IP adress'), blank=True, null=True)
     raw = models.TextField(_('raw'), blank=False)
