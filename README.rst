@@ -140,7 +140,7 @@ XML
 CRAP XML
     The XML version *extended* to suit to old tribune application client. Currently the 
     only diff is the XML structure wich is indented. Url path from the tribune is 
-    ``remote/xml/crap/`` for backend and ``post/xml/crap/`` for post view.
+    ``crap/remote.xml`` for backend and ``crap/post.xml`` for post view.
 JSON
     Very *declarative*, use the web message render, descendant ordered by default. Url 
     path from the tribune is ``remote/json/`` for backend and ``post/json/`` for post 
