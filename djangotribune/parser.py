@@ -294,10 +294,10 @@ class MessageParser(object):
                 # Horloge
                 elif chunk[0:7] == '<clock ':
                     slipped_web.write('<span class="pointer">')
-                    slipped_remote.write(chunk)
+                    #slipped_remote.write(chunk)
                 elif chunk == '</clock>':
                     slipped_web.write('</span>')
-                    slipped_remote.write(chunk)
+                    #slipped_remote.write(chunk)
                 # Smileys
                 elif chunk[0:7] == '<totoz ':
                     totoz = chunk[13:-4]
