@@ -64,11 +64,18 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
         return ''
     
     def form_valid(self, form):
+        """
+        16:07:58 sans last_id, on ne renvoie rien après un post
+        16:07:58 avec un last_id, tu ne renvoie que le backend avec la prise en compte du last_id
+        """
         super(PostRemoteBaseView, self).form_valid(form)
         
         messages = self.get_backend()
         backend = self.build_backend(messages)
         
+        return self.form_valid_response(messages, backend)
+
+    def form_valid_response(self, messages, backend):
         return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
 
     def form_invalid(self, form):
@@ -157,24 +164,36 @@ class PostBoardNoScriptView(PostBoardView):
 
 class PostRemotePlainView(RemotePlainMixin, PostRemoteBaseView):
     """
-    Remote PLAIN TEXT view
+    Remote post PLAIN TEXT view
     """
     pass
 
 class PostRemoteJsonView(RemoteJsonMixin, PostRemoteBaseView):
     """
-    Remote JSON view
+    Remote post JSON view
     """
     pass
 
 class PostRemoteXmlView(RemoteXmlMixin, PostRemoteBaseView):
     """
-    Remote JSON view
+    Remote post XML view
+    
+    Essentially for client application so the behaviour can be different from plain 
+    or JSON.
     """
-    pass
+    def form_valid_response(self, messages, backend):
+        """
+        If last_id is defined, use it to return the right backend, else if last_id is 
+        not defined, return just a simple plain/text response http200 but including the 
+        x-post-id in its header
+        """
+        if self.get_last_id():
+            return self.patch_response( http.HttpResponse(backend, mimetype=self.mimetype) )
+        else:
+            return self.patch_response( http.HttpResponse("", mimetype=RemotePlainMixin.mimetype) )
 
-class PostRemoteCrapXmlView(RemoteXmlMixin, PostRemoteBaseView):
+class PostRemoteCrapXmlView(PostRemoteXmlView):
     """
-    Remote XML view with indent (for some very old client application)
+    Remote post XML view with indent (for some very old client application)
     """
     prettify_backend = True
