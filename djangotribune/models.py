@@ -218,6 +218,14 @@ class Message(models.Model):
     def __unicode__(self):
         return self.raw
     
+    def get_created_date(self):
+        return self.created.date()
+    
+    def get_identity(self):
+        if not self.author:
+            return self.user_agent[:50]
+        return self.author
+    
     class Meta:
         verbose_name = _('message')
         verbose_name_plural = _('messages')

@@ -204,8 +204,16 @@ From remote client applications
 -------------------------------
 
 Remote clients can send a new message directly within a **POST** request and putting the 
-content in a ``content`` argument. Validated messages return the last updated backend (from 
-the *knowed* last id). Unvalid message return an Http error.
+content in a ``content`` argument. 
+
+* Validated messages from a request without ``last_id`` defined return an empty Http200 response 
+  in plain-text;
+* Validated messages from a request with ``last_id`` defined return the last updated backend (from 
+  the *knowed* last id);
+* Unvalid message return an Http error.
+
+All POST response for validated message return a **X-Post-Id** header that contain the ID of the 
+new message.
 
 `Url arguments`_ options can be given for the POST request and they will be used for the returned 
 backend in success case.
