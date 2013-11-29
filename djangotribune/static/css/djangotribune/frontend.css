@@ -2,38 +2,38 @@
 * Base styles for Django-tribune
 * Created by David THENON in May 2012
 */
-/* line 74, ../../../../compass/scss/frontend.scss */
+/* line 96, ../../../../compass/scss/frontend.scss */
 .djangotribune {
   margin: 0;
   padding: .1em;
   /* Highlights for clock events */
 }
-/* line 80, ../../../../compass/scss/frontend.scss */
+/* line 102, ../../../../compass/scss/frontend.scss */
 .djangotribune li.message.highlighted,
 .djangotribune span.clock.highlighted {
   background-color: #e2d5d4;
 }
-/* line 83, ../../../../compass/scss/frontend.scss */
+/* line 105, ../../../../compass/scss/frontend.scss */
 .djangotribune span.content span.pointer.highlighted {
   background-color: #e2d5d4;
   text-decoration: underline;
 }
-/* line 88, ../../../../compass/scss/frontend.scss */
+/* line 110, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages {
   margin: 0;
   padding: 0;
 }
-/* line 91, ../../../../compass/scss/frontend.scss */
+/* line 113, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message {
   margin: 3px 3px 3px 17px;
-  padding: 0 0 0 5px;
+  padding: 0;
   position: relative;
+  line-height: 1.4;
   list-style-type: none;
-  /* For owned reference clocks */
-  /* For message that answering to user's clock */
 }
 /* line 8, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.clock {
+  display: inline-block;
   padding: 3px;
   color: #FF0000;
   text-decoration: none;
@@ -41,62 +41,90 @@
   border-bottom: 1px solid transparent;
 }
 /* line 16, ../../../../compass/scss/frontend.scss */
+.djangotribune .messages .message span.identity {
+  display: inline-block;
+}
+/* line 18, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.identity.authenticated {
   padding-right: 3px;
   color: #008000;
   text-decoration: none;
 }
-/* line 21, ../../../../compass/scss/frontend.scss */
+/* line 23, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.identity.anonymous {
   padding-right: 3px;
   font-style: italic;
   color: #660000;
   text-decoration: none;
 }
-/* line 30, ../../../../compass/scss/frontend.scss */
+/* line 32, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message.me-action span.content {
+  display: inline-block;
   color: #008000;
   font-weight: bold;
 }
-/* line 36, ../../../../compass/scss/frontend.scss */
+/* line 39, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.pointer {
   color: blue;
 }
-/* line 39, ../../../../compass/scss/frontend.scss */
+/* line 42, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.marker {
   font-size: 14px;
+  line-height: 2;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;
 }
-/* line 45, ../../../../compass/scss/frontend.scss */
+/* line 49, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.marker i.icon-asterisk {
   color: #5da423;
 }
-/* line 49, ../../../../compass/scss/frontend.scss */
+/* line 53, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.marker i.icon-comment {
   color: #2ba6cb;
 }
-/* line 55, ../../../../compass/scss/frontend.scss */
+/* line 59, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message.owned span.clock {
   border-left: 3px solid #E0B080;
   border-bottom: 1px solid #E0B080;
 }
-/* line 63, ../../../../compass/scss/frontend.scss */
+/* line 67, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message.answer span.content span.pointer.pointer-answer {
   font-weight: bold;
 }
-/* line 68, ../../../../compass/scss/frontend.scss */
+/* line 74, ../../../../compass/scss/frontend.scss */
+.djangotribune .messages .message.usercast, .djangotribune .messages .message.musslecast {
+  border: 1px solid #D0D0D0;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #F0F0F0;
+}
+/* line 78, ../../../../compass/scss/frontend.scss */
+.djangotribune .messages .message.usercast:hover, .djangotribune .messages .message.musslecast:hover {
+  background-color: #e2d5d4;
+}
+/* line 82, ../../../../compass/scss/frontend.scss */
+.djangotribune .messages .message.musslecast {
+  background-image: linear-gradient(#f8f8f8, #e1e1e1);
+}
+/* line 84, ../../../../compass/scss/frontend.scss */
+.djangotribune .messages .message.musslecast:hover {
+  background-image: linear-gradient(#f8f8f8, #e2d5d4);
+}
+/* line 90, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message a.smiley {
   text-decoration: none;
 }
 
-/* line 102, ../../../../compass/scss/frontend.scss */
+/* line 125, ../../../../compass/scss/frontend.scss */
 .smiley_container {
   z-index: 8000;
 }
 
-/* line 107, ../../../../compass/scss/frontend.scss */
+/* line 130, ../../../../compass/scss/frontend.scss */
 .absolute-message-container {
   position: fixed;
   z-index: 9000;
@@ -109,10 +137,8 @@
   -webkit-box-shadow: 0px 0px 5px #333333;
   -moz-box-shadow: 0px 0px 5px #333333;
   box-shadow: 0px 0px 5px #333333;
-  /* For owned reference clocks */
-  /* For message that answering to user's clock */
 }
-/* line 118, ../../../../compass/scss/frontend.scss */
+/* line 141, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.at-top {
   border-top: 0;
   -moz-border-radius-bottomleft: 5px;
@@ -122,7 +148,7 @@
   -webkit-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-/* line 122, ../../../../compass/scss/frontend.scss */
+/* line 145, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.at-bottom {
   border-bottom: 0;
   -moz-border-radius-topleft: 5px;
@@ -134,6 +160,7 @@
 }
 /* line 8, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.clock {
+  display: inline-block;
   padding: 3px;
   color: #FF0000;
   text-decoration: none;
@@ -141,75 +168,103 @@
   border-bottom: 1px solid transparent;
 }
 /* line 16, ../../../../compass/scss/frontend.scss */
+.absolute-message-container span.identity {
+  display: inline-block;
+}
+/* line 18, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.identity.authenticated {
   padding-right: 3px;
   color: #008000;
   text-decoration: none;
 }
-/* line 21, ../../../../compass/scss/frontend.scss */
+/* line 23, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.identity.anonymous {
   padding-right: 3px;
   font-style: italic;
   color: #660000;
   text-decoration: none;
 }
-/* line 30, ../../../../compass/scss/frontend.scss */
+/* line 32, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.me-action span.content {
+  display: inline-block;
   color: #008000;
   font-weight: bold;
 }
-/* line 36, ../../../../compass/scss/frontend.scss */
+/* line 39, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.pointer {
   color: blue;
 }
-/* line 39, ../../../../compass/scss/frontend.scss */
+/* line 42, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.marker {
   font-size: 14px;
+  line-height: 2;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;
 }
-/* line 45, ../../../../compass/scss/frontend.scss */
+/* line 49, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.marker i.icon-asterisk {
   color: #5da423;
 }
-/* line 49, ../../../../compass/scss/frontend.scss */
+/* line 53, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.marker i.icon-comment {
   color: #2ba6cb;
 }
-/* line 55, ../../../../compass/scss/frontend.scss */
+/* line 59, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.owned span.clock {
   border-left: 3px solid #E0B080;
   border-bottom: 1px solid #E0B080;
 }
-/* line 63, ../../../../compass/scss/frontend.scss */
+/* line 67, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.answer span.content span.pointer.pointer-answer {
   font-weight: bold;
 }
-/* line 68, ../../../../compass/scss/frontend.scss */
+/* line 74, ../../../../compass/scss/frontend.scss */
+.absolute-message-container.usercast, .absolute-message-container.musslecast {
+  border: 1px solid #D0D0D0;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #F0F0F0;
+}
+/* line 78, ../../../../compass/scss/frontend.scss */
+.absolute-message-container.usercast:hover, .absolute-message-container.musslecast:hover {
+  background-color: #e2d5d4;
+}
+/* line 82, ../../../../compass/scss/frontend.scss */
+.absolute-message-container.musslecast {
+  background-image: linear-gradient(#f8f8f8, #e1e1e1);
+}
+/* line 84, ../../../../compass/scss/frontend.scss */
+.absolute-message-container.musslecast:hover {
+  background-image: linear-gradient(#f8f8f8, #e2d5d4);
+}
+/* line 90, ../../../../compass/scss/frontend.scss */
 .absolute-message-container a.smiley {
   text-decoration: none;
 }
-/* line 129, ../../../../compass/scss/frontend.scss */
+/* line 152, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.marker {
   position: static;
   left: auto;
 }
-/* line 134, ../../../../compass/scss/frontend.scss */
+/* line 157, ../../../../compass/scss/frontend.scss */
 .absolute-message-container ul {
   margin: 0;
   list-style-type: none;
 }
 
-/* line 141, ../../../../compass/scss/frontend.scss */
+/* line 164, ../../../../compass/scss/frontend.scss */
 form {
   margin-top: 15px;
 }
-/* line 144, ../../../../compass/scss/frontend.scss */
+/* line 167, ../../../../compass/scss/frontend.scss */
 form label[for='id_content'] {
   display: none;
 }
-/* line 148, ../../../../compass/scss/frontend.scss */
+/* line 171, ../../../../compass/scss/frontend.scss */
 form .refresh_active {
   margin: 0;
   padding: 0;
@@ -222,13 +277,13 @@ form .refresh_active {
   line-height: 14px;
   z-index: 2000;
 }
-/* line 160, ../../../../compass/scss/frontend.scss */
+/* line 183, ../../../../compass/scss/frontend.scss */
 form .refresh_active input {
   margin: 0;
   padding: 0;
   font-size: 14px;
 }
-/* line 167, ../../../../compass/scss/frontend.scss */
+/* line 190, ../../../../compass/scss/frontend.scss */
 form #div_id_content {
   padding-left: 25px;
   position: relative;
@@ -244,35 +299,35 @@ AAAQABAAAAVfICCOZGmeqEgUxUAIpkA0AMKyxkEiSZEIsJqhYAg+boUFSTAkiBiNHks3sg1ILAfBiS10
             line-height: 33px;
         }*/
 }
-/* line 182, ../../../../compass/scss/frontend.scss */
+/* line 205, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field {
   padding-right: 25px;
   position: relative;
   transition: none 0s ease 0s;
 }
-/* line 187, ../../../../compass/scss/frontend.scss */
+/* line 210, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.disabled {
   border: 1px solid #606060;
   color: #606060;
   background-color: #C0C0C0;
 }
-/* line 192, ../../../../compass/scss/frontend.scss */
+/* line 215, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.error {
   border: 1px solid #ff0000;
 }
-/* line 195, ../../../../compass/scss/frontend.scss */
+/* line 218, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.backend-refresh-spinner {
   background-image: url("data:image/gif;base64,R0lGODlhEAAQAPQAAP///wAAAPj4+Dg4OISEhAYGBiYmJtbW1qioqBYWFnZ2dmZmZuTk5JiYmMbGxkhISFZWVgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAFUCAgjmRpnqUwFGwhKoRgqq2YFMaRGjWA8AbZiIBbjQQ8AmmFUJEQhQGJhaKOrCksgEla+KIkYvC6SJKQOISoNSYdeIk1ayA8ExTyeR3F749CACH5BAkKAAAALAAAAAAQABAAAAVoICCKR9KMaCoaxeCoqEAkRX3AwMHWxQIIjJSAZWgUEgzBwCBAEQpMwIDwY1FHgwJCtOW2UDWYIDyqNVVkUbYr6CK+o2eUMKgWrqKhj0FrEM8jQQALPFA3MAc8CQSAMA5ZBjgqDQmHIyEAIfkECQoAAAAsAAAAABAAEAAABWAgII4j85Ao2hRIKgrEUBQJLaSHMe8zgQo6Q8sxS7RIhILhBkgumCTZsXkACBC+0cwF2GoLLoFXREDcDlkAojBICRaFLDCOQtQKjmsQSubtDFU/NXcDBHwkaw1cKQ8MiyEAIfkECQoAAAAsAAAAABAAEAAABVIgII5kaZ6AIJQCMRTFQKiDQx4GrBfGa4uCnAEhQuRgPwCBtwK+kCNFgjh6QlFYgGO7baJ2CxIioSDpwqNggWCGDVVGphly3BkOpXDrKfNm/4AhACH5BAkKAAAALAAAAAAQABAAAAVgICCOZGmeqEAMRTEQwskYbV0Yx7kYSIzQhtgoBxCKBDQCIOcoLBimRiFhSABYU5gIgW01pLUBYkRItAYAqrlhYiwKjiWAcDMWY8QjsCf4DewiBzQ2N1AmKlgvgCiMjSQhACH 5BAkKAAAALAAAAAAQABAAAAVfICCOZGmeqEgUxUAIpkA0AMKyxkEiSZEIsJqhYAg+boUFSTAkiBiNHks3sg1ILAfBiS10gyqCg0UaFBCkwy3RYKiIYMAC+RAxiQgYsJdAjw5DN2gILzEEZgVcKYuMJiEAOwAAAAAAAAAAAA%3D%3D");
   background-position: center right;
   background-repeat: no-repeat;
 }
-/* line 201, ../../../../compass/scss/frontend.scss */
+/* line 224, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.backend-refresh-error {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHpJREFUeNpiYBjMwACI30OxATkG7Afi/1C8n1TNCUiaYTiBWM0CUGeDNDlA8X+omAAxBvQj2QoDMH4/MQH3H48B/wkF6H4iDNhPSsBhMwBrgCIHHDEYI0D7cSgsAOIAHHLgAGVEciI2UIhkATYA00+S85G9MQgAQIABAJGFUjKtrEJQAAAAAElFTkSuQmCC");
   background-position: center right;
   background-repeat: no-repeat;
 }
-/* line 209, ../../../../compass/scss/frontend.scss */
+/* line 232, ../../../../compass/scss/frontend.scss */
 form .within-input {
   position: absolute;
   top: 10px;
@@ -282,50 +337,50 @@ form .within-input {
 /*
  * Page list for url archives list
  */
-/* line 222, ../../../../compass/scss/frontend.scss */
+/* line 245, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_pattern label,
 .djangotribune-url-archives #div_id_pattern .errorField {
   display: none;
 }
-/* line 227, ../../../../compass/scss/frontend.scss */
+/* line 250, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters label {
   font-weight: bold;
 }
-/* line 230, ../../../../compass/scss/frontend.scss */
+/* line 253, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters label .asteriskField {
   display: none;
 }
-/* line 234, ../../../../compass/scss/frontend.scss */
+/* line 257, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters .errorField {
   display: none;
 }
-/* line 237, ../../../../compass/scss/frontend.scss */
+/* line 260, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters .button {
   border-right: 0;
 }
-/* line 240, ../../../../compass/scss/frontend.scss */
+/* line 263, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters li {
   text-align: left;
 }
-/* line 245, ../../../../compass/scss/frontend.scss */
+/* line 268, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls {
   list-style-type: none;
 }
-/* line 249, ../../../../compass/scss/frontend.scss */
+/* line 272, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li h3 {
   font-size: 20px;
 }
-/* line 253, ../../../../compass/scss/frontend.scss */
+/* line 276, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message {
   margin-bottom: 5px;
   background-color: #f0f0f0;
   padding: 10px;
+  line-height: 1.3;
   border: 1px solid #DDDDDD;
-  /* For owned reference clocks */
-  /* For message that answering to user's clock */
 }
 /* line 8, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.clock {
+  display: inline-block;
   padding: 3px;
   color: #FF0000;
   text-decoration: none;
@@ -333,61 +388,89 @@ form .within-input {
   border-bottom: 1px solid transparent;
 }
 /* line 16, ../../../../compass/scss/frontend.scss */
+.djangotribune-url-archives .urls li .message span.identity {
+  display: inline-block;
+}
+/* line 18, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.identity.authenticated {
   padding-right: 3px;
   color: #008000;
   text-decoration: none;
 }
-/* line 21, ../../../../compass/scss/frontend.scss */
+/* line 23, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.identity.anonymous {
   padding-right: 3px;
   font-style: italic;
   color: #660000;
   text-decoration: none;
 }
-/* line 30, ../../../../compass/scss/frontend.scss */
+/* line 32, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message.me-action span.content {
+  display: inline-block;
   color: #008000;
   font-weight: bold;
 }
-/* line 36, ../../../../compass/scss/frontend.scss */
+/* line 39, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.pointer {
   color: blue;
 }
-/* line 39, ../../../../compass/scss/frontend.scss */
+/* line 42, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.marker {
   font-size: 14px;
+  line-height: 2;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;
 }
-/* line 45, ../../../../compass/scss/frontend.scss */
+/* line 49, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.marker i.icon-asterisk {
   color: #5da423;
 }
-/* line 49, ../../../../compass/scss/frontend.scss */
+/* line 53, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.marker i.icon-comment {
   color: #2ba6cb;
 }
-/* line 55, ../../../../compass/scss/frontend.scss */
+/* line 59, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message.owned span.clock {
   border-left: 3px solid #E0B080;
   border-bottom: 1px solid #E0B080;
 }
-/* line 63, ../../../../compass/scss/frontend.scss */
+/* line 67, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message.answer span.content span.pointer.pointer-answer {
   font-weight: bold;
 }
-/* line 68, ../../../../compass/scss/frontend.scss */
+/* line 74, ../../../../compass/scss/frontend.scss */
+.djangotribune-url-archives .urls li .message.usercast, .djangotribune-url-archives .urls li .message.musslecast {
+  border: 1px solid #D0D0D0;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  background-color: #F0F0F0;
+}
+/* line 78, ../../../../compass/scss/frontend.scss */
+.djangotribune-url-archives .urls li .message.usercast:hover, .djangotribune-url-archives .urls li .message.musslecast:hover {
+  background-color: #e2d5d4;
+}
+/* line 82, ../../../../compass/scss/frontend.scss */
+.djangotribune-url-archives .urls li .message.musslecast {
+  background-image: linear-gradient(#f8f8f8, #e1e1e1);
+}
+/* line 84, ../../../../compass/scss/frontend.scss */
+.djangotribune-url-archives .urls li .message.musslecast:hover {
+  background-image: linear-gradient(#f8f8f8, #e2d5d4);
+}
+/* line 90, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message a.smiley {
   text-decoration: none;
 }
-/* line 261, ../../../../compass/scss/frontend.scss */
+/* line 285, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .credits {
   font-size: 14px;
   text-align: right;
 }
-/* line 266, ../../../../compass/scss/frontend.scss */
+/* line 290, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li + li {
   border-top: 1px solid #000000;
 }
