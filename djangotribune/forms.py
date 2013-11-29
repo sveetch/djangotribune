@@ -12,7 +12,7 @@ from django.utils.translation import ugettext as _
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Layout, Row, Column, Submit, Field
 
-from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN
+from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN, TRIBUNE_SAVE_URLS_BY_POST
 from djangotribune.models import Channel, Message, Url
 from djangotribune.parser import MessageParser
 from djangotribune.actions import TRIBUNE_COMMANDS
@@ -212,14 +212,17 @@ class MessageForm(forms.Form):
         """
         Save URLs finded in message content
         
-        TODO: Check db for duplicate
+        Check for unique url that did not allready exists in archives
         """
-        SAVE_URLS_BY_POST = 5 # limit
-        l = []
-        for coming_url in urls[:SAVE_URLS_BY_POST]:
-            if coming_url not in l:
-                new_url = message_instance.url_set.create(
-                    author = message_instance.author,
-                    url = coming_url
-                )
-                l.append(coming_url)
+        # Unique urls limited on X url
+        urls = set(urls[:TRIBUNE_SAVE_URLS_BY_POST])
+        # Check those that have allready be saved
+        allready_exists = Url.objects.filter(url__in=list(urls)).values_list('url', flat=True).distinct()
+        # Filter urls to have only those are not saved yet
+        urls = [item for item in urls if item not in allready_exists]
+        # Save them
+        for coming_url in urls:
+            new_url = message_instance.url_set.create(
+                author = message_instance.author,
+                url = coming_url
+            )

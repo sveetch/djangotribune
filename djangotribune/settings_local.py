@@ -33,6 +33,9 @@ TRIBUNE_SMILEYS_URL = getattr(settings, 'TRIBUNE_SMILEYS_URL', 'http://sfw.totoz
 # Name for session part containing the BaK
 TRIBUNE_BAK_SESSION_NAME = getattr(settings, 'TRIBUNE_BAK_SESSION_NAME', 'djangotribune_bak')
 
+# How many urls maximum will be saved in a message
+TRIBUNE_SAVE_URLS_BY_POST = getattr(settings, 'TRIBUNE_SAVE_URLS_BY_POST', 5)
+
 # Titles randomly displayed on tribune board (html and plain/text versions)
 TRIBUNE_TITLES = getattr(settings, 'TRIBUNE_TITLES_AVAILABLE', (
     u'Avengers Mansion', # Marvel Comics
