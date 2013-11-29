@@ -75,12 +75,14 @@
         border: 1px solid #D0D0D0;
         @include border-radius(5px);
         background-color: #F0F0F0;
+        &.highlighted,
         &:hover{
             background-color: #e2d5d4;
         }
     }
     &.musslecast{
         background-image: linear-gradient(#F8F8F8, #E1E1E1);
+        &.highlighted,
         &:hover{
             background-image: linear-gradient(#F8F8F8, #e2d5d4);
         }
