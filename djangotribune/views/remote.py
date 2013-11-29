@@ -390,13 +390,25 @@ class RemoteXmlMixin(RemoteBaseMixin):
             if item['author__username']:
                 username.text = item['author__username']
             
-            content = ET.SubElement(message_item, "message")
-            content.text = item['remote_render']
+            self.get_message_node(message_item, item['remote_render'])
         
         if self.prettify_backend:
             self._prettify(root)
         
         return ET.tostring(root, 'UTF-8')
+
+    def get_message_node(self, parent_node, content):
+        """
+        Put content in <message/> node and give to eat to ET, this way all 
+        content tags are not encoded
+        """
+        # Old behaviour with tag encoded
+        #content = ET.SubElement(message_item, "message")
+        #content.text = item['remote_render']
+        node_str = u"<message>{content}</message>".format(content=content)
+        parent_node.append(ET.fromstring(node_str.encode('utf-8')))
+        
+        return parent_node
 
     def _prettify(self, elem, level=0):
         """Prettify an ElementTree with indent"""
