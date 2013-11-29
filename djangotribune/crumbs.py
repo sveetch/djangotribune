@@ -10,4 +10,5 @@ site.update({
     'tribune-channel-board': "{{ tribune_channel.title }}",
     'tribune-board-noscript': ugettext_lazy('No script'),
     'tribune-readme': ugettext_lazy('Readme'),
+    'tribune-url-archives': ugettext_lazy('Url archives'),
 })

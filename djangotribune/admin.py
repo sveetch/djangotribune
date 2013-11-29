@@ -9,6 +9,15 @@ class ChannelAdmin(admin.ModelAdmin):
     list_display = ('slug', 'title', 'created')
     ordering = ('-created',)
 
+class UserPreferencesAdmin(admin.ModelAdmin):
+    list_display = ('owner', 'created')
+    list_filter = ('created',)
+
+class FilterEntryAdmin(admin.ModelAdmin):
+    list_display = ('author', 'target', 'kind', 'value')
+    list_filter = ('target', 'kind')
+    ordering = ('author', 'target', 'kind')
+
 class MessageAdmin(admin.ModelAdmin):
     list_display = ('channel', 'get_created_date', 'clock', 'get_identity', 'raw', 'ip')
     list_display_links = ('get_created_date', 'clock')
@@ -16,19 +25,10 @@ class MessageAdmin(admin.ModelAdmin):
     search_fields = ['raw','author__username', 'user_agent','ip']
     ordering = ('-created',)
 
-class FilterEntryAdmin(admin.ModelAdmin):
-    list_display = ('author', 'target', 'kind', 'value')
-    list_filter = ('target', 'kind')
-    ordering = ('author', 'target', 'kind')
-
 class UrlAdmin(admin.ModelAdmin):
-    list_display = ('url', 'created')
+    list_display = ('created', 'url')
     list_filter = ('created',)
     raw_id_fields = ("message",)
-
-class UserPreferencesAdmin(admin.ModelAdmin):
-    list_display = ('owner', 'created')
-    list_filter = ('created',)
 
 admin.site.register(Channel, ChannelAdmin)
 admin.site.register(UserPreferences, UserPreferencesAdmin)

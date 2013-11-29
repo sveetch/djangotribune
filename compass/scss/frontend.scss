@@ -4,9 +4,7 @@
 */
 @import "compass/css3";
 
-// Common message display properties for messages containers
-.djangotribune .messages .message,
-.absolute-message-container{
+@mixin message-components(){
     span.clock{
         padding: 3px;
         color: #FF0000;
@@ -95,6 +93,8 @@
             padding: 0 0 0 5px;
             position: relative;
             list-style-type: none;
+            
+            @include message-components;
         }
     }
 }
@@ -123,6 +123,8 @@
         border-bottom: 0;
         @include border-top-radius(5px);
     }
+    
+    @include message-components;
     
     span.marker{
         position: static;
@@ -208,5 +210,62 @@ AAAQABAAAAVfICCOZGmeqEgUxUAIpkA0AMKyxkEiSZEIsJqhYAg+boUFSTAkiBiNHks3sg1ILAfBiS10
         position: absolute;
         top: 10px;
         font-size: 14px;
+    }
+}
+/*
+ * Page list for url archives list
+ */
+.djangotribune-url-archives{
+    // Search box fields
+    #div_id_pattern{
+        label,
+        .errorField{
+            display: none;
+        }
+    }
+    #div_id_filters{
+        label{
+            font-weight: bold;
+            
+            .asteriskField{
+                display: none;
+            }
+        }
+        .errorField{
+            display: none;
+        }
+        .button{
+            border-right: 0;
+        }
+        li {
+            text-align: left;
+        }
+    }
+    // Url list
+    .urls{
+        list-style-type: none;
+        
+        li{
+            h3{
+                font-size: 20px;
+            }
+            
+            .message{
+                margin-bottom: 5px;
+                background-color: #f0f0f0;
+                padding: 10px;
+                border: 1px solid #DDDDDD;
+                @include message-components;
+            }
+            
+            .credits{
+                font-size: 14px;
+                text-align: right;
+            }
+            
+            &+li{
+                border-top: 1px solid #000000;
+            }
+        }
     }
 }

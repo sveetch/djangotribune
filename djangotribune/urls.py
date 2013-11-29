@@ -12,6 +12,7 @@ from djangotribune.views.post import (PostBoardView, PostBoardNoScriptView,
                                         PostRemoteXmlView, PostRemoteCrapXmlView)
 from djangotribune.views.clock import ClockJsonView
 from djangotribune.views.discovery import ConfigDiscoveryView
+from djangotribune.views.archives import UrlArchivesView
 
 urlpatterns = patterns('',
     url(r'^$', PostBoardView.as_view(), name='tribune-board'),
@@ -36,6 +37,9 @@ urlpatterns = patterns('',
     url(r'^remote/json/$', RemoteJsonView.as_view(), name='tribune-remote-json'),
     url(r'^remote/xml/$', RemoteXmlView.as_view(), name='tribune-remote-xml'),
     url(r'^crap/remote.xml$', RemoteCrapXmlView.as_view(), name='tribune-remote-xml-crap'),
+    
+    # Message posting views
+    url(r'^urls/$', UrlArchivesView.as_view(), name='tribune-url-archives'),
     
     # Duplicated previous urls for channel tribunes
     url(r'^(?P<channel_slug>[-\w]+)/$', PostBoardView.as_view(), name='tribune-channel-board'),

@@ -2,16 +2,15 @@
 """
 Forms
 """
-import datetime, pytz
+import datetime, operator, pytz
 
 from django.conf import settings
 from django import forms
 from django.utils.html import escape as html_escape
 from django.utils.translation import ugettext as _
-from django.utils.translation import ugettext
 
 from crispy_forms.helper import FormHelper
-from crispy_forms_foundation.layout import Layout, Row, Column, Submit
+from crispy_forms_foundation.layout import Layout, Row, Column, Submit, Field
 
 from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN
 from djangotribune.models import Channel, Message, Url
@@ -19,11 +18,55 @@ from djangotribune.parser import MessageParser
 from djangotribune.actions import TRIBUNE_COMMANDS
 from django.utils.timezone import utc
 
+URLFILTERS_CHOICES = (
+    ('url__contains', _('Url')),
+    ('author__username__contains', _('Author')),
+    ('message__raw__contains', _('Message')),
+)
+
+class UrlSearchForm(forms.Form):
+    """
+    Url archive search form
+    """
+    pattern = forms.CharField(label=_("Pattern"), max_length=200, required=True, widget=forms.TextInput(attrs={'placeholder': _("Search")}))
+    filters = forms.MultipleChoiceField(label=_("Filters"), choices=URLFILTERS_CHOICES, required=True, widget=forms.CheckboxSelectMultiple)
+    
+    def __init__(self, *args, **kwargs):
+        self.helper = FormHelper()
+        self.helper.form_action = '.'
+        self.helper.layout = Layout(
+            Row(
+                Column(
+                    'pattern',
+                    css_class='eight mobile-two input-column'
+                ),
+                Column(
+                    Field('filters', css_class='no-reset-click', wrapper_class="button expand dropdown postfix"),
+                    css_class='three mobile-one input-column'
+                ),
+                Column(
+                    Submit('post_submit', _('Ok'), css_class='tiny expand postfix'),
+                    css_class='one mobile-one'
+                ),
+                css_class='collapse inline-form'
+            ),
+        )
+        
+        super(UrlSearchForm, self).__init__(*args, **kwargs)
+    
+    def save(self):
+        """
+        Return formatted search filters 
+        """
+        if hasattr(self, 'cleaned_data') and self.cleaned_data['pattern']:
+            return [(item, self.cleaned_data['pattern']) for item in self.cleaned_data['filters']]
+        return []
+
 class MessageForm(forms.Form):
     """
     Message form
     """
-    content = forms.CharField(label=ugettext("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=forms.TextInput(attrs={
+    content = forms.CharField(label=_("Your message"), max_length=TRIBUNE_MESSAGES_POST_MAX_LENGTH, required=True, widget=forms.TextInput(attrs={
         'class':'content_field',
         'size':'50',
         'accesskey':'T'
@@ -38,16 +81,6 @@ class MessageForm(forms.Form):
         self.parser = None
         self.command = None
         
-        """
-        <div class="row collapse">
-            <div class="ten mobile-three columns">
-                FIELD
-            </div>
-            <div class="two mobile-one columns">
-                SUBMIT
-            </div>
-        </div>
-        """
         self.helper = FormHelper()
         self.helper.form_action = '.'
         self.helper.layout = Layout(
@@ -57,7 +90,7 @@ class MessageForm(forms.Form):
                     css_class='ten mobile-three input-column'
                 ),
                 Column(
-                    Submit('post_submit', ugettext('Ok'), css_class='expand postfix'),
+                    Submit('post_submit', _('Ok'), css_class='expand postfix'),
                     css_class='two mobile-one'
                 ),
                 css_class='collapse'
@@ -113,7 +146,7 @@ class MessageForm(forms.Form):
         if not self.command or self.command.need_to_push_data:
             self.parser = MessageParser()
             if not self.parser.validate(content):
-                raise forms.ValidationError(ugettext('Unvalid post content'))
+                raise forms.ValidationError(_('Unvalid post content'))
         
         return content
     
@@ -176,7 +209,11 @@ class MessageForm(forms.Form):
         return new_message
 
     def _save_urls(self, message_instance, urls):
-        """Save URLs finded in message content"""
+        """
+        Save URLs finded in message content
+        
+        TODO: Check db for duplicate
+        """
         SAVE_URLS_BY_POST = 5 # limit
         l = []
         for coming_url in urls[:SAVE_URLS_BY_POST]:

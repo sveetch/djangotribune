@@ -216,7 +216,7 @@ class Message(models.Model):
         return "<Message: {id}>".format(id=self.id)
     
     def __unicode__(self):
-        return self.raw
+        return "{date} by {author}".format(date=self.created, author=self.get_identity())
     
     def get_created_date(self):
         return self.created.date()

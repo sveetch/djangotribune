@@ -3,6 +3,7 @@
 .. _texttable: http://pypi.python.org/pypi/texttable/0.8.1
 .. _crispy-forms-foundation: https://github.com/sveetch/crispy-forms-foundation
 .. _South: http://south.readthedocs.org/en/latest/
+.. _Foundation3: http://foundation.zurb.com/docs/v/3.2.5/
 
 Introduction
 ============
@@ -55,6 +56,7 @@ Planned
   * **Done** Owner marks;
   * **Done** Error notices;
   * **Done** Rollover display for clocks pointing message out of the screen;
+  * **Done** Url archives view;
   * Editable settings;
 
 * **Done** Remote views (JSON and maybe XML too) to get messages targeted on a given clock;
@@ -106,6 +108,46 @@ Project templates
 A simple note about templates, djangotribune templates use a base template ``djangotribune/base.html`` to include some common HTML to fit contents in your layout, and all other templates extend it to insert their content.
 
 This base template is made to extend a ``skeleton.html`` template that should be the root base of your project layout. Therefore if you don't use a base template or use it with another name, just override ``djangotribune/base.html`` in project templates to fit it right within your project.
+
+Also, note that templates have been writed for `Foundation3`_ so if you don't use it, it should not really trouble you as this is only HTML, you can style it yourself or at least change the templates to accomodate to your needed HTML structure. And if you want to use `Foundation3`_, just add its required assets to your project, but for the url archives form you will have to patch some Javascript because of an added feature to use input checkbox inside button dropdown.
+
+Here is a patch file for the Javascript file for buttons : ::
+
+    diff --git a/project/webapp_statics/js/foundation/jquery.foundation.buttons.js b/project/webapp_statics/js/foundation/jquery.foundation.buttons.js
+    --- a/project/webapp_statics/js/foundation/jquery.foundation.buttons.js
+    +++ b/project/webapp_statics/js/foundation/jquery.foundation.buttons.js
+    @@ -33,6 +33,12 @@
+            button = $el.closest('.button.dropdown'),
+            dropdown = $('> ul', button);
+            
+    +        // let ".no-reset-click" elements to act by default to prevent dropdown closing
+    +        if($(e.target).hasClass('no-reset-click')){
+    +          e.stopPropagation();
+    +          return true;
+    +        }
+    + 
+
+And another patch file for your ``app.js`` : ::
+
+    diff --git a/project/webapp_statics/js/foundation/app.js b/project/webapp_statics/js/foundation/app.js
+    --- a/project/webapp_statics/js/foundation/app.js
+    +++ b/project/webapp_statics/js/foundation/app.js
+    @@ -11,6 +11,15 @@ function column_equalizer(){
+    }
+    
+    $(document).ready(function() {
+    +    // Automatically add "no-reset-click" class on direct input parent label to 
+    +    // follow their natural behavior (to propagate the click to their input child, 
+    +    // usually only for radio or checkbox)
+    +    $("form .button.dropdown .no-reset-click").each(function(index) {
+    +        if($(this).parent().prop('nodeName')=='LABEL'){
+    +            $(this).parent().addClass('no-reset-click');
+    +        }
+    +    });
+    +    
+        //$.fn.foundationAlerts           ? $doc.foundationAlerts() : null;
+        $.fn.foundationButtons          ? $doc.foundationButtons() : null;
+        //$.fn.foundationAccordion        ? $doc.foundationAccordion() : null;
 
 Updates
 *******

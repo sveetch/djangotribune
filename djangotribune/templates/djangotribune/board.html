@@ -1,5 +1,5 @@
 {% extends "djangotribune/base.html" %}
-{% load i18n crispy_forms_tags tribune %}
+{% load i18n crispy_forms_tags tribune %}{% load url from future %}
 
 {% block head_title %}{{ board_title }}{% endblock %}
 {% block html_more_links %}{{ block.super }}
@@ -27,6 +27,10 @@
 
 {% block content_part %}
 <h2>{{ board_title }}</h2>
+
+<p>
+    <a href="{% url 'tribune-url-archives' %}" class="button round tiny secondary">{% trans 'Url archives' %}</a>
+</p>
 
 <div class="djangotribune">
     <ul class="messages">

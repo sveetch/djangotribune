@@ -18,7 +18,6 @@ class DummySourceParser(object):
         return "<DummySourceParser>"
 
 try:
-    # TODO: Do not rely anymore on sveedocuments, but use rstview instead
     from rstview.parser import SourceParser
 except ImportError:
     class SourceParser(DummySourceParser): pass
@@ -27,7 +26,7 @@ class ConditionalParserView(TemplateView):
     """
     Page with conditional render and mimetype
     
-    Si le parser de Sveetchies-documents est disponible, renvoi une réponse HTML avec 
+    Si le parser de rstview est disponible, renvoi une réponse HTML avec 
     le contenu transformé par docutils.
     
     Sinon renvoi une réponse plain-text avec directement le contenu du document 
