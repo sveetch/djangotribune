@@ -33,6 +33,9 @@ TRIBUNE_SMILEYS_URL = getattr(settings, 'TRIBUNE_SMILEYS_URL', 'http://sfw.totoz
 # Name for session part containing the BaK
 TRIBUNE_BAK_SESSION_NAME = getattr(settings, 'TRIBUNE_BAK_SESSION_NAME', 'djangotribune_bak')
 
+# Maximum number of user message id saved in session
+TRIBUNE_SESSION_MAX_OWNED_IDS = getattr(settings, 'TRIBUNE_SESSION_MAX_OWNED_IDS', 50)
+
 # How many urls maximum will be saved in a message
 TRIBUNE_SAVE_URLS_BY_POST = getattr(settings, 'TRIBUNE_SAVE_URLS_BY_POST', 5)
 

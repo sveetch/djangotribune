@@ -394,7 +394,6 @@ jQuery.fn.extend({
         update : function(event, data, backend, last_id, options) {
             var element,
                 element_ts,
-                owned,
                 $this = $(event.target),
                 current_message_length = $(".djangotribune_scroll li", $this).length;
             
@@ -428,7 +427,7 @@ jQuery.fn.extend({
                 row.clockclass = clock_store.clock_to_cssname(element_ts.clock);
                 
                 // Compute some additionals row data
-                row = CoreTools.compute_extra_row_datas(row, owned);
+                row = CoreTools.compute_extra_row_datas(row);
                 // Compile template, add its result to html and attach it his data
                 element = $( templates.message_row(row) ).appendTo( $(".djangotribune_scroll ul", $this) ).data("djangotribune_row", row);
                 // Bind all related message events
@@ -683,7 +682,7 @@ jQuery.fn.extend({
                             if(backend.length==0) return false;
                             
                             $.each(backend, function(index, row) {
-                                row = CoreTools.compute_extra_row_datas(row, false);
+                                row = CoreTools.compute_extra_row_datas(row);
                                 html += templates.message_row(row, true);
                             });
                             events.display_message_popin(djangotribune_data, $this_pointer, "<ul>"+html+"</ul>");
@@ -697,17 +696,15 @@ jQuery.fn.extend({
                 
             });
             
-            // Mark answers to current user messages
+            // Mark answers for current user
             // TODO: this use "simple" clocks as references without checking, so this 
             //       will also mark same clock from another day if they are somes in 
             //       history
-            if (djangotribune_data.settings.authenticated_username){
-                $("span.content span.pointer", message_element).each( function(i){
-                    if( clock_store.is_user_clock(djangotribune_data.key, $(this).text()) ) {
-                        $(this).addClass("pointer-answer").parent().parent().addClass("answer").find('span.marker').html("<i class=\"icon-comment\"></i>");
-                    }
-                });
-            }
+            $("span.content span.pointer", message_element).each( function(i){
+                if( clock_store.is_user_clock(djangotribune_data.key, $(this).text()) ) {
+                    $(this).addClass("pointer-answer").parent().parent().addClass("answer").find('span.marker').html("<i class=\"icon-comment\"></i>");
+                }
+            });
         },
         /*
          * Display the smiley in a "bubble tip" positionned from the element
@@ -734,15 +731,6 @@ jQuery.fn.extend({
                 "bottom": "",
                 "left": left_offset+"px"
             }).prependTo("body");
-            
-            /*console.group("Smiley datas");
-                console.group("Link container");
-                console.info("outerHeight : " + $this.outerHeight());
-                console.info("outerWidth : " + $this.outerWidth());
-                console.groupEnd();
-            console.info("top_offset : " + $this.offset().top);
-            console.info("left_offset : " + $this.offset().left);
-            console.groupEnd();*/
             
             // By default the image is positionned at the bottom of the element, but 
             // if its bottom corner is "out of screen", we move it at the top of element.
@@ -781,49 +769,6 @@ jQuery.fn.extend({
             // Apply css position and show it
             djangotribune_data.absolute_container.css(css_attrs).show();
         }
- 
-        /*
-         * Periodic check to control mouse position is still in the pointer area, else 
-         * force remove the popin
-         * 
-         * This is to avoid a bug where it seems an Ajax request can drop the coming 
-         * mouseleave event that is needed to drop the absolute popin container
-         * 
-         * DEPRECATED: bloated stuff that doesn't do the job
-         
-        _check_mousepos_for_popin : function(djangotribune_data, pointer) {
-            var pageCoords = "( " + window.mouseXPos + ", " + window.mouseYPos + " )";
-            var pointerArea = {
-                'top': pointer.offset().top,
-                'left': pointer.offset().left
-            };
-            pointerArea['right'] = pointerArea.left + pointer.outerWidth();
-            pointerArea['bottom'] = pointerArea.top + pointer.outerHeight();
-            var pointerFoo = "( left:" + pointerArea.left + ", right:" + pointerArea.right + ", top:" + pointerArea.top + ", bottom:" + pointerArea.bottom + " )";
-            var pointerDim = "( " + pointer.outerWidth() + ", " + pointer.outerHeight() + " )";
-            console.group("Popin check");
-            console.info("Mouse Coords : " + pageCoords);
-            console.info("Pointer Area : " + pointerFoo);
-            console.info("Pointer Dims : " + pointerDim);
-            console.groupEnd();
-            
-            // If the cursor is out of the pointer area
-            if(
-                (window.mouseXPos < pointerArea.left || window.mouseXPos > pointerArea.right) || 
-                (window.mouseYPos < pointerArea.top || window.mouseYPos > pointerArea.bottom)
-            ) {
-                Timer.stopTimer("popin");
-                $("body").unbind("mousemove.popin");
-                console.warn("Unbind mousemove.popin");
-                djangotribune_data.absolute_container.html("").hide();
-            // Else we continue to do a periodic check
-            } else {
-                // Timer.setTimer("popin", function(){
-                //     events._check_mousepos_for_popin(djangotribune_data, pointer);
-                // }, 250);
-            }
-            
-        }*/
     };
     
     
@@ -1094,11 +1039,10 @@ jQuery.fn.extend({
         /*
          * Compute some extra datas from the row data from a backend
          */
-        compute_extra_row_datas: function(row, owned){
+        compute_extra_row_datas: function(row){
             row.css_classes = ["msgclock_"+row.clockclass];
             if(row.owned) row.css_classes.push("owned");
             row.identity = {'title': row.user_agent, 'kind': 'anonymous', 'content': row.user_agent.slice(0,30)};
-            row.owned = owned;
             if(row.author__username){
                 row.identity.kind = 'authenticated';
                 row.identity.content = row.author__username;

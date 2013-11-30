@@ -104,6 +104,7 @@ class CommandActionName(CommandBase):
         Prepare the new name to use
         """
         self.new_name = " ".join(self.args).encode('utf-8')
+        self.session['tribune_name'] = self.new_name
         
     def patch_response(self, response):
         """
@@ -114,7 +115,7 @@ class CommandActionName(CommandBase):
             response.set_cookie(TRIBUNE_MESSAGES_UA_COOKIE_NAME, b64encode(self.new_name), max_age=TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE, expires=self.expires, domain=settings.SESSION_COOKIE_DOMAIN)
         # Delete the cookie to drop custom name
         else:
-            response.set_cookie(TRIBUNE_MESSAGES_UA_COOKIE_NAME, '', max_age=TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE, expires=self.expires, domain=settings.SESSION_COOKIE_DOMAIN) # Is this really necessary ?
+            response.set_cookie(TRIBUNE_MESSAGES_UA_COOKIE_NAME, '', max_age=TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE, expires=self.expires, domain=settings.SESSION_COOKIE_DOMAIN)
             response.delete_cookie(TRIBUNE_MESSAGES_UA_COOKIE_NAME)
         
         return response

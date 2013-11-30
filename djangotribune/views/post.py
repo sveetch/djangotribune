@@ -64,10 +64,6 @@ class PostRemoteBaseView(RemoteBaseMixin, PostBaseView):
         return ''
     
     def form_valid(self, form):
-        """
-        16:07:58 sans last_id, on ne renvoie rien après un post
-        16:07:58 avec un last_id, tu ne renvoie que le backend avec la prise en compte du last_id
-        """
         super(PostRemoteBaseView, self).form_valid(form)
         
         messages = self.get_backend()

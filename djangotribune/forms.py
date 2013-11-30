@@ -2,7 +2,7 @@
 """
 Forms
 """
-import datetime, operator, pytz
+import copy, datetime, operator, pytz
 
 from django.conf import settings
 from django import forms
@@ -12,7 +12,9 @@ from django.utils.translation import ugettext as _
 from crispy_forms.helper import FormHelper
 from crispy_forms_foundation.layout import Layout, Row, Column, Submit, Field
 
-from djangotribune.settings_local import TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, TRIBUNE_MESSAGES_UA_LENGTH_MIN, TRIBUNE_SAVE_URLS_BY_POST
+from djangotribune.settings_local import (TRIBUNE_MESSAGES_POST_MAX_LENGTH, TRIBUNE_MESSAGES_UA_COOKIE_NAME, 
+                                            TRIBUNE_MESSAGES_UA_LENGTH_MIN, TRIBUNE_SAVE_URLS_BY_POST, 
+                                            TRIBUNE_SESSION_MAX_OWNED_IDS)
 from djangotribune.models import Channel, Message, Url
 from djangotribune.parser import MessageParser
 from djangotribune.actions import TRIBUNE_COMMANDS
@@ -201,6 +203,15 @@ class MessageForm(forms.Form):
             remote_render=rendered['remote_render'],
         )
         new_message.save()
+        
+        # If anonymous, save the id to a list (limited to X items) in session
+        if author is None:
+            owned_ids = self.session.get('tribune_owned_post_ids', [])[:TRIBUNE_SESSION_MAX_OWNED_IDS-1]
+            owned_ids.insert(0, new_message.id)
+            self.session['tribune_owned_post_ids'] = owned_ids
+        # If authenticated, allways empty (to avoid conflict)
+        else:
+            self.session['tribune_owned_post_ids'] = []
         
         # If message contains URLs, archive them
         if rendered['urls']:

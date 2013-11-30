@@ -28,7 +28,8 @@ from django.views.decorators.http import condition
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 
-from djangotribune.settings_local import TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, TRIBUNE_BAK_SESSION_NAME
+from djangotribune.settings_local import (TRIBUNE_MESSAGES_MAX_LIMIT, TRIBUNE_MESSAGES_DEFAULT_LIMIT, 
+                                        TRIBUNE_BAK_SESSION_NAME)
 from djangotribune.models import Channel, Message
 from djangotribune.clocks import ClockIndice
 from djangotribune.views import getmax_identity, BackendEncoder, ChannelAwareMixin, LockView
@@ -169,6 +170,8 @@ class RemoteBaseMixin(ChannelAwareMixin):
         """
         Return a messages list containing a dict for each message
         """
+        self.user_owned_messages = self.get_user_owned_messages()
+        
         limit = self.get_row_limit()
         last_id = self.get_last_id()
         direction = self.get_row_direction()
@@ -194,6 +197,14 @@ class RemoteBaseMixin(ChannelAwareMixin):
             url = "{0}?{1}".format(url, args)
         return url
 
+    def get_user_owned_messages(self):
+        """
+        Get saved user's message id saved in session
+        """
+        if self.request.user.is_authenticated():
+            return []
+        return self.request.session.get('tribune_owned_post_ids', [])
+    
     def build_backend(self, messages):
         return 'Hello World'
     
@@ -342,7 +353,7 @@ class RemoteJsonMixin(RemoteBaseMixin):
         row['clock_indice'] = row['clock_indice'].real
         # Add the owned mark if the message is authored by the current user
         row['owned'] = False
-        if self.request.user.is_authenticated() and row['author__username'] and self.request.user.username == row['author__username']:
+        if (self.request.user.is_authenticated() and row['author__username'] and self.request.user.username == row['author__username']) or (row['id'] in self.user_owned_messages):
             row['owned'] = True
         return row
 
