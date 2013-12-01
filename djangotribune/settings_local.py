@@ -39,6 +39,9 @@ TRIBUNE_SESSION_MAX_OWNED_IDS = getattr(settings, 'TRIBUNE_SESSION_MAX_OWNED_IDS
 # How many urls maximum will be saved in a message
 TRIBUNE_SAVE_URLS_BY_POST = getattr(settings, 'TRIBUNE_SAVE_URLS_BY_POST', 5)
 
+# How many urls to list by page in the archives
+TRIBUNE_ARCHIVE_URLS_MAX_LIMIT = getattr(settings, 'TRIBUNE_ARCHIVE_URLS_MAX_LIMIT', 30)
+
 # Titles randomly displayed on tribune board (html and plain/text versions)
 TRIBUNE_TITLES = getattr(settings, 'TRIBUNE_TITLES_AVAILABLE', (
     u'Avengers Mansion', # Marvel Comics

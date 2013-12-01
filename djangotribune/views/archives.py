@@ -10,6 +10,7 @@ from django.utils.http import urlquote
 
 from djangotribune.models import Url
 from djangotribune.forms import URLFILTERS_CHOICES, UrlSearchForm
+from djangotribune.settings_local import TRIBUNE_ARCHIVE_URLS_MAX_LIMIT
 
 class SearchListMixin(MultipleObjectMixin, FormMixin, TemplateResponseMixin):
     """
@@ -135,7 +136,7 @@ class UrlArchivesView(SearchListView):
     """
     model = Url
     allow_empty = True
-    paginate_by = 5
+    paginate_by = TRIBUNE_ARCHIVE_URLS_MAX_LIMIT
     template_name = "djangotribune/url_archives.html"
     initial = {'filters': [URLFILTERS_CHOICES[0][0]]}
     form_class = UrlSearchForm

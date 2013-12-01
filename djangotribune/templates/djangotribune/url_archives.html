@@ -20,8 +20,7 @@
     <ul class="urls">
         {% for archive in object_list %}{% with archive.message as message %}
         <li class="list_item {% cycle row1,row2 %}{% if forloop.first %} first{% endif %}{% if forloop.last %} last{% endif %}">
-            <h3><small>{{ forloop.counter }}, {{ archive.id }}</small>
-            <a href="{{ archive.url }}" rel="nofollow">{{ archive.url|slice:"0:115" }}</a></h3>
+            <h3><a href="{{ archive.url }}" rel="nofollow">{{ archive.url|slice:"0:115" }}</a></h3>
             <p class="message{% if request.user and message.author == request.user %} owned{% endif %}" rel="{{ message.id }}">
                 <span class="marker"></span>
                 <span class="clock">{{ message.clock|time:"H:i:s" }}<sup>&nbsp;</sup></span>
