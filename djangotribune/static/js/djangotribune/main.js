@@ -175,7 +175,16 @@ jQuery.fn.extend({
                 "refresh_active": true,
                 "refresh_time_shifting": 10000,
                 "authenticated_username": null,
-                "urlopen_blank": true
+                "urlopen_blank": true,
+                "shortcut_map": {
+                    "bold": ["b", "b", function(s){ return "<b>"+s+"</b>" }],
+                    "italic": ["i", "i", function(s){ return "<i>"+s+"</i>" }],
+                    "stroke": ["s", "s", function(s){ return "<s>"+s+"</s>" }],
+                    "underline": ["u", "u", function(s){ return "<u>"+s+"</u>" }],
+                    "teletype": ["tt", "t", function(s){ return "<tt>"+s+"</tt>" }],
+                    "kode": ["code", "c", function(s){ return "<code>"+s+"</code>" }],
+                    "moment": ["m", "m", function(s){ return "<m>"+s+"</m>" }]
+                }
             }, options);
             
             // Build DjangoTribune for each selected element
@@ -184,7 +193,8 @@ jQuery.fn.extend({
                     djangotribune_key = "djangotribune-id-" + (settings.channel||'default'), // djangotribune instance ID, must be unique, reference to the current channel if any
                     djangotribune_scroll = $("<div class=\"djangotribune_scroll\"></div>").insertBefore("form", $this).append($("ul.messages", $this)),
                     refresh_input = templates.refresh_checkbox(settings).insertBefore("form .input-column .ctrlHolder", $this),
-                    // This can ben overriden to make custom refresh indicator display
+                    shortcut_bar = $("<div class=\"djangotribune_shortcut_bar row collapse\"></div>").insertBefore("form *:first", $this),
+                    // REFRESH INDICATOR display
                     refresh_indicator = {
                         start: function(instance){
                             $("input.content_field", instance).removeClass("backend-refresh-error").addClass("backend-refresh-spinner");
@@ -196,7 +206,7 @@ jQuery.fn.extend({
                             $("input.content_field", instance).removeClass("backend-refresh-spinner").addClass("backend-refresh-error");
                         },
                     },
-                    // This can ben overriden to make custom submit indicator display
+                    // SUBMIT INDICATOR display
                     submit_indicator = {
                         start: function(instance){
                             $("input.content_field", instance).removeClass("error").addClass("disabled");
@@ -225,7 +235,7 @@ jQuery.fn.extend({
                 });
                 $this.data("djangotribune_lastid", 0);
                 
-                // Open a new store for the current channel or default channel
+                // Open a new store for the current channel
                 clock_store.new_store(djangotribune_key);
                 
                 // Default Ajax request settings
@@ -243,7 +253,7 @@ jQuery.fn.extend({
                 $(window).bind("update_backend_display.djangotribune", events.update);
                 refresh_input.find('input').change(extra_context, events.change_refresh_active);
                 $("form input[type='submit']", $this).click(extra_context, events.submit);
-                $("input.content_field", $this).keydown( extra_context, function(e){
+                $("input.content_field", $this).keydown(extra_context, function(e){
                     if(e.keyCode == '13'){
                         e.stopPropagation();
                         return events.submit(e);
@@ -252,6 +262,15 @@ jQuery.fn.extend({
                 });
                 $("form", $this).bind("submit", function() { return false; });
                 
+                // Bind keyboard shortcuts for syntax from the map
+                $.each(settings.shortcut_map, function(index, row) {
+                    $("input.content_field", $this).bind('keydown', jwerty.event('alt+'+row[1], events.shortcut_key, [index, $this]));
+                    // Add a button in bar to simulate shortcut key on button click
+                    $('<a title="alt+'+row[1]+'">'+row[0]+'</a>').appendTo(shortcut_bar).click(function(){
+                        jwerty.fire('alt+'+row[1], "input.content_field", $this);
+                        return false;
+                    });
+                });
                 // First parsing from html
                 $this.djangotribune('initial');
             });
@@ -441,7 +460,6 @@ jQuery.fn.extend({
             $this.data("djangotribune_lastid", last_id);
         },
  
-
         /*
          * Change the settings "refresh_active" from the checkbox
          * TODO: This should be memorized in a cookie or something else more persistent 
@@ -706,6 +724,21 @@ jQuery.fn.extend({
                 }
             });
         },
+ 
+        /*
+         * Replace selected text with some method attached to shortcut key
+         */
+        shortcut_key : function(event, code) {
+            event.preventDefault();
+            
+            var $this = this[1],
+                data = $this.data("djangotribune"),
+                method_name = this[0],
+                content = $("input.content_field", $this).textrange('get').text;
+            
+            $("input.content_field", $this).textrange('replace', data.settings.shortcut_map[method_name][2](content));
+        },
+ 
         /*
          * Display the smiley in a "bubble tip" positionned from the element
          */
@@ -784,6 +817,7 @@ jQuery.fn.extend({
     var backends_store = {
         _map_backends : {}
     };
+    
     
     /*
      * Clock date store
@@ -1056,7 +1090,7 @@ jQuery.fn.extend({
     /*
      * Plugin HTML templates
      * This is not "real" templates as we can see it with some library like "Mustach.js" 
-     * and others
+     * and others, this is just some functions to build the needed HTML
      */
     var templates = {
         /*

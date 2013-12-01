@@ -118,13 +118,42 @@
 .djangotribune .messages .message a.smiley {
   text-decoration: none;
 }
+/* line 126, ../../../../compass/scss/frontend.scss */
+.djangotribune .djangotribune_shortcut_bar {
+  padding: 0 3px 0 25px;
+}
+/* line 129, ../../../../compass/scss/frontend.scss */
+.djangotribune .djangotribune_shortcut_bar a {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+  padding: 0.2em 0.4em;
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: #404040;
+  line-height: 13px;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: 1px solid #C0C0C0;
+  background-color: #FFFFFF;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+}
+/* line 145, ../../../../compass/scss/frontend.scss */
+.djangotribune .djangotribune_shortcut_bar a:hover {
+  color: #D0910B;
+}
 
-/* line 127, ../../../../compass/scss/frontend.scss */
+/* line 152, ../../../../compass/scss/frontend.scss */
 .smiley_container {
   z-index: 8000;
 }
 
-/* line 132, ../../../../compass/scss/frontend.scss */
+/* line 157, ../../../../compass/scss/frontend.scss */
 .absolute-message-container {
   position: fixed;
   z-index: 9000;
@@ -138,7 +167,7 @@
   -moz-box-shadow: 0px 0px 5px #333333;
   box-shadow: 0px 0px 5px #333333;
 }
-/* line 143, ../../../../compass/scss/frontend.scss */
+/* line 168, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.at-top {
   border-top: 0;
   -moz-border-radius-bottomleft: 5px;
@@ -148,7 +177,7 @@
   -webkit-border-bottom-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
-/* line 147, ../../../../compass/scss/frontend.scss */
+/* line 172, ../../../../compass/scss/frontend.scss */
 .absolute-message-container.at-bottom {
   border-bottom: 0;
   -moz-border-radius-topleft: 5px;
@@ -245,26 +274,26 @@
 .absolute-message-container a.smiley {
   text-decoration: none;
 }
-/* line 154, ../../../../compass/scss/frontend.scss */
+/* line 179, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.marker {
   position: static;
   left: auto;
 }
-/* line 159, ../../../../compass/scss/frontend.scss */
+/* line 184, ../../../../compass/scss/frontend.scss */
 .absolute-message-container ul {
   margin: 0;
   list-style-type: none;
 }
 
-/* line 166, ../../../../compass/scss/frontend.scss */
+/* line 191, ../../../../compass/scss/frontend.scss */
 form {
   margin-top: 15px;
 }
-/* line 169, ../../../../compass/scss/frontend.scss */
+/* line 194, ../../../../compass/scss/frontend.scss */
 form label[for='id_content'] {
   display: none;
 }
-/* line 173, ../../../../compass/scss/frontend.scss */
+/* line 198, ../../../../compass/scss/frontend.scss */
 form .refresh_active {
   margin: 0;
   padding: 0;
@@ -277,13 +306,13 @@ form .refresh_active {
   line-height: 14px;
   z-index: 2000;
 }
-/* line 185, ../../../../compass/scss/frontend.scss */
+/* line 210, ../../../../compass/scss/frontend.scss */
 form .refresh_active input {
   margin: 0;
   padding: 0;
   font-size: 14px;
 }
-/* line 192, ../../../../compass/scss/frontend.scss */
+/* line 217, ../../../../compass/scss/frontend.scss */
 form #div_id_content {
   padding-left: 25px;
   position: relative;
@@ -299,35 +328,35 @@ AAAQABAAAAVfICCOZGmeqEgUxUAIpkA0AMKyxkEiSZEIsJqhYAg+boUFSTAkiBiNHks3sg1ILAfBiS10
             line-height: 33px;
         }*/
 }
-/* line 207, ../../../../compass/scss/frontend.scss */
+/* line 232, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field {
   padding-right: 25px;
   position: relative;
   transition: none 0s ease 0s;
 }
-/* line 212, ../../../../compass/scss/frontend.scss */
+/* line 237, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.disabled {
   border: 1px solid #606060;
   color: #606060;
   background-color: #C0C0C0;
 }
-/* line 217, ../../../../compass/scss/frontend.scss */
+/* line 242, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.error {
   border: 1px solid #ff0000;
 }
-/* line 220, ../../../../compass/scss/frontend.scss */
+/* line 245, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.backend-refresh-spinner {
   background-image: url("data:image/gif;base64,R0lGODlhEAAQAPQAAP///wAAAPj4+Dg4OISEhAYGBiYmJtbW1qioqBYWFnZ2dmZmZuTk5JiYmMbGxkhISFZWVgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAAFUCAgjmRpnqUwFGwhKoRgqq2YFMaRGjWA8AbZiIBbjQQ8AmmFUJEQhQGJhaKOrCksgEla+KIkYvC6SJKQOISoNSYdeIk1ayA8ExTyeR3F749CACH5BAkKAAAALAAAAAAQABAAAAVoICCKR9KMaCoaxeCoqEAkRX3AwMHWxQIIjJSAZWgUEgzBwCBAEQpMwIDwY1FHgwJCtOW2UDWYIDyqNVVkUbYr6CK+o2eUMKgWrqKhj0FrEM8jQQALPFA3MAc8CQSAMA5ZBjgqDQmHIyEAIfkECQoAAAAsAAAAABAAEAAABWAgII4j85Ao2hRIKgrEUBQJLaSHMe8zgQo6Q8sxS7RIhILhBkgumCTZsXkACBC+0cwF2GoLLoFXREDcDlkAojBICRaFLDCOQtQKjmsQSubtDFU/NXcDBHwkaw1cKQ8MiyEAIfkECQoAAAAsAAAAABAAEAAABVIgII5kaZ6AIJQCMRTFQKiDQx4GrBfGa4uCnAEhQuRgPwCBtwK+kCNFgjh6QlFYgGO7baJ2CxIioSDpwqNggWCGDVVGphly3BkOpXDrKfNm/4AhACH5BAkKAAAALAAAAAAQABAAAAVgICCOZGmeqEAMRTEQwskYbV0Yx7kYSIzQhtgoBxCKBDQCIOcoLBimRiFhSABYU5gIgW01pLUBYkRItAYAqrlhYiwKjiWAcDMWY8QjsCf4DewiBzQ2N1AmKlgvgCiMjSQhACH 5BAkKAAAALAAAAAAQABAAAAVfICCOZGmeqEgUxUAIpkA0AMKyxkEiSZEIsJqhYAg+boUFSTAkiBiNHks3sg1ILAfBiS10gyqCg0UaFBCkwy3RYKiIYMAC+RAxiQgYsJdAjw5DN2gILzEEZgVcKYuMJiEAOwAAAAAAAAAAAA%3D%3D");
   background-position: center right;
   background-repeat: no-repeat;
 }
-/* line 226, ../../../../compass/scss/frontend.scss */
+/* line 251, ../../../../compass/scss/frontend.scss */
 form #div_id_content input.content_field.backend-refresh-error {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHpJREFUeNpiYBjMwACI30OxATkG7Afi/1C8n1TNCUiaYTiBWM0CUGeDNDlA8X+omAAxBvQj2QoDMH4/MQH3H48B/wkF6H4iDNhPSsBhMwBrgCIHHDEYI0D7cSgsAOIAHHLgAGVEciI2UIhkATYA00+S85G9MQgAQIABAJGFUjKtrEJQAAAAAElFTkSuQmCC");
   background-position: center right;
   background-repeat: no-repeat;
 }
-/* line 234, ../../../../compass/scss/frontend.scss */
+/* line 259, ../../../../compass/scss/frontend.scss */
 form .within-input {
   position: absolute;
   top: 10px;
@@ -337,40 +366,40 @@ form .within-input {
 /*
  * Page list for url archives list
  */
-/* line 247, ../../../../compass/scss/frontend.scss */
+/* line 272, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_pattern label,
 .djangotribune-url-archives #div_id_pattern .errorField {
   display: none;
 }
-/* line 252, ../../../../compass/scss/frontend.scss */
+/* line 277, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters label {
   font-weight: bold;
 }
-/* line 255, ../../../../compass/scss/frontend.scss */
+/* line 280, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters label .asteriskField {
   display: none;
 }
-/* line 259, ../../../../compass/scss/frontend.scss */
+/* line 284, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters .errorField {
   display: none;
 }
-/* line 262, ../../../../compass/scss/frontend.scss */
+/* line 287, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters .button {
   border-right: 0;
 }
-/* line 265, ../../../../compass/scss/frontend.scss */
+/* line 290, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters li {
   text-align: left;
 }
-/* line 270, ../../../../compass/scss/frontend.scss */
+/* line 295, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls {
   list-style-type: none;
 }
-/* line 274, ../../../../compass/scss/frontend.scss */
+/* line 299, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li h3 {
   font-size: 20px;
 }
-/* line 278, ../../../../compass/scss/frontend.scss */
+/* line 303, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message {
   margin-bottom: 5px;
   background-color: #f0f0f0;
@@ -465,12 +494,12 @@ form .within-input {
 .djangotribune-url-archives .urls li .message a.smiley {
   text-decoration: none;
 }
-/* line 287, ../../../../compass/scss/frontend.scss */
+/* line 312, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .credits {
   font-size: 14px;
   text-align: right;
 }
-/* line 292, ../../../../compass/scss/frontend.scss */
+/* line 317, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li + li {
   border-top: 1px solid #000000;
 }

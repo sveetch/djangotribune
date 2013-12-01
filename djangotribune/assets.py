@@ -17,6 +17,8 @@ else:
         'djangotribune_js': Bundle(
             "js/jquery/jquery.querystring.js",
             "js/jquery/jquery.cookies.2.2.0.js",
+            "js/jquery/jquery-textrange.js",
+            "js/jquery/jwerty.0.3.2.9.js",
             #"js/djangotribune/timer.js",
             "js/djangotribune/csrf.js",
             "js/djangotribune/main.js",

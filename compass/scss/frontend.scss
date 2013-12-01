@@ -122,6 +122,31 @@
             @include message-components;
         }
     }
+    
+    .djangotribune_shortcut_bar{
+        padding: 0 3px 0 25px;
+        
+        a{
+            display:inline-block;
+            margin: 0 5px 5px 0;
+            padding: 0.2em 0.4em;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #404040;
+            line-height: 13px;
+            text-align: center;
+            text-transform: uppercase;
+            cursor: pointer;
+            border: 1px solid #C0C0C0;
+            background-color: #FFFFFF;
+            @include border-radius(5px);
+            
+            &:hover{
+                color: #D0910B;
+            }
+        }
+    }
 }
 
 .smiley_container{
