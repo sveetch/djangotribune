@@ -47,7 +47,7 @@ class UrlSearchForm(forms.Form):
                     css_class='three mobile-one input-column'
                 ),
                 Column(
-                    Submit('post_submit', _('Ok'), css_class='tiny expand postfix'),
+                    Submit('post_submit', _('Ok'), css_class='expand postfix'),
                     css_class='one mobile-one'
                 ),
                 css_class='collapse inline-form'
@@ -89,11 +89,11 @@ class MessageForm(forms.Form):
             Row(
                 Column(
                     'content',
-                    css_class='ten mobile-three input-column'
+                    css_class='ten input-column'
                 ),
                 Column(
                     Submit('post_submit', _('Ok'), css_class='expand postfix'),
-                    css_class='two mobile-one'
+                    css_class='two submit-column'
                 ),
                 css_class='collapse'
             ),
