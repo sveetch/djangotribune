@@ -89,11 +89,11 @@ class MessageForm(forms.Form):
             Row(
                 Column(
                     'content',
-                    css_class='ten input-column'
+                    css_class='eleven input-column'
                 ),
                 Column(
                     Submit('post_submit', _('Ok'), css_class='expand postfix'),
-                    css_class='two submit-column'
+                    css_class='one submit-column'
                 ),
                 css_class='collapse'
             ),

@@ -182,7 +182,7 @@ jQuery.fn.extend({
                     "stroke": ["s", "s", function(s){ return "<s>"+s+"</s>" }],
                     "underline": ["u", "u", function(s){ return "<u>"+s+"</u>" }],
                     "teletype": ["tt", "t", function(s){ return "<tt>"+s+"</tt>" }],
-                    "kode": ["code", "c", function(s){ return "<code>"+s+"</code>" }],
+                    "code": ["code", "c", function(s){ return "<code>"+s+"</code>" }],
                     "moment": ["m", "m", function(s){ return "<m>"+s+"</m>" }]
                 }
             }, options);
@@ -266,7 +266,7 @@ jQuery.fn.extend({
                 $.each(settings.shortcut_map, function(index, row) {
                     $("input.content_field", $this).bind('keydown', jwerty.event('alt+'+row[1], events.shortcut_key, [index, $this]));
                     // Add a button in bar to simulate shortcut key on button click
-                    $('<a title="alt+'+row[1]+'">'+row[0]+'</a>').appendTo(shortcut_bar).click(function(){
+                    $('<a class="'+index+'" title="alt+'+row[1]+'">'+row[0]+'</a>').appendTo(shortcut_bar).click(function(){
                         jwerty.fire('alt+'+row[1], "input.content_field", $this);
                         return false;
                     });
