@@ -16,8 +16,8 @@ Basics
 Message backends
 ================
 
-Backends are available with various formats, each format has its own specificity. 
-Generally, *JSON* is for webapp usage, *XML* for remote clients and *Plain* for some 
+Backends are available in various formats, each format has its own special features. 
+Usually, *JSON* is for webapp usage, *XML* for remote clients and *Plain* for some 
 nerdz.
 
 .. _formats-label:
@@ -32,7 +32,7 @@ Formats
     Very fast, use the remote message render, descendant ordered by default. Url path from 
     the tribune is ``remote/xml/`` for backend and ``post/xml/`` for post view.
 **CRAP XML**
-    The XML version *extended* to suit to old tribune application client. Currently the 
+    The *extended* XML version to go well with old tribune application clients. Currently the 
     only diff is the XML structure wich is indented. Url path from the tribune is 
     ``crap/remote.xml`` for backend and ``crap/post.xml`` for post view.
 **JSON**
@@ -50,18 +50,18 @@ Formats
 Url arguments
 -------------
 
-On backend URLs, you can set somes options by adding URL arguments like this : ::
+On backend URLs, you can set some options by adding URL arguments like this : ::
     
     /remote/?limit=42&direction=asc&last_id=77
 
 **limit**
-    An integer to specify how much message can be retrieved, this value cannot be higher 
-    than the setting value ``TRIBUNE_MESSAGES_MAX_LIMIT``. Default value come from 
+    An integer to specify how many messages can be retrieved. This value cannot be greater 
+    than the setting value ``TRIBUNE_MESSAGES_MAX_LIMIT``. Default value comes from 
     setting ``TRIBUNE_MESSAGES_MAX_LIMIT`` if this option is not specified.
 **direction**
-    Message listing direction specify if the list should be ordered on ``id`` in 
+    Message listing direction specify whether the list should be ordered by ``id`` in 
     ascendant or descendant way. Value can be ``asc`` for ascendant or ``desc`` for 
-    descendant. Each backend can has its own default direction.
+    descendant. Each backend can have its own default direction.
 **last_id**
     The last ``id`` from wich to retrieve the messages in the interval of the ``limit`` 
     option.
@@ -91,20 +91,20 @@ The tribune can either be used from the web interface or via remote client appli
 Remote client applications
 --------------------------
 
-Remote clients can send a new message directly within a **POST** request and putting the 
+Remote clients can send a new message directly within a **POST** request and by putting the 
 content in a ``content`` argument. 
 
 * Validated messages from a request without ``last_id`` defined return an empty Http200 response 
   in plain-text;
 * Validated messages from a request with ``last_id`` defined return the last updated backend (from 
-  the *knowed* last id);
+  the *known* last id);
 * Unvalid message return an Http error.
 
 All POST response for validated message return a **X-Post-Id** header that contain the ID of the 
 new message.
 
 :ref:`url-arguments-label` options can be given for the POST request and they will be used for the returned 
-backend in success case.
+backend in case of success.
 
 In fact, remote client applications should always give the 
 ``last_id`` option (taken from the last message they know just before sending the POST 
@@ -115,9 +115,9 @@ request) to receive only messages they didn't know (and not the whole backend).
 Dealing with errors
 ...................
 
-* This is not really an error, but remote backend return a **Http304** (*NotModified*) when 
-  you try to fetch a backend where they are no new message;
-* If the *POST* request is invalidated (with the form) the returned response will be a 
+* This is not really an error, but remote backend returns a **Http304** (*NotModified*) when 
+  you try to fetch a backend with no new message;
+* If the *POST* request is invalidated (with the form), the returned response will be a 
   **Http400** (*Bad Request*) with an explanation in Ascii;
 * A **Http404** is returned when you try to use a channel remote backend that 
   doesn't exists;
@@ -135,9 +135,9 @@ All users (registred and anonymous) can manage their own entries for filtering m
 on various pattern. These filters are stored in the user session in an object called BaK 
 as *Boîte à Kons* (eg: *Idiots box*) which is persistent in your session.
 
-That being so an user can lose his session (by a very long inactivity or when logged out) 
-so there are option to **save** the filters in your BaK in your profile in database then 
-after you can **load** them in your session when needed.
+That being so, a user can lose its session (after a very long inactivity or when logged out) 
+so there are option to **save** the filters of your BaK in your profile in a database. So  
+you can **load** them in your session when needed.
 
 There is two ways to manage filters from your bak :
 
@@ -154,7 +154,7 @@ Available arguments
     The part of the message which will be used to apply the filter, available targets are :
     
     * ``ua`` for the user-agent;
-    * ``author`` for the author username only effective for messages from registered used;
+    * ``author`` for the author username only effective for messages from registered users;
     * ``message`` for the message in his raw version (as it was posted).
 **kind**
     The kind of matching filter that will be used. Only used in the *verbose way* 
@@ -199,14 +199,14 @@ Options details
     To save your current filters in your session to your profile in database, this works only 
     for registered users. 
     
-    Saving your filters will overwrite all your previous saved filters, so if you just 
+    Saving your filters will overwrite all your previously saved filters, so if you just 
     want to add new filters, load the previously saved filters before.
     
     This is option does not require any argument : ::
         
         /bak save
 **load**
-    To load your previously saved filters in your current session. If you allready have 
+    To load your previously saved filters in your current session. If you already have 
     filters in your current session this will overwrite them.
     
     This is option does not requires any argument : ::
