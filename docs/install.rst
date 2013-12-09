@@ -23,14 +23,14 @@ Then after you should register the app urls in your project ``urls.py`` : ::
 
     url(r'^tribune/', include('djangotribune.urls')),
 
-Of course you can use another mounting directory than the default ``tribune/`` or even 
+Of course, you can use another mounting directory than the default ``tribune/`` or even 
 use your own app urls, look at the provided ``djangotribune.urls`` to see what you have 
 to map.
 
 And finally don't forget to do the Django's *syncdb command* to synchronize models in your 
 database.
 
-If needed you can change some `Application settings`_ in your settings file.
+If needed, you can change some `Application settings`_ in your settings file.
 
 .. NOTE:: The recommended database engine is **PostgreSQL**. With SQLite you could have 
           problems because the application makes usage of case-insensitive matching 
@@ -39,11 +39,11 @@ If needed you can change some `Application settings`_ in your settings file.
 Project templates
 =================
 
-A simple note about templates, djangotribune templates use a base template ``djangotribune/base.html`` to include some common HTML to fit contents in your layout, and all other templates extend it to insert their content.
+A simple note about templates, djangotribune templates use a base template ``djangotribune/base.html`` to include some common HTML to add contents to your layout, and all other templates extend it to insert theirs.
 
-This base template is made to extend a ``skeleton.html`` template that should be the root base of your project layout. Therefore if you don't use a base template or use it with another name, just override ``djangotribune/base.html`` in project templates to fit it right within your project.
+This base template is made to extend a ``skeleton.html`` template that should be the root base of your project layout. Therefore, if you don't use a base template or use it with another name, just override ``djangotribune/base.html`` in project templates to fit it right within your project.
 
-Also, note that templates have been writed for `Foundation3`_ so if you don't use it, it should not really trouble you as this is only HTML, you can style it yourself or at least change the templates to accomodate to your needed HTML structure. And if you want to use `Foundation3`_, just add its required assets to your project, but for the url archives form you will have to patch some Javascript because of an added feature to use input checkbox inside button dropdown.
+Also, note that templates have been written for `Foundation3`_ so if you don't use it, it should not really matter to you as this is only HTML, you can style it yourself or at least change the templates to accomodate to your needed HTML structure. And if you want to use `Foundation3`_, just add its required assets to your project, but for the url archives form you will have to patch some Javascript because of an added feature to use input checkbox inside button dropdown.
 
 Here is a patch file for the Javascript file for buttons : ::
 
@@ -123,7 +123,7 @@ project settings.
 **TRIBUNE_MESSAGES_POST_MAX_LENGTH**
     Maximum length (in characters) for the content message. 
     
-    Require an integer, by default this is set to 500. You have no real limit on this 
+    Requires an integer, by default this is set to 500. You have no real limit on this 
     value because this is stored in full text field without limit.
 **TRIBUNE_SMILEYS_URL**
     `Template string <http://docs.python.org/library/string.html#formatstrings>`_ for 
