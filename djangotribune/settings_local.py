@@ -28,7 +28,7 @@ TRIBUNE_MESSAGES_UA_COOKIE_MAXAGE = getattr(settings, 'SESSION_COOKIE_AGE', (60 
 TRIBUNE_MESSAGES_UA_LENGTH_MIN = getattr(settings, 'TRIBUNE_MESSAGES_UA_LENGTH_MIN', 3)
 
 # Template string for smileys URL, this is where you can set the wanted smiley host
-TRIBUNE_SMILEYS_URL = getattr(settings, 'TRIBUNE_SMILEYS_URL', 'http://sfw.totoz.eu/{0}.gif')
+TRIBUNE_SMILEYS_URL = getattr(settings, 'TRIBUNE_SMILEYS_URL', 'http://totoz.eu/{0}.gif')
 
 # Name for session part containing the BaK
 TRIBUNE_BAK_SESSION_NAME = getattr(settings, 'TRIBUNE_BAK_SESSION_NAME', 'djangotribune_bak')
