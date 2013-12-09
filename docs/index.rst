@@ -36,7 +36,6 @@ Features
 * :ref:`discovery-label` XML configuration file for third client applications (aka remote client or *coincoins*);
 * Channel support;
 * `South`_ support;
-* Largely documented.
 
 Links
 =====
