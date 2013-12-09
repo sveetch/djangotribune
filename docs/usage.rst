@@ -18,25 +18,25 @@ Message board
 
 The tribune can either be used from the web interface or via remote client applications.
 
-Just enter in, and put your message in the input at the bottom of messages. You can use shortcut 
+Just enter in, and type your message in the input box at the bottom of the list of messages. You can use shortcut 
 buttons to add html tags to surround your current text selection in the input (or just add it if 
 you didn't select text).
 
 Also in your message you can insert smileys (commonly called *totoz*) from the smiley host 
 (by default http://totoz.eu/). Smileys syntax is to surround the smiley key word with 
 ``[:keyname]`` like ``[:totoz]`` that will be replaced to a link to the image 
-``http://totoz.eu/totoz.gif``. This image will be displayed when the mouse cursor will hover the 
+``http://totoz.eu/totoz.gif``. This image will be displayed when the mouse cursor hovers the 
 link.
 
 The default interface performs a periodical request on the remote backend to display any new message, 
 so you don't have to reload the page to see new message. When the the periodical refresh is on progress 
 you will see a sign in the input, if the server return a response error you will see a sign that will be 
-hided at the next refresh success response.
+hidden at the next refresh success response.
 
 If your posted message is not validated, the input field will be displayed with red borders, the borders will 
-be hidded just after a new validated post.
+be hidden just after a new validated post.
 
-Actually, the only option you can manage is the *Active refresh* than you can disable to avoid any 
+In fact, the only option you can manage is the *Active refresh* that you can disable to avoid any 
 periodical request on the remote backend. But if you disable it and you post a new message, there will 
 still be a *POST* request that will refresh the message list.
 
@@ -45,11 +45,11 @@ still be a *POST* request that will refresh the message list.
 Action commands
 ===============
 
-Action commands can be passed in message content, generally this results in doing the 
+Action commands can be passed to message content, generally this results in doing the 
 action without saving a new message although some actions can push a message to save.
 
 All action command must start with a ``/`` followed (without any separator) by the 
-action name and then the action arguments if any. Unvalid action command will often 
+action name and then the action arguments if any. Invalid action commands will often 
 result in saving the content as a new message.
 
 **name**
@@ -69,7 +69,7 @@ result in saving the content as a new message.
     
     Note that this name will only be directly visible for anonymous user, because 
     registered users have their username displayed, but the name (or user-agent) is 
-    visible on mouseover their username. This is behavior is only on HTML board, remote 
+    visible on mouse over their username. This behavior is only on HTML board, remote 
     clients have their own behaviors.
 **lastfm**
     This command use the `LastFM API`_ 
@@ -94,9 +94,9 @@ result in saving the content as a new message.
         **====> Moment Artist - Title <====**
 **bak**
     Intended for users to manage their message filters, see :ref:`messagefiltering-system-label` 
-    for a full explanation.
+    for a complete explanation.
 
-    You want to avoid displaying message from the registered user ``BadBoy``, you will do : ::
+    If you want to avoid displaying message from the registered user ``BadBoy``, you will do : ::
         
             /bak add author Badboy
 
