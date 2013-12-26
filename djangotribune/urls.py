@@ -4,7 +4,7 @@ Root url's map for application
 """
 from django.conf.urls.defaults import *
 
-from djangotribune.views.help import ReadmePage
+#from djangotribune.views.help import ReadmePage
 from djangotribune.views.remote import (RemotePlainView, RemoteJsonView, RemoteXmlView, 
                                         RemoteCrapXmlView)
 from djangotribune.views.post import (PostBoardView, PostBoardNoScriptView, 
@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^$', PostBoardView.as_view(), name='tribune-board'),
     url(r'^noscript/$', PostBoardNoScriptView.as_view(), name='tribune-board-noscript'),
     
-    url(r'^readme/$', ReadmePage.as_view(), name='tribune-readme'),
+    #url(r'^readme/$', ReadmePage.as_view(), name='tribune-readme'),
     
     # For default tribune
     url(r'^discovery.config$', ConfigDiscoveryView.as_view(), name='tribune-config'),

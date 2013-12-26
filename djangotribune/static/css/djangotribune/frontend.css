@@ -25,10 +25,10 @@
 }
 /* line 146, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message {
-  margin: 3px 3px 3px 17px;
+  margin: 1px 3px 1px 17px;
   padding: 0;
   position: relative;
-  line-height: 1.4;
+  line-height: 1.2;
   list-style-type: none;
 }
 @media (max-width: 767px) {
@@ -86,7 +86,7 @@
 /* line 48, ../../../../compass/scss/frontend.scss */
 .djangotribune .messages .message span.marker {
   font-size: 14px;
-  line-height: 2;
+  line-height: 2.2;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;
@@ -348,7 +348,7 @@
 /* line 48, ../../../../compass/scss/frontend.scss */
 .absolute-message-container span.marker {
   font-size: 14px;
-  line-height: 2;
+  line-height: 2.2;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;
@@ -607,7 +607,7 @@ form .within-input {
 /* line 48, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message span.marker {
   font-size: 14px;
-  line-height: 2;
+  line-height: 2.2;
   position: absolute;
   left: -17px;
   text-shadow: rgba(0, 0, 0, 0.2) 1px 1px 0;

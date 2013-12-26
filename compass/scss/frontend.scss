@@ -47,7 +47,7 @@
     }
     span.marker{
         font-size: 14px;
-        line-height: 2;
+        line-height: 2.2;
         position: absolute;
         left: -17px;
         @include text-shadow(rgba(black, 0.2) 1px 1px 0);
@@ -144,10 +144,10 @@
         margin: 0;
         padding: 0;
         .message{
-            margin: 3px 3px 3px 17px;
+            margin: 1px 3px 1px 17px;
             padding: 0;
             position: relative;
-            line-height: 1.4;
+            line-height: 1.2;
             list-style-type: none;
             @media (max-width: $screenSmall - 1) {
                 margin: 5px 3px 5px 0;

@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+View to display help 
+
+DEPRECATED: now we use the doc on readthedoc
+"""
 import os
 
 from django import http
