@@ -71,6 +71,8 @@ result in saving the content as a new message.
     registered users have their username displayed, but the name (or user-agent) is 
     visible on mouse over their username. This behavior is only on HTML board, remote 
     clients have their own behaviors.
+**nick**
+    This is an alias for ``name`` action command, it work exactly the same.
 **lastfm**
     This command use the `LastFM API`_ 
     to automatically post a *musical instant* for the current 

@@ -345,6 +345,7 @@ class CommandActionLastFM(CommandBase):
 TRIBUNE_COMMANDS = (
     #("admin", CommandAdmin),
     ("name", CommandActionName),
+    ("nick", CommandActionName),
     ("bak", CommandBak),
     ("lastfm", CommandActionLastFM),
 )
