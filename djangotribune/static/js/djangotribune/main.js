@@ -591,11 +591,11 @@ jQuery.fn.extend({
             if( message_data.web_render.toLowerCase().search(/moules&lt;/) != -1 || message_data.web_render.toLowerCase().search(/moules&#60;/) != -1 ){
                 // Global mussles broadcasting
                 $(message_element).addClass("musslecast");
-                $('span.marker', message_element).html("<i class=\"icon-asterisk\"></i>")
+                $('span.marker', message_element).html("<i class=\"icon-bullhorn\"></i>")
             } else if ( djangotribune_data.settings.authenticated_username && ( message_data.web_render.toLowerCase().search( regex_cast_initial ) != -1 || message_data.web_render.toLowerCase().search( regex_cast_backend ) != -1 ) ){
                 // User broadcasting
                 $(message_element).addClass("usercast");
-                $('span.marker', message_element).html("<i class=\"icon-asterisk\"></i>")
+                $('span.marker', message_element).html("<i class=\"icon-bullhorn\"></i>")
             }
                 
             // Message reference clock
@@ -720,7 +720,7 @@ jQuery.fn.extend({
             //       history
             $("span.content span.pointer", message_element).each( function(i){
                 if( clock_store.is_user_clock(djangotribune_data.key, $(this).text()) ) {
-                    $(this).addClass("pointer-answer").parent().parent().addClass("answer").find('span.marker').html("<i class=\"icon-comment\"></i>");
+                    $(this).addClass("pointer-answer").parent().parent().addClass("answer").find('span.marker').html("<i class=\"icon-bubble\"></i>");
                 }
             });
         },
