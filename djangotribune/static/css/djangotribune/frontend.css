@@ -518,42 +518,58 @@ form .within-input {
 }
 
 /*
+ * Global menu for djangotribune pages
+ */
+/* line 356, ../../../../compass/scss/frontend.scss */
+ul.inline-list.djangotribune-menu {
+  margin-left: 0;
+}
+/* line 359, ../../../../compass/scss/frontend.scss */
+ul.inline-list.djangotribune-menu li {
+  margin-left: 0;
+}
+/* line 362, ../../../../compass/scss/frontend.scss */
+ul.inline-list.djangotribune-menu li + li .button {
+  border-left: 0;
+}
+
+/*
  * Page list for url archives list
  */
-/* line 359, ../../../../compass/scss/frontend.scss */
+/* line 375, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_pattern label,
 .djangotribune-url-archives #div_id_pattern .errorField {
   display: none;
 }
-/* line 364, ../../../../compass/scss/frontend.scss */
+/* line 380, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters label {
   font-weight: bold;
 }
-/* line 367, ../../../../compass/scss/frontend.scss */
+/* line 383, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters label .asteriskField {
   display: none;
 }
-/* line 371, ../../../../compass/scss/frontend.scss */
+/* line 387, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters .errorField {
   display: none;
 }
-/* line 374, ../../../../compass/scss/frontend.scss */
+/* line 390, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters .button {
   border-right: 0;
 }
-/* line 377, ../../../../compass/scss/frontend.scss */
+/* line 393, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives #div_id_filters li {
   text-align: left;
 }
-/* line 382, ../../../../compass/scss/frontend.scss */
+/* line 398, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls {
   list-style-type: none;
 }
-/* line 386, ../../../../compass/scss/frontend.scss */
+/* line 402, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li h3 {
   font-size: 20px;
 }
-/* line 390, ../../../../compass/scss/frontend.scss */
+/* line 406, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .message {
   margin-bottom: 5px;
   background-color: #f0f0f0;
@@ -687,12 +703,12 @@ form .within-input {
   font-family: monospace;
   font-size: 0.6em;
 }
-/* line 399, ../../../../compass/scss/frontend.scss */
+/* line 415, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li .credits {
   font-size: 14px;
   text-align: right;
 }
-/* line 404, ../../../../compass/scss/frontend.scss */
+/* line 420, ../../../../compass/scss/frontend.scss */
 .djangotribune-url-archives .urls li + li {
   border-top: 1px solid #000000;
 }

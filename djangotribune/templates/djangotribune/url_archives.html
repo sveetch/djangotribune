@@ -1,5 +1,5 @@
 {% extends "djangotribune/base.html" %}
-{% load i18n crispy_forms_tags tribune %}
+{% load i18n crispy_forms_tags tribune %}{% load url from future %}
 
 {% block head_title %}{% trans 'Url archives' %}{% endblock %}
 {% block html_more_links %}{{ block.super }}
@@ -8,6 +8,8 @@
 {% block html_more_js %}{{ block.super }}
     {% include "djangotribune/include_js.html" %}
 {% endblock %}
+
+{% block djangotribune_menuitem_urls_attrs %} class="active"{% endblock %}
 
 {% block content_part %}
 <h2>{% trans 'Url archives' %}</h2>

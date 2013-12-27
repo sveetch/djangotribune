@@ -1,8 +1,15 @@
 {% extends "skeleton.html" %}
+{% load i18n %}{% load url from future %}
 
 {% block content %}
 <div class="row" id="djangotribune-container">
     <div class="twelve columns">
+        <ul class="inline-list djangotribune-menu">
+            <li{% block djangotribune_menuitem_messages_attrs %}{% endblock %}><a href="{% url 'tribune-board' %}" class="button small">{% trans 'Messages' %}</a></li>
+            <li{% block djangotribune_menuitem_urls_attrs %}{% endblock %}><a href="{% url 'tribune-url-archives' %}" class="button small">{% trans 'Url archives' %}</a></li>
+            <li{% block djangotribune_menuitem_help_attrs %}{% endblock %}><a href="http://djangotribune.readthedocs.org/en/latest/usage.html" class="button small" target="_blank">{% trans 'Help' %}</a></li>
+        </ul>
+
     {% block content_part %}{% endblock %}
     </div>
 </div>

@@ -25,12 +25,10 @@
     </script>
 {% endblock %}
 
+{% block djangotribune_menuitem_messages_attrs %} class="active"{% endblock %}
+
 {% block content_part %}
 <h2>{{ board_title }}</h2>
-
-<p>
-    <a href="{% url 'tribune-url-archives' %}" class="button round tiny secondary">{% trans 'Url archives' %}</a>
-</p>
 
 <div class="djangotribune">
     <ul class="messages">

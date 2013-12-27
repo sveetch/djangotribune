@@ -349,6 +349,22 @@ AAAQABAAAAVfICCOZGmeqEgUxUAIpkA0AMKyxkEiSZEIsJqhYAg+boUFSTAkiBiNHks3sg1ILAfBiS10
         font-size: 14px;
     }
 }
+
+/*
+ * Global menu for djangotribune pages
+ */
+ul.inline-list.djangotribune-menu{
+    margin-left: 0;
+    
+    li{
+        margin-left: 0;
+        
+        &+li .button{
+            border-left: 0;
+        }
+    }
+}
+
 /*
  * Page list for url archives list
  */
