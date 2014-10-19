@@ -17,45 +17,6 @@ Array.prototype.remove = function(from, to) {
     return this.push.apply(this, rest);
 };
 
-/*
- * Extend jQuery with a new method to insert text in an input at current cursor position
- * 
- * Stealed from :
- * 
- * http://stackoverflow.com/questions/946534/insert-text-into-textarea-with-jquery
- * 
- * Usage :
- * 
- *     $("input.myinput").insertAtCaret("My text");
- */
-jQuery.fn.extend({
-    insertAtCaret: function(myValue){
-        return this.each(function(i) {
-            if (document.selection) {
-                //For browsers like Internet Explorer
-                this.focus();
-                var sel = document.selection.createRange();
-                sel.text = myValue;
-                this.focus();
-            }
-            else if (this.selectionStart || this.selectionStart == '0') {
-                //For browsers like Firefox and Webkit based
-                var startPos = this.selectionStart,
-                    endPos = this.selectionEnd,
-                    scrollTop = this.scrollTop;
-                this.value = this.value.substring(0, startPos)+myValue+this.value.substring(endPos,this.value.length);
-                this.focus();
-                this.selectionStart = startPos + myValue.length;
-                this.selectionEnd = startPos + myValue.length;
-                this.scrollTop = scrollTop;
-            } else {
-                this.value += myValue;
-                this.focus();
-            }
-        });
-    }
-});
-
 /* 
  * The djangotribune plugin
  * 
@@ -555,6 +516,7 @@ jQuery.fn.extend({
         bind_message : function(djangotribune_element, djangotribune_data, message_element, message_data, initial) {
             var preload,
                 clock,
+                input_sel,
                 pointer_name,
                 clock_name,
                 css_attrs,
@@ -615,9 +577,11 @@ jQuery.fn.extend({
                     $(this).parent().parent().removeClass("highlighted");
                 });
             }).click(function(){
-                // Focus in input and add the clock to answer it
+                // Add clicked clock at input cursor position then focus after 
+                // the clock position
                 clock = jQuery.trim($(this).text());
-                $("#id_content").insertAtCaret(clock+" ");
+                input_sel = $("#id_content").textrange('get');
+                $("#id_content").textrange('insert', clock+" ").textrange('setcursor', input_sel.position+clock.length+1);
             });
             
             // Clock pointers contained
@@ -1091,8 +1055,8 @@ jQuery.fn.extend({
     
     /*
      * Plugin HTML templates
-     * This is not "real" templates as we can see it with some library like "Mustach.js" 
-     * and others, this is just some functions to build the needed HTML
+     * This is not "real" templates like with "Mustach.js" and others but just 
+     * some functions to build the needed HTML
      */
     var templates = {
         /*
