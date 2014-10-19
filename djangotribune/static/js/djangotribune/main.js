@@ -558,13 +558,12 @@ jQuery.fn.extend({
                 pointer_name,
                 clock_name,
                 css_attrs,
-                initial = (initial) ? true : false;
-            
-            // TODO: move in the djangotribune data
-            // NOTE: initial HTML use entity reference and JSON backend use decimal 
-            // reference, so for now we need to support both of them
-            var regex_cast_initial = new RegExp(djangotribune_data.settings.authenticated_username+"&#60;");
-            var regex_cast_backend = new RegExp(djangotribune_data.settings.authenticated_username+"&lt;");
+                initial = (initial) ? true : false,
+                // TODO: move in the djangotribune data
+                // NOTE: initial HTML use entity reference and JSON backend use decimal 
+                // reference, so for now we need to support both of them
+                regex_cast_initial = new RegExp(djangotribune_data.settings.authenticated_username+"&#60;"),
+                regex_cast_backend = new RegExp(djangotribune_data.settings.authenticated_username+"&lt;");
             
             // Add event to force URL opening in a new window
             $("span.content a", message_element).click( function() {
@@ -734,9 +733,12 @@ jQuery.fn.extend({
             var $this = this[1],
                 data = $this.data("djangotribune"),
                 method_name = this[0],
-                content = $("input.content_field", $this).textrange('get').text;
+                sel = $("input.content_field", $this).textrange('get'),
+                tagged_text = data.settings.shortcut_map[method_name][2](sel.text),
+                pos_diff = tagged_text.length - sel.length;
             
-            $("input.content_field", $this).textrange('replace', data.settings.shortcut_map[method_name][2](content));
+            $("input.content_field", $this).textrange('replace', tagged_text);
+            $('input.content_field').textrange('setcursor', sel.end+pos_diff);
         },
  
         /*

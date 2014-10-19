@@ -65,8 +65,13 @@ TRIBUNE_TITLES = getattr(settings, 'TRIBUNE_TITLES_AVAILABLE', (
     u'Vice City',
     u'San Andreas',
     u'Liberty City',
+    # Papers, Please
+    u"La voix de l'Arstotzka"
     # Hercule Poirot
     u'Whitehaven Mansions',
+    # Walking dead
+    u'Woodbury',
+    u'West Georgia Correctional Facility',
     # Zorel
     u'La trouée des Trolls',
     u'Twilight Zone',
