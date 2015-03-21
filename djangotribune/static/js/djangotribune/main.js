@@ -1031,7 +1031,7 @@ Array.prototype.remove = function(from, to) {
          */
         get_request_url : function(host, path_view, options) {
             var url = host + path_view;
-            if(options){
+            if(options && $.param(options)!=''){
                 url += "?" + $.param(options);
             }
             return url;

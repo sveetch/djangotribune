@@ -8,6 +8,11 @@
             <li{% block djangotribune_menuitem_messages_attrs %}{% endblock %}><a href="{% url 'tribune-board' %}" class="button small">{% trans 'Messages' %}</a></li>
             <li{% block djangotribune_menuitem_urls_attrs %}{% endblock %}><a href="{% url 'tribune-url-archives' %}" class="button small">{% trans 'Url archives' %}</a></li>
             <li{% block djangotribune_menuitem_help_attrs %}{% endblock %}><a href="http://djangotribune.readthedocs.org/en/latest/usage.html" class="button small" target="_blank">{% trans 'Help' %}</a></li>
+            {% if tribune_channel %}
+            <li><a href="{% url 'tribune-channel-config' channel_slug=tribune_channel.slug %}" class="button small">{% trans 'Discovery config' %}</a></li>
+            {% else %}
+            <li><a href="{% url 'tribune-config' %}" class="button small">{% trans 'Discovery config' %}</a></li>
+            {% endif %}
         </ul>
 
     {% block content_part %}{% endblock %}

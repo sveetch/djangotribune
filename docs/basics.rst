@@ -100,6 +100,8 @@ content in a ``content`` argument.
   the *known* last id);
 * Unvalid message return an Http error.
 
+If ``last_id`` is given in the **POST** request it will be used instead of **GET** argument.
+
 All POST response for validated message return a **X-Post-Id** header that contain the ID of the 
 new message.
 

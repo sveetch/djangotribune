@@ -74,9 +74,16 @@ class RemoteBaseMixin(ChannelAwareMixin):
         return value.astimezone(self.current_tz)
 
     def get_last_id(self):
-        """Get the id from wich to start row fetching"""
+        """
+        Get the id from which to start fetching
+        
+        POST argument have predominance on GET argument that have predominance on 
+        URL path element
+        """
         last_id = self.kwargs.get('last_id', 0)
         last_id = self.request.GET.get('last_id', last_id)
+        if self.request.POST:
+            last_id = self.request.POST.get('last_id', last_id)
         try:
             last_id = int(last_id)
         except ValueError:
