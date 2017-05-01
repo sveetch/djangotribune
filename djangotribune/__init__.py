@@ -2,4 +2,4 @@
 """
 Django-tribune is a chat-like application
 """
-__version__ = '0.7.9'
+__version__ = '2.0.0-pre.1'

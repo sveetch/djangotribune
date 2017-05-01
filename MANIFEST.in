@@ -1,7 +1,13 @@
 include MANIFEST.in
 include LICENCE.txt
 include README.rst
+
 recursive-include djangotribune/templates *
 recursive-include djangotribune/static *
 recursive-include djangotribune/locale *
 recursive-include djangotribune/test_fixtures *
+
+recursive-exclude project_test *
+recursive-exclude project_test .cache
+recursive-exclude project_test __pycache__
+recursive-exclude project_test *.pyc
