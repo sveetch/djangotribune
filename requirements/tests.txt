@@ -1,0 +1,5 @@
+django
+pytest
+pytest-django
+factory-boy
+pytest-factoryboy
