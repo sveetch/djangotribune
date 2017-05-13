@@ -4,6 +4,9 @@ import factory
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.template.defaultfilters import slugify
+
+from djangotribune.models import Channel, UserPreferences
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -23,3 +26,27 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = User
+
+
+class ChannelFactory(factory.django.DjangoModelFactory):
+    """
+    Simple factory for User model
+    """
+    title = factory.Sequence(lambda n: 'Channel {0}'.format(n))
+    slug = factory.LazyAttribute(lambda obj: slugify(obj))
+
+    class Meta:
+        model = Channel
+
+
+class UserPreferencesFactory(factory.django.DjangoModelFactory):
+    """
+    Simple factory for User model
+    """
+    owner = factory.SubFactory(UserFactory)
+    refresh_time = factory.Iterator([5000, 1000, 10000])
+    refresh_actived = factory.Iterator([True, False])
+    smileys_host_url = factory.Iterator(['http://totoz.eu', 'http://nsfw.totoz.eu'])
+
+    class Meta:
+        model = UserPreferences
