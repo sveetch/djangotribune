@@ -53,7 +53,7 @@ FILTER_KIND_ALIASES = (
 
 class Channel(models.Model):
     """
-    Channel
+    Channel board reference
     """
     created = models.DateTimeField(_('created date'), auto_now_add=True)
     slug = models.SlugField('slug', unique=True, max_length=75)
@@ -69,7 +69,7 @@ class Channel(models.Model):
 
 class UserPreferences(models.Model):
     """
-    User preferences to tribune usage
+    User preferences for board usage
     """
     owner = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -81,7 +81,6 @@ class UserPreferences(models.Model):
     refresh_actived = models.BooleanField(_('refresh actived'), default=True)
     smileys_host_url = models.CharField(_('smileys host url'),
                                         max_length=150, blank=False)
-    maximised = models.BooleanField(_('maximised view'), default=True)
 
     def __unicode__(self):
         return self.owner.username
