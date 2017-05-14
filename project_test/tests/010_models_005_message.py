@@ -1,0 +1,20 @@
+import pytest
+import pytz
+
+from djangotribune.models import Message
+
+from .factories import MessageFactory
+
+
+@pytest.mark.django_db
+def test_single_goods(settings):
+    """Single Message creation from factory"""
+    factory_message = MessageFactory()
+
+    assert Message.objects.count() == 1
+
+    msg = Message.objects.get(owner=factory_message.owner)
+    assert msg.raw == factory_message.raw
+
+    tz = pytz.timezone(settings.TIME_ZONE)
+    assert msg.clock == msg.created.astimezone(tz).time()
