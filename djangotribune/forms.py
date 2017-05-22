@@ -195,7 +195,8 @@ class MessageForm(forms.Form):
         new_message = Message(
             created=created,
             # Enforce the same time that the one stored in created
-            clock=created.astimezone(pytz.timezone(settings.TIME_ZONE)).time(),
+            # Should not be needed anymore since model perform it in its save()
+            #clock=created.astimezone(pytz.timezone(settings.TIME_ZONE)).time(),
             channel=self.channel,
             author=author,
             user_agent=self.cleaned_data['user_agent'][:150],
