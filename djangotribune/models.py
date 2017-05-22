@@ -2,41 +2,22 @@
 """
 Data Models
 """
+import datetime, pytz
+
 from django.conf import settings
 from django.db import models
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import utc
 
 from django.contrib.auth.models import User
-
-
-# Target determines wich field is used on the filter
-FILTER_TARGET_CHOICE = (
-    ('user_agent', _('User Agent')),
-    ('author__username', _('Username')),
-    ('raw', _('Raw message')),
-)
 
 
 # Aliases for target field names
 FILTER_TARGET_ALIASES = (
     ('ua', 'user_agent'),
-    ('author', 'author__username'),
+    ('owner', 'owner__username'),
     ('message', 'raw'),
-)
-
-
-# Kind determines what kind of Field lookup is used on the filter.
-# 'regex' are disabled because they seem to have too much cost on performance
-FILTER_KIND_CHOICE = (
-    #('regex', _('Case-sensitive regular expression match')),
-    #('iregex', _('Case-insensitive regular expression match')),
-    ('contains', _('Case-sensitive containment test')),
-    ('icontains', _('Case-insensitive containment test')),
-    ('exact', _('Case-sensitive exact match')),
-    ('iexact', _('Case-insensitive exact match')),
-    ('startswith', _('Case-sensitive starts-with')),
-    ('endswith', _('Case-sensitive ends-with')),
 )
 
 
@@ -117,17 +98,38 @@ class FilterEntry(models.Model):
     """
     Personnal user entry to hide messages
     """
-    author = models.ForeignKey(User, verbose_name=_('identified author'),
-                               blank=False)
+    # Target determines wich field is used on the filter
+    FILTER_TARGET_CHOICE = (
+        ('user_agent', _('User Agent')),
+        ('owner__username', _('Username')),
+        ('raw', _('Raw message')),
+    )
+
+    # Kind determines what kind of Field lookup is used on the filter.
+    # 'regex' are disabled because they seem to have too much cost on
+    # performance
+    FILTER_KIND_CHOICE = (
+        #('regex', _('Case-sensitive regular expression match')),
+        #('iregex', _('Case-insensitive regular expression match')),
+        ('contains', _('Case-sensitive containment test')),
+        ('icontains', _('Case-insensitive containment test')),
+        ('exact', _('Case-sensitive exact match')),
+        ('iexact', _('Case-insensitive exact match')),
+        ('startswith', _('Case-sensitive starts-with')),
+        ('endswith', _('Case-sensitive ends-with')),
+    )
+
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, blank=False)
     target = models.CharField(_('target'), choices=FILTER_TARGET_CHOICE,
                               max_length=30, blank=False)
     kind = models.CharField(_('kind'), choices=FILTER_KIND_CHOICE,
                             max_length=30, blank=False)
+    # value can be related to any field respecting 'FILTER_TARGET_CHOICE'
     value = models.CharField(_('value'), max_length=255, blank=False)
     objects = FilterEntryManager()
 
     def __unicode__(self):
-        return u"{kind} from {user}".format(user=self.author.username,
+        return u"{kind} from {user}".format(user=self.owner.username,
                                             kind=self.get_kind_display())
 
     class Meta:
@@ -182,16 +184,16 @@ class MessageManagerMixin(object):
             q = q.exclude(**{key: pattern})
         return q
 
-    def bunkerize(self, author=None):
+    def bunkerize(self, owner=None):
         """
         Get message filters to excludes messages
 
-        This is method automatically get the saved filters in the author
+        This is method automatically get the saved filters in the owner
         profile in database.
         """
         q = self.exclude()
-        if author and author.is_authenticated():
-            for x in author.filterentry_set.get_filters_kwargs():
+        if owner and owner.is_authenticated():
+            for x in owner.filterentry_set.get_filters_kwargs():
                 q = q.exclude(**x)
         return q
 
@@ -227,12 +229,12 @@ class Message(models.Model):
     The clock attribute is filled from the created attribute, and its purpose
     is mainly for some specific queryset filters.
     """
-    channel = models.ForeignKey(Channel, verbose_name=_('channel'),
+    channel = models.ForeignKey('Channel', verbose_name=_('channel'),
                                 blank=True, null=True, default=None)
-    author = models.ForeignKey(User, verbose_name=_('identified author'),
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                                blank=True, null=True, default=None)
-    created = models.DateTimeField(_('created date'))#, auto_now_add=True)
-    clock = models.TimeField(_('clock'))#, auto_now_add=True)
+    created = models.DateTimeField(_('created date'))
+    clock = models.TimeField(_('clock'), blank=True)
     user_agent = models.CharField(_('User Agent'), max_length=150)
     ip = models.GenericIPAddressField(_('IP adress'), blank=True, null=True)
     raw = models.TextField(_('raw'), blank=False)
@@ -244,16 +246,29 @@ class Message(models.Model):
         return "<Message: {id}>".format(id=self.id)
 
     def __unicode__(self):
-        return "{date} by {author}".format(date=self.created,
-                                           author=self.get_identity())
+        return "{date} by {owner}".format(date=self.created,
+                                           owner=self.get_identity())
 
     def get_created_date(self):
         return self.created.date()
 
     def get_identity(self):
-        if not self.author:
+        if not self.owner:
             return self.user_agent[:50]
-        return self.author
+        return self.owner
+
+    def save(self, *args, **kwargs):
+        # 'created' field should be filled from posting form (to have a sooner
+        # datetime without to wait for model save) but in case message entry
+        # is created out of the form process, automatically fill it here
+        if not self.created:
+            self.created = datetime.datetime.utcnow().replace(tzinfo=utc)
+
+        # Allways fill 'clock' field from 'created' field
+        tz = pytz.timezone(settings.TIME_ZONE)
+        self.clock = self.created.astimezone(tz).time()
+
+        super(Message, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = _('message')
@@ -264,8 +279,8 @@ class Url(models.Model):
     """
     Url catched from a Message
     """
-    message = models.ForeignKey(Message)
-    author = models.ForeignKey(User, verbose_name=_('identified author'),
+    message = models.ForeignKey('Message')
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL,
                                blank=True, null=True, default=None)
     created = models.DateTimeField(_('created date'), blank=True)
     url = models.TextField(_('url'), blank=False)
@@ -274,9 +289,11 @@ class Url(models.Model):
         return self.url
 
     def save(self, *args, **kwargs):
+        # Inherit owner and created from related message
         if not self.created:
-            self.author = self.message.author
             self.created = self.message.created
+        if not self.owner:
+            self.owner = self.message.owner
         super(Url, self).save(*args, **kwargs)
 
     class Meta:

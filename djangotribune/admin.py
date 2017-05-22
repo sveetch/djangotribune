@@ -17,9 +17,9 @@ class UserPreferencesAdmin(admin.ModelAdmin):
 
 
 class FilterEntryAdmin(admin.ModelAdmin):
-    list_display = ('author', 'target', 'kind', 'value')
+    list_display = ('owner', 'target', 'kind', 'value')
     list_filter = ('target', 'kind')
-    ordering = ('author', 'target', 'kind')
+    ordering = ('owner', 'target', 'kind')
 
 
 class MessageAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class MessageAdmin(admin.ModelAdmin):
                     'raw', 'ip')
     list_display_links = ('get_created_date', 'clock')
     list_filter = ('created', 'channel')
-    search_fields = ['raw','author__username', 'user_agent','ip']
+    search_fields = ['raw','owner__username', 'user_agent','ip']
     ordering = ('-created',)
 
 
