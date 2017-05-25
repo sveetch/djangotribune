@@ -82,11 +82,8 @@ class GenericPostCleaner(list):
     """
     G.I.P. 2 : "Glandium inspired parser" strikes back
 
-    Original code is avalaible by GIT at : 
-    git://git.glandium.org/bouchot-ng.git
-
-    Original credits to :
-    Mike Hommey mh AT glandium DOT org
+    Original credits to Mike Hommey :
+    mh AT glandium DOT org
     """
     def __init__(self):
         self._tags = []
@@ -246,7 +243,7 @@ class PostCleaner(GenericPostCleaner):
         title = scheme
         if title == 'http':
             title = 'url'
-        
+
         # Renommage du label du lien selon son url
         for k,v in URL_SUBSTITUTION:
             matched = re.search(k, url)
@@ -259,7 +256,7 @@ class PostCleaner(GenericPostCleaner):
                 else:
                     title = v
                 break
-        
+
         return "[%s]" % title
 
 class MessageParser(object):
@@ -270,7 +267,7 @@ class MessageParser(object):
 
     def render(self, source):
         """
-        Procède au rendu de transformation et le renvoi dans un dictionnaire 
+        Procède au rendu de transformation et le renvoi dans un dictionnaire
         avec les stats de parsing
         """
         lastIndex = 0
@@ -280,7 +277,7 @@ class MessageParser(object):
         parserObject = PostCleaner(link_rel_escape=self.link_rel_escape)
         parserObject.append_batch( source )
         cleaned_source = unicode( parserObject )
-        
+
         # Itération sur les résultats de la Regex de formattage
         for chunk in parserObject:
             if chunk[0] == '<':
@@ -310,7 +307,7 @@ class MessageParser(object):
             else:
                 slipped_web.write(chunk)
                 slipped_remote.write(chunk)
-        
+
         return {
             'web_render': slipped_web.getvalue().replace(self.link_rel_escape, ' class="external" rel="nofollow"'),
             'remote_render': slipped_remote.getvalue().replace(self.link_rel_escape, ''),
@@ -318,7 +315,7 @@ class MessageParser(object):
             'smileys': parserObject.matched_totozs,
             'clocks': parserObject.matched_clocks,
         }
-        
+
     def validate(self, source):
         ## TODO: invalidate for words with a crazy length
         #if len(source.strip()) < self.min_width:
