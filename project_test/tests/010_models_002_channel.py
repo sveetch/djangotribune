@@ -2,7 +2,7 @@ import pytest
 
 from djangotribune.models import Channel
 
-from .factories import ChannelFactory
+from project_test.tests.factories import ChannelFactory
 
 
 @pytest.mark.django_db

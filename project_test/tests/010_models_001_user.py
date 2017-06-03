@@ -2,7 +2,7 @@ import pytest
 
 from django.contrib.auth.models import User
 
-from .factories import UserFactory
+from project_test.tests.factories import UserFactory
 
 
 @pytest.mark.django_db

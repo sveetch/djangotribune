@@ -2,7 +2,7 @@ import pytest
 
 from djangotribune.models import FilterEntry
 
-from .factories import FilterEntryFactory
+from project_test.tests.factories import FilterEntryFactory
 
 
 @pytest.mark.django_db

@@ -1,7 +1,6 @@
-from faker import Faker
-
 # first, import a similar Provider or use the default one
 from faker.providers import BaseProvider
+
 
 # create new provider class
 class TribuneProvider(BaseProvider):
@@ -10,7 +9,7 @@ class TribuneProvider(BaseProvider):
         'moment',
         'markup',
         'totoz',
-        #'url',
+        'url',
     )
 
     MARKUP_MESSAGES = (
@@ -23,8 +22,10 @@ class TribuneProvider(BaseProvider):
 
     ANSWER_MESSAGES = (
         """12:12:12 No you don't""",
+        """22:30:30""",
         """14:15:23 Yep 14:15:23 Nope""",
         """00:00:00 Refused""",
+        """I ain't going nowhere until 16:45:00""",
     )
 
     TOTOZ_MESSAGES = (
@@ -37,8 +38,25 @@ class TribuneProvider(BaseProvider):
         """[:fascinant]""",
     )
 
+    URL_MESSAGES = (
+        """http://perdu.com""",
+        """https://linuxfr.org/news""",
+        """https://google.fr""",
+        """https://en.wikipedia.org/wiki/Western_conifer_seed_bug""",
+        """http://minecraft.gamepedia.com/Crafting""",
+        """http://internet-map.net/""",
+        """https://www.smashingmagazine.com/tag/web-design/""",
+        """http://heeeeeeeey.com/""",
+    )
+
     MOMENT_MESSAGES = (
         """<m>The West Montgomery Trio - Whisper Not</m>""",
+        """<m>AC/DC - Hells Bells</m>""",
+        """<m>Laurent Coulondre - Vamos Tio</m>""",
+        """<m>Bobby Timmons - This Here</m>""",
+        """<m>Nazareth - Hair of the Dog</m>""",
+        """<m>Willie Nelson - Night Life</m>""",
+        """<m>Os Tres Morais - Freio Aerodinämico</m>""",
     )
 
     def tribune_message(self):
@@ -57,11 +75,18 @@ class TribuneProvider(BaseProvider):
     def tribune_moment(self):
         return self.random_element(self.MOMENT_MESSAGES)
 
+    def tribune_url(self):
+        return self.random_element(self.URL_MESSAGES)
+
+
 if __name__ == "__main__":
+    from faker import Faker
+
     # add new provider to faker instance
     fake = Faker()
     fake.add_provider(TribuneProvider)
 
+    # Dummy tests
     for i in range(0, 9):
         print(fake.tribune_message())
     print()
