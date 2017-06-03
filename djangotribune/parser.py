@@ -4,10 +4,13 @@ Message parser
 """
 import re
 from datetime import datetime
-from StringIO import StringIO
+
+from six import StringIO
+
 from django.template.defaultfilters import truncatechars
 
 from djangotribune.settings_local import TRIBUNE_SMILEYS_URL, TRIBUNE_SHOW_TRUNCATED_URL
+
 
 POST_CLEANER_TAG_RE = '<(?P<tag>/?(?:b|i|s|u|tt|m|code))>'
 POST_CLEANER_SCHEME_RE = '(?P<scheme>(?:http|ftp|https|chrome|gopher|git|git+ssh|svn|svn+ssh)://)'
@@ -16,6 +19,7 @@ POST_CLEANER_CLOCK_RE = u'(?<![0-9])(?P<clock>(?P<h>2[0-3]|[01][0-9])(?P<c>(?=[0
 POST_CLEANER_TOTOZ_RE = '(?P<totoz>\[\:[A-Za-z0-9-_@ ]+(?:\:[0-9]+)?\])'
 POST_CLEANER_RE = re.compile('(' + POST_CLEANER_TOTOZ_RE + '|(?P<sep>[\(\)\[\]"])|' + POST_CLEANER_TAG_RE + '|' + POST_CLEANER_SCHEME_RE + '|' + POST_CLEANER_CLOCK_RE + ')')
 POST_CLEANER_SEP_END = { '(': ')', '[': ']', '"': '"' }
+
 
 # TODO: move to settings "local" and use re.compile
 URL_SUBSTITUTION = (
@@ -52,14 +56,21 @@ URL_SUBSTITUTION = (
     (r"http://(.*).free.fr", r"\1@free"),
 )
 
+
 def XmlEntities(s):
     """
-    TODO: utiliser les entités ``&XX;`` ou alors uniformiser sur la notation en hexa (
-    mais les parser xml ont tendance à tous utiliser les entités ``&XX;``)
+    Replace HTML entities to valid XML entities (with numeric character
+    reference ``&#nnnn;``).
     """
-    return s.replace('&', '&#38;').replace('<', '&#60;').replace('>', '&#62;').replace('"', '&#34;')
+    return s.replace('&', '&#38;').replace('<', '&#60;')\
+            .replace('>', '&#62;').replace('"', '&#34;')
+
 
 def PostMatchIterator(str):
+    """
+    Custom iterator to split string using message regex from
+    ``POST_CLEANER_RE``.
+    """
     lastIndex = 0
     for match in re.finditer(POST_CLEANER_RE, str):
         if match.start() > lastIndex:
@@ -72,11 +83,16 @@ def PostMatchIterator(str):
     if len(str) > lastIndex:
         yield ['txt', str[lastIndex:]]
 
+
 def ListPopIterator(list):
+    """
+    Custom iterator to consume every parts
+    """
     while True:
         try:
             yield list.pop()
         except: break
+
 
 class GenericPostCleaner(list):
     """
@@ -192,6 +208,7 @@ class GenericPostCleaner(list):
             elif type == 'totoz':
                 self.append_totoz(match.group('totoz'))
 
+
 class PostCleaner(GenericPostCleaner):
     """
     ``GenericPostCleaner`` extension to implement needed methods and tribune behavior
@@ -258,6 +275,7 @@ class PostCleaner(GenericPostCleaner):
                 break
 
         return "[%s]" % title
+
 
 class MessageParser(object):
     def __init__(self, smileys_url=TRIBUNE_SMILEYS_URL, min_width=2):

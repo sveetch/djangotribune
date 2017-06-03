@@ -14,3 +14,12 @@ def test_single_goods():
 
     prefs = UserPreferences.objects.get(owner=factory_prefs.owner)
     assert prefs.smileys_host_url == prefs.smileys_host_url
+
+
+@pytest.mark.django_db
+def test_many_goods():
+    """Multiple UserPreferences creation from factory"""
+    for k in range(1, 6):
+        factory_filter = UserPreferencesFactory()
+
+    assert UserPreferences.objects.count() == 5

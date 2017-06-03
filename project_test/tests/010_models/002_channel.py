@@ -14,3 +14,12 @@ def test_single_goods():
 
     u = Channel.objects.get(slug=factory_channel.slug)
     assert u.title == factory_channel.title
+
+
+@pytest.mark.django_db
+def test_many_goods():
+    """Multiple Channel creation from factory"""
+    for k in range(1, 6):
+        factory_filter = ChannelFactory()
+
+    assert Channel.objects.count() == 5
