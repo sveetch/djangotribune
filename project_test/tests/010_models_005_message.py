@@ -3,7 +3,7 @@ import pytz
 
 from djangotribune.models import Message
 
-from .factories import MessageFactory
+from project_test.tests.factories import MessageFactory
 
 
 @pytest.mark.django_db

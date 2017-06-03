@@ -9,6 +9,8 @@ from django.template.defaultfilters import slugify
 from djangotribune.models import (Channel, UserPreferences, FilterEntry,
                                   Message)
 
+from project_test.tests.fakers import TribuneProvider
+factory.Faker.add_provider(TribuneProvider)
 
 class UserFactory(factory.django.DjangoModelFactory):
     """
@@ -91,7 +93,7 @@ class MessageFactory(factory.django.DjangoModelFactory):
     ip = factory.Faker('ipv4', network=False)
     # TODO: raw should use a custom faker using lorem and adding some markup
     #       (valid and invalid)
-    raw = factory.Faker('text', max_nb_chars=200)
+    raw = factory.Faker('tribune_message')
     # TODO: 'web_render' and 'remote_render' should be LazyAttribute using
     #       parsed 'raw' value to be valid BML (Bouchot Markup Language)
     #       according to their format
