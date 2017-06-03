@@ -23,6 +23,7 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
     install_requires=[
+        'six',
         'Django',
         'texttable',
         #'crispy-forms-foundation>=0.2.3.1',

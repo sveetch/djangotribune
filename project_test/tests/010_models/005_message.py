@@ -18,3 +18,12 @@ def test_single_goods(settings):
 
     tz = pytz.timezone(settings.TIME_ZONE)
     assert msg.clock == msg.created.astimezone(tz).time()
+
+
+@pytest.mark.django_db
+def test_many_goods():
+    """Multiple UserPreferences creation from factory"""
+    for k in range(1, 6):
+        factory_filter = MessageFactory()
+
+    assert Message.objects.count() == 5

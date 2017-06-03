@@ -14,3 +14,12 @@ def test_single_goods():
 
     prefs = FilterEntry.objects.get(owner=factory_filter.owner)
     assert prefs.value == prefs.value
+
+
+@pytest.mark.django_db
+def test_many_goods():
+    """Multiple FilterEntry creation from factory"""
+    for k in range(1, 6):
+        factory_filter = FilterEntryFactory()
+
+    assert FilterEntry.objects.count() == 5
