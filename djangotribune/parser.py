@@ -70,6 +70,8 @@ def PostMatchIterator(str):
     """
     Custom iterator to split string using message regex from
     ``POST_CLEANER_RE``.
+
+    NOTE: No test coverage.
     """
     lastIndex = 0
     for match in re.finditer(POST_CLEANER_RE, str):
@@ -87,6 +89,8 @@ def PostMatchIterator(str):
 def ListPopIterator(list):
     """
     Custom iterator to consume every parts
+
+    NOTE: No test coverage.
     """
     while True:
         try:
@@ -111,6 +115,31 @@ class GenericPostCleaner(list):
         else:
              self.append(append)
 
+    def format_clock(self, weight_format, h, m, s):
+        """
+        Format given time args to a clock display depending from given clock
+        weight format.
+
+        Args:
+            weight_format (string): Clock weight format like ``%H:%M:%S``. In
+                fact, method only worries about presence of ``:`` in the third
+                position of format so it will be added in formatted clock or
+                not.
+            h (integer): Hours.
+            m (integer): Minutes
+            s (integer): Seconds.
+
+        Returns:
+            string: Allways return a clock with seconds even if equal to zero.
+            Clock parts will separeted with ``:`` or not depending from
+            ``weight_format``.
+        """
+        clock = ('%02d:%02d' if weight_format[2] == ':' else '%02d%02d') % (h, m)
+        if s != None:
+            clock += (':%02d' if weight_format[2] == ':' else '%02d') % s
+
+        return clock
+
     def append_tag(self, tag):
         """tag is given without <>"""
         if tag[0] == '/':
@@ -123,19 +152,21 @@ class GenericPostCleaner(list):
             self._tags.append(tag)
             self.pop_or_append('</%s>' % tag, '<%s>' % tag)
 
-    def append_escape(self, str):
-        raise NotImplementedError
+    def append_escape(self, string):
+        self.append(string)
 
     def append_url(self, scheme, url):
-        """scheme includes ://"""
-        raise NotImplementedError
+        """scheme includes protocol and ://"""
+        self.append(url)
 
     def append_totoz(self, totoz):
         """totoz contains enclosing [: ]"""
-        raise NotImplementedError
+        self.append(totoz)
 
-    def append_clock(self, format, h, m, s, sel):
-        raise NotImplementedError
+    def append_clock(self, weight_format, h, m, s, sel):
+        if not sel:
+            sel = ''
+        self.append(self.format_clock(weight_format, h, m, s) + sel)
 
     def __str__(self):
         return ''.join(self)
@@ -223,7 +254,8 @@ class PostCleaner(GenericPostCleaner):
     def append_escape(self, s):
         self.append(XmlEntities(s))
 
-    def append_url(self, scheme, url): # scheme includes ://
+    def append_url(self, scheme, url):
+        # scheme includes ://
         self.append('<a href="')
         self.append_escape(url)
         self.append('"%s>' % self.link_rel_escape)
@@ -231,14 +263,13 @@ class PostCleaner(GenericPostCleaner):
         self.append('</a>')
         self.matched_urls.append(url)
 
-    def append_totoz(self, totoz): # totoz contains enclosing [: ]
+    def append_totoz(self, totoz):
+        # totoz contains enclosing [: ]
         self.append('<totoz name="%s"/>' % totoz[2:])
         self.matched_totozs.append(totoz[2:])
 
-    def append_clock(self, format, h, m, s, sel):
-        time = ('%02d:%02d' if format[2] == ':' else '%02d%02d') % (h, m)
-        if s != None:
-            time += (':%02d' if format[2] == ':' else '%02d') % s
+    def append_clock(self, weight_format, h, m, s, sel):
+        time = self.format_clock(weight_format, h, m, s)
         if not sel:
             sel = ''
         self.append('<clock time="%s">' % (time.replace(':','')))
@@ -251,7 +282,8 @@ class PostCleaner(GenericPostCleaner):
 
     def link_formatter(self, scheme, url):
         """
-        Parse l'url pour en déterminer le titre
+        Format link according to url, determine name from ``URL_SUBSTITUTION``
+        label patterns.
         """
         if TRIBUNE_SHOW_TRUNCATED_URL:
             return self.truncate_link(scheme, url)
