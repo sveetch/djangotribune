@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Message parser
+Message parsers and renderer
 """
 import re
 from datetime import datetime
@@ -100,7 +100,32 @@ def ListPopIterator(list):
 
 class GenericPostCleaner(list):
     """
-    G.I.P. 2 : "Glandium inspired parser" strikes back
+    Basic message parser.
+
+    Basic parser is only about to split a string into message parts where each
+    part can be a text, a clock, a totoz, an url or a recognized tag. It is an
+    inheritor from ``list`` object.
+
+    Available part kinds are:
+
+    * A message text part until another element kind is
+      encountered, if so it will close its part before to potentially continue
+      in another following part;
+    * A *Totoz* that is a smiley name surrounded with bracket and colon like
+      this ``[:name]``;
+    * Any url starting with recognized protocol from
+      ``POST_CLEANER_SCHEME_RE``;
+    * A time clock with hour, minute and second like ``12:00:15``;
+    * A recognized HTML tag from ``POST_CLEANER_TAG_RE``, this is not
+      necessarily a valid HTML tag;
+
+    Recognized tags are corrected when not
+    correctly written like missing closing tag, attributes, etc.. Other tags
+    are just escaped (or at least pretended to be so for this basic parser).
+
+    Processing and formatting methods (named like ``append_xxxx``) in this
+    parser only append given content as a message, excepting for clock and tag
+    methods.
 
     Original credits to Mike Hommey :
     mh AT glandium DOT org
@@ -108,6 +133,14 @@ class GenericPostCleaner(list):
     def __init__(self):
         self._tags = []
         super(GenericPostCleaner, self).__init__()
+
+    def __str__(self):
+        return ''.join(self)
+
+    def __iter__(self):
+        for t in ListPopIterator(self._tags):
+            self.pop_or_append('<%s>' % t, '</%s>' % t)
+        return super(GenericPostCleaner, self).__iter__()
 
     def pop_or_append(self, pop, append):
         if len(self) > 0 and self[len(self) - 1] == pop:
@@ -153,30 +186,35 @@ class GenericPostCleaner(list):
             self.pop_or_append('</%s>' % tag, '<%s>' % tag)
 
     def append_escape(self, string):
+        """
+        Escape string from HTML entities and append it to message parts.
+        """
         self.append(string)
 
     def append_url(self, scheme, url):
-        """scheme includes protocol and ://"""
+        """
+        Process url string and append it to message parts.
+        """
         self.append(url)
 
     def append_totoz(self, totoz):
-        """totoz contains enclosing [: ]"""
+        """
+        Process totoz string and append it to message parts.
+        """
         self.append(totoz)
 
     def append_clock(self, weight_format, h, m, s, sel):
+        """
+        Process clock string and append it to message parts.
+        """
         if not sel:
             sel = ''
         self.append(self.format_clock(weight_format, h, m, s) + sel)
 
-    def __str__(self):
-        return ''.join(self)
-
-    def __iter__(self):
-        for t in ListPopIterator(self._tags):
-            self.pop_or_append('<%s>' % t, '</%s>' % t)
-        return super(GenericPostCleaner, self).__iter__()
-
     def append_batch(self, str):
+        """
+        Parse and split given string into message parts.
+        """
         lastSep = ''
         code = 0
         iterator = iter(PostMatchIterator(str))
@@ -242,7 +280,11 @@ class GenericPostCleaner(list):
 
 class PostCleaner(GenericPostCleaner):
     """
-    ``GenericPostCleaner`` extension to implement needed methods and tribune behavior
+    Functional message parser.
+
+    Opposed to the basic message parser, this one process every part to apply
+    some formatting. Also it escapes string and makes some indexes about finded
+    totoz, clock and urls.
     """
     def __init__(self, link_rel_escape):
         super(PostCleaner, self).__init__()
@@ -310,6 +352,11 @@ class PostCleaner(GenericPostCleaner):
 
 
 class MessageParser(object):
+    """
+    Message renderer.
+
+    Using functional parser, it render a message to a HTML and a XML versions.
+    """
     def __init__(self, smileys_url=TRIBUNE_SMILEYS_URL, min_width=2):
         self.smileys_url = smileys_url
         self.min_width = min_width
@@ -317,8 +364,7 @@ class MessageParser(object):
 
     def render(self, source):
         """
-        Procède au rendu de transformation et le renvoi dans un dictionnaire
-        avec les stats de parsing
+        Render given string to HTML and XML.
         """
         lastIndex = 0
         slipped_web = StringIO()
