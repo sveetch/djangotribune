@@ -123,7 +123,7 @@ class GenericPostCleaner(list):
     correctly written like missing closing tag, attributes, etc.. Other tags
     are just escaped (or at least pretended to be so for this basic parser).
 
-    Processing and formatting methods (named like ``append_xxxx``) in this
+    Processing and formating methods (named like ``append_xxxx``) in this
     parser only append given content as a message, excepting for clock and tag
     methods.
 
@@ -156,7 +156,7 @@ class GenericPostCleaner(list):
         Args:
             weight_format (string): Clock weight format like ``%H:%M:%S``. In
                 fact, method only worries about presence of ``:`` in the third
-                position of format so it will be added in formatted clock or
+                position of format so it will be added in formated clock or
                 not.
             h (integer): Hours.
             m (integer): Minutes
@@ -283,15 +283,24 @@ class PostCleaner(GenericPostCleaner):
     Functional message parser.
 
     Opposed to the basic message parser, this one process every part to apply
-    some formatting. Also it escapes string and makes some indexes about finded
+    some formating. Also it escapes string and makes some indexes about finded
     totoz, clock and urls.
     """
-    def __init__(self, link_rel_escape):
+    def __init__(self, escape_token=None):
         super(PostCleaner, self).__init__()
         self.matched_totozs = []
         self.matched_clocks = []
         self.matched_urls = []
-        self.link_rel_escape = link_rel_escape
+        self.escape_token = escape_token or self.get_escape_token()
+
+    def get_escape_token(self):
+        """
+        Build a token to insert in some parts so it can be used to escape some
+        HTML attributes.
+
+        Exclusively used inside url processing.
+        """
+        return "$LinkRelEscape{0}$".format(datetime.now().strftime('%s'))
 
     def append_escape(self, s):
         self.append(XmlEntities(s))
@@ -300,15 +309,15 @@ class PostCleaner(GenericPostCleaner):
         # scheme includes ://
         self.append('<a href="')
         self.append_escape(url)
-        self.append('"%s>' % self.link_rel_escape)
-        self.append( self.link_formatter(scheme[0:-3], url) )
+        self.append('"%s>' % self.escape_token)
+        self.append( self.link_formater(scheme[0:-3], url) )
         self.append('</a>')
         self.matched_urls.append(url)
 
     def append_totoz(self, totoz):
         # totoz contains enclosing [: ]
-        self.append('<totoz name="%s"/>' % totoz[2:])
-        self.matched_totozs.append(totoz[2:])
+        self.append('<totoz name="%s"/>' % totoz[2:-1])
+        self.matched_totozs.append(totoz[2:-1])
 
     def append_clock(self, weight_format, h, m, s, sel):
         time = self.format_clock(weight_format, h, m, s)
@@ -322,7 +331,7 @@ class PostCleaner(GenericPostCleaner):
     def truncate_link(self, scheme, url):
         return truncatechars(url.replace(scheme + '://', ''), 100)
 
-    def link_formatter(self, scheme, url):
+    def link_formater(self, scheme, url):
         """
         Format link according to url, determine name from ``URL_SUBSTITUTION``
         label patterns.
@@ -360,7 +369,6 @@ class MessageParser(object):
     def __init__(self, smileys_url=TRIBUNE_SMILEYS_URL, min_width=2):
         self.smileys_url = smileys_url
         self.min_width = min_width
-        self.link_rel_escape = "$LinkRelEscape{0}$".format(datetime.now().strftime('%s'))
 
     def render(self, source):
         """
@@ -370,11 +378,11 @@ class MessageParser(object):
         slipped_web = StringIO()
         slipped_remote = StringIO()
         # Procède au scan et nettoyage de la source
-        parserObject = PostCleaner(link_rel_escape=self.link_rel_escape)
+        parserObject = PostCleaner()
         parserObject.append_batch( source )
         cleaned_source = unicode( parserObject )
 
-        # Itération sur les résultats de la Regex de formattage
+        # Itération sur les résultats de la Regex de formatage
         for chunk in parserObject:
             if chunk[0] == '<':
                 # Moment
@@ -405,8 +413,8 @@ class MessageParser(object):
                 slipped_remote.write(chunk)
 
         return {
-            'web_render': slipped_web.getvalue().replace(self.link_rel_escape, ' class="external" rel="nofollow"'),
-            'remote_render': slipped_remote.getvalue().replace(self.link_rel_escape, ''),
+            'web_render': slipped_web.getvalue().replace(parserObject.escape_token, ' class="external" rel="nofollow"'),
+            'remote_render': slipped_remote.getvalue().replace(parserObject.escape_token, ''),
             'urls': parserObject.matched_urls,
             'smileys': parserObject.matched_totozs,
             'clocks': parserObject.matched_clocks,
