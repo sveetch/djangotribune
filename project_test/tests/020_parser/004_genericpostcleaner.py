@@ -118,7 +118,12 @@ def test_format_clock(source_args, attempted):
     ),
 ])
 def test_parse(source, attempted):
-    """Parsing message source using basic 'post cleaner'"""
+    """
+    Parsing message source using basic post cleaner
+
+    NOTE: Since basic parser does not do formating we can't clearly identify
+          here what part kind have been resolved, so tests are very basic.
+    """
     gpc = GenericPostCleaner()
     gpc.append_batch(source)
 
