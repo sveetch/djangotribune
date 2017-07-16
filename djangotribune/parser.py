@@ -6,6 +6,7 @@ import re
 from datetime import datetime
 
 from six import StringIO
+from six import u
 
 from django.template.defaultfilters import truncatechars
 
@@ -286,55 +287,42 @@ class PostCleaner(GenericPostCleaner):
     some formating. Also it escapes string and makes some indexes about finded
     totoz, clock and urls.
     """
+    TOKEN_TEMPLATE = "$LinkRelEscape{}$"
+    URL_DISPLAY_LIMIT = 100
+
     def __init__(self, escape_token=None):
         super(PostCleaner, self).__init__()
         self.matched_totozs = []
         self.matched_clocks = []
         self.matched_urls = []
-        self.escape_token = escape_token or self.get_escape_token()
+        self.escape_token = (escape_token
+                             or self.get_escape_token(datetime.now()
+                                                      .strftime('%s')))
 
-    def get_escape_token(self):
+    def get_escape_token(self, now):
         """
         Build a token to insert in some parts so it can be used to escape some
         HTML attributes.
 
         Exclusively used inside url processing.
         """
-        return "$LinkRelEscape{0}$".format(datetime.now().strftime('%s'))
-
-    def append_escape(self, s):
-        self.append(XmlEntities(s))
-
-    def append_url(self, scheme, url):
-        # scheme includes ://
-        self.append('<a href="')
-        self.append_escape(url)
-        self.append('"%s>' % self.escape_token)
-        self.append( self.link_formater(scheme[0:-3], url) )
-        self.append('</a>')
-        self.matched_urls.append(url)
-
-    def append_totoz(self, totoz):
-        # totoz contains enclosing [: ]
-        self.append('<totoz name="%s"/>' % totoz[2:-1])
-        self.matched_totozs.append(totoz[2:-1])
-
-    def append_clock(self, weight_format, h, m, s, sel):
-        time = self.format_clock(weight_format, h, m, s)
-        if not sel:
-            sel = ''
-        self.append('<clock time="%s">' % (time.replace(':','')))
-        self.append(time + sel)
-        self.append('</clock>')
-        self.matched_clocks.append(time + sel)
+        return self.TOKEN_TEMPLATE.format(now)
 
     def truncate_link(self, scheme, url):
-        return truncatechars(url.replace(scheme + '://', ''), 100)
-
-    def link_formater(self, scheme, url):
         """
-        Format link according to url, determine name from ``URL_SUBSTITUTION``
-        label patterns.
+        Remove recognized HTTP protocol (like ``http://``) then truncate url
+        if longer than limit ``PostCleaner.URL_DISPLAY_LIMIT``
+        """
+        return truncatechars(url.replace(scheme + '://', ''),
+                             self.URL_DISPLAY_LIMIT)
+
+    def url_display(self, scheme, url):
+        """
+        Return display label for given url
+
+        Link is formatted according to url, label is determined from
+        ``URL_SUBSTITUTION`` label patterns if substitution is enabled from
+        setting ``TRIBUNE_SHOW_TRUNCATED_URL``.
         """
         if TRIBUNE_SHOW_TRUNCATED_URL:
             return self.truncate_link(scheme, url)
@@ -359,6 +347,32 @@ class PostCleaner(GenericPostCleaner):
 
         return "[%s]" % title
 
+    def append_escape(self, s):
+        self.append(XmlEntities(s))
+
+    def append_url(self, scheme, url):
+        # scheme includes ://
+        self.append('<a href="')
+        self.append_escape(url)
+        self.append('"%s>' % self.escape_token)
+        self.append( self.url_display(scheme[0:-3], url) )
+        self.append('</a>')
+        self.matched_urls.append(url)
+
+    def append_totoz(self, totoz):
+        # totoz contains enclosing [: ]
+        self.append('<totoz name="%s"/>' % totoz[2:-1])
+        self.matched_totozs.append(totoz[2:-1])
+
+    def append_clock(self, weight_format, h, m, s, sel):
+        time = self.format_clock(weight_format, h, m, s)
+        if not sel:
+            sel = ''
+        self.append('<clock time="%s">' % (time.replace(':','')))
+        self.append(time + sel)
+        self.append('</clock>')
+        self.matched_clocks.append(time + sel)
+
 
 class MessageParser(object):
     """
@@ -379,8 +393,8 @@ class MessageParser(object):
         slipped_remote = StringIO()
         # Procède au scan et nettoyage de la source
         parserObject = PostCleaner()
-        parserObject.append_batch( source )
-        cleaned_source = unicode( parserObject )
+        parserObject.append_batch(source)
+        cleaned_source = u(parserObject)
 
         # Itération sur les résultats de la Regex de formatage
         for chunk in parserObject:
