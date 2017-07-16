@@ -1,10 +1,99 @@
 from __future__ import unicode_literals
 
+from datetime import datetime, timedelta
+
 import pytest
 
 from django.contrib.auth.models import User
 
 from djangotribune.parser import PostCleaner
+
+
+@pytest.mark.parametrize('now', [
+    datetime.now(),
+    datetime.now() + timedelta(minutes=15),
+])
+def test_get_escape_token(now):
+    timenow = now.strftime('%s')
+
+    gpc = PostCleaner()
+
+    result = gpc.get_escape_token(timenow)
+
+    assert result == gpc.TOKEN_TEMPLATE.format(timenow)
+
+
+@pytest.mark.parametrize('token', [
+    None,
+    "Foo",
+    "$Plop$",
+])
+def test_escape_token(token):
+    gpc = PostCleaner(escape_token=token)
+
+    if token:
+        assert gpc.escape_token == token
+    else:
+        # Since we dont know the datetime now from test, just check generated
+        # token starts alike the default token template
+        assert gpc.escape_token.startswith(gpc.TOKEN_TEMPLATE.split('{')[0])
+
+
+@pytest.mark.parametrize('protocol,url,attempted', [
+    (
+        "http",
+        "http://perdu.com",
+        "perdu.com"
+    ),
+    (
+        "gopher",
+        "gopher://perdu.com",
+        "perdu.com"
+    ),
+    (
+        "http",
+        ("http://perdu.com/lorem/ipsum/salace/nec/vergiture/foo/bar/ping/pong/"
+         "plop/plip/plap/plup/this/is/a/very/long/url/"),
+        ("perdu.com/lorem/ipsum/salace/nec/vergiture/foo/bar/ping/pong/"
+         "plop/plip/plap/plup/this/is/a/very/l..."),
+    ),
+])
+
+def test_truncate_link(protocol, url, attempted):
+    gpc = PostCleaner()
+
+    assert gpc.truncate_link(protocol, url) == attempted
+
+
+@pytest.mark.parametrize('protocol,url,attempted', [
+    (
+        "http",
+        "http://perdu.com",
+        "[url]"
+    ),
+    (
+        "https",
+        "https://www.youtube.com/watch?v=DsJK9sYRUWc",
+        "[youtube]"
+    ),
+    (
+        "https",
+        "https://www.google.fr/",
+        "[google]"
+    ),
+    (
+        "https",
+        "https://www.foobar.com/google-is-down/",
+        "[google]"
+    ),
+])
+def test_url_display(protocol, url, attempted):
+    """
+    Every default substitution should be tested, this may need is own test file
+    """
+    gpc = PostCleaner()
+
+    assert gpc.url_display(protocol, url) == attempted
 
 
 @pytest.mark.parametrize('source,attempted', [
@@ -71,7 +160,7 @@ from djangotribune.parser import PostCleaner
     ),
 ])
 def test_parse(source, attempted):
-    """Parsing message source using spost cleaner'"""
+    """Parsing message source using post cleaner'"""
     dummy_token = "$DummyToken$"
     gpc = PostCleaner(escape_token=dummy_token)
     gpc.append_batch(source)
