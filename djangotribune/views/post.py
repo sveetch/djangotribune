@@ -164,6 +164,12 @@ class PostRemotePlainView(RemotePlainMixin, PostRemoteBaseView):
     """
     pass
 
+class PostRemoteTsvView(RemoteTsvMixin, PostRemoteBaseView):
+    """
+    Remote post Tsv view
+    """
+    pass
+
 class PostRemoteJsonView(RemoteJsonMixin, PostRemoteBaseView):
     """
     Remote post JSON view
