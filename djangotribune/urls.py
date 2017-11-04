@@ -5,10 +5,10 @@ Root url's map for application
 from django.conf.urls.defaults import *
 
 #from djangotribune.views.help import ReadmePage
-from djangotribune.views.remote import (RemotePlainView, RemoteJsonView, RemoteXmlView, 
+from djangotribune.views.remote import (RemotePlainView, RemoteTsvView, RemoteJsonView, RemoteXmlView, 
                                         RemoteCrapXmlView)
 from djangotribune.views.post import (PostBoardView, PostBoardNoScriptView, 
-                                        PostRemotePlainView, PostRemoteJsonView, 
+                                        PostRemotePlainView, PostRemoteTsvView, PostRemoteJsonView, 
                                         PostRemoteXmlView, PostRemoteCrapXmlView)
 from djangotribune.views.clock import ClockJsonView
 from djangotribune.views.discovery import ConfigDiscoveryView
@@ -28,12 +28,14 @@ urlpatterns = patterns('',
     
     # Message posting views
     url(r'^post/$', PostRemotePlainView.as_view(), name='tribune-post-plain'),
+    url(r'^post/tsv/$', PostRemoteTsvView.as_view(), name='tribune-post-tsv'),
     url(r'^post/json/$', PostRemoteJsonView.as_view(), name='tribune-post-json'),
     url(r'^post/xml/$', PostRemoteXmlView.as_view(), name='tribune-post-xml'),
     url(r'^crap/post.xml$', PostRemoteCrapXmlView.as_view(), name='tribune-post-xml-crap'),
     
     # Remote backend views for message list
     url(r'^remote/$', RemotePlainView.as_view(), name='tribune-remote-plain'),
+    url(r'^remote/tsv/$', RemoteTsvView.as_view(), name='tribune-remote-tsv'),
     url(r'^remote/json/$', RemoteJsonView.as_view(), name='tribune-remote-json'),
     url(r'^remote/xml/$', RemoteXmlView.as_view(), name='tribune-remote-xml'),
     url(r'^crap/remote.xml$', RemoteCrapXmlView.as_view(), name='tribune-remote-xml-crap'),
@@ -51,11 +53,13 @@ urlpatterns = patterns('',
     url(r'^(?P<channel_slug>[-\w]+)/clock/(?P<clock>[:\d]{5,9})/$', ClockJsonView.as_view(), name='tribune-channel-clock-remote'),
     
     url(r'^(?P<channel_slug>[-\w]+)/post/$', PostRemotePlainView.as_view(), name='tribune-channel-post-plain'),
+    url(r'^(?P<channel_slug>[-\w]+)/post/tsv/$', PostRemoteTsvView.as_view(), name='tribune-channel-post-tsv'),
     url(r'^(?P<channel_slug>[-\w]+)/post/json/$', PostRemoteJsonView.as_view(), name='tribune-channel-post-json'),
     url(r'^(?P<channel_slug>[-\w]+)/post/xml/$', PostRemoteXmlView.as_view(), name='tribune-channel-post-xml'),
     url(r'^(?P<channel_slug>[-\w]+)/crap/post.xml$', PostRemoteCrapXmlView.as_view(), name='tribune-channel-post-xml-crap'),
     
     url(r'^(?P<channel_slug>[-\w]+)/remote/$', RemotePlainView.as_view(), name='tribune-channel-remote-plain'),
+    url(r'^(?P<channel_slug>[-\w]+)/remote/tsv/$', RemoteTsvView.as_view(), name='tribune-channel-remote-tsv'),
     url(r'^(?P<channel_slug>[-\w]+)/remote/json/$', RemoteJsonView.as_view(), name='tribune-channel-remote-json'),
     url(r'^(?P<channel_slug>[-\w]+)/remote/xml/$', RemoteXmlView.as_view(), name='tribune-channel-remote-xml'),
     url(r'^(?P<channel_slug>[-\w]+)/crap/remote.xml$', RemoteCrapXmlView.as_view(), name='tribune-channel-remote-xml-crap'),

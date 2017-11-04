@@ -336,6 +336,38 @@ class RemotePlainMixin(RemoteBaseMixin):
         
         return table.draw()
 
+class RemoteTsvMixin(RemoteBaseMixin):
+    """
+    Remote TSV mixin
+    """
+    mimetype = "text/tab-separated-values; charset=utf-8"
+    default_row_direction = "asc"
+  
+    def build_backend(self, messages):
+        """
+        A TSV backend:
+
+        * served with HTTP Content-Type: text/tab-separated-values.
+        * without header.
+        * with a fixed list of fields
+
+        Each line looks like:
+
+        ${id}\t${time}\t${info}\t${login}\t${message}\n
+        """
+        
+        backend = ''
+        for item in messages:
+            backend += str(item['id']) + "\t"
+            backend += item['created'].strftime('%Y%m%d%H%M%S') + "\t"
+            backend += item['user_agent'] + "\t"
+            if item['author__username']:
+                backend += item['author__username'];
+            backend += "\t";
+            backend += item['raw'] + "\n"
+        
+        return backend
+
 class RemoteJsonMixin(RemoteBaseMixin):
     """
     Remote JSON mixin
@@ -461,6 +493,12 @@ class RemoteBaseView(LockView):
 class RemotePlainView(RemotePlainMixin, RemoteBaseView):
     """
     Remote PLAIN TEXT view
+    """
+    pass
+
+class RemoteTsvView(RemoteTsvMixin, RemoteBaseView):
+    """
+    Remote TSV view
     """
     pass
 
