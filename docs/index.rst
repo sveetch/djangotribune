@@ -6,14 +6,14 @@
 djangotribune
 *************
 
-Django-tribune is a *chat-like application* with some aspects of *IRC* but with a 
+Django-tribune is a *chat-like application* with some aspects of *IRC* but with a
 strong usage of message clocks.
 
-**Message clocks** are always displayed and used in messages to reference answers or 
+**Message clocks** are always displayed and used in messages to reference answers or
 relation with other messages.
 
 A sample part of Tribune messages will look like this in a plain-text version : ::
-    
+
     16:15:27     <superman>            First
     16:16:13     Anonymous coward      16:15:27 oh no you don't !
     16:15:27     <superman>            16:16:13 liar !
@@ -21,7 +21,7 @@ A sample part of Tribune messages will look like this in a plain-text version : 
     18:39:05     <superman>            18:39:01 hello
     18:43:22     Anonymous coward      18:39:01 yo
 
-The application has a rich interface but is also accessible from third client 
+The application has a rich interface but is also accessible from third client
 application (via a XML backend) and even in plain text.
 
 Features
@@ -52,6 +52,7 @@ Contents
    install.rst
    basics.rst
    usage.rst
+   changelog.rst
 
 
 Indices and tables
