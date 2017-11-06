@@ -22,7 +22,7 @@ POST_CLEANER_RE = re.compile('(' + POST_CLEANER_TOTOZ_RE + '|(?P<sep>[\(\)\[\]"]
 POST_CLEANER_SEP_END = { '(': ')', '[': ']', '"': '"' }
 
 
-# TODO: move to settings "local" and use re.compile
+# TODO: move to app default settings and use re.compile
 URL_SUBSTITUTION = (
     (r".tar.gz", "tgz"),
     (r".tgz", "tgz"),
@@ -60,11 +60,10 @@ URL_SUBSTITUTION = (
 
 def XmlEntities(s):
     """
-    Replace HTML entities to valid XML entities (with numeric character
-    reference ``&#nnnn;``).
+    Replace HTML entities to valid XML entities
     """
-    return s.replace('&', '&#38;').replace('<', '&#60;')\
-            .replace('>', '&#62;').replace('"', '&#34;')
+    return s.replace('&', '&amp;').replace('<', '&lt;')\
+            .replace('>', '&gt;').replace('"', '&quot;')
 
 
 def PostMatchIterator(str):
@@ -401,11 +400,11 @@ class MessageParser(object):
             if chunk[0] == '<':
                 # Moment
                 if chunk == '<m>':
-                    slipped_web.write('====&#62; <b>Moment ')
-                    slipped_remote.write('====&#62; <b>Moment ')
+                    slipped_web.write('====&gt; <b>Moment ')
+                    slipped_remote.write('====&gt; <b>Moment ')
                 elif chunk == '</m>':
-                    slipped_web.write('</b> &#60;====')
-                    slipped_remote.write('</b> &#60;====')
+                    slipped_web.write('</b> &lt;====')
+                    slipped_remote.write('</b> &lt;====')
                 # Horloge
                 elif chunk[0:7] == '<clock ':
                     slipped_web.write('<span class="pointer">')
@@ -415,7 +414,7 @@ class MessageParser(object):
                     #slipped_remote.write(chunk)
                 # Smileys
                 elif chunk[0:7] == '<totoz ':
-                    totoz = chunk[13:-4]
+                    totoz = chunk[13:-3]
                     totoz_url = self.smileys_url.format(totoz)
                     slipped_web.write('<a class="smiley" href="%s" rel="nofollow">[:%s]</a>' % (totoz_url, totoz))
                     slipped_remote.write('[:%s]'%totoz)

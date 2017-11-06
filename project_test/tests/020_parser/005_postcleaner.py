@@ -116,13 +116,13 @@ def test_url_display(protocol, url, attempted):
     (
         """You may add a new <code><a><div/></a></code> in your element""",
         ['You may add a new ', '<code>',
-         '&#60;a&#62;&#60;div/&#62;&#60;/a&#62;', '</code>',
+         '&lt;a&gt;&lt;div/&gt;&lt;/a&gt;', '</code>',
          ' in your element']
     ),
     # <code> in <code> has its closing tag swallowed
     (
         """Code in code <code><code><div/></code></code>""",
-        ['Code in code ', '<code>', '&#60;code&#62;', '&#60;div/&#62;',
+        ['Code in code ', '<code>', '&lt;code&gt;', '&lt;div/&gt;',
          '</code>']
     ),
     # Invalid html outside <code> are corrected
@@ -134,12 +134,12 @@ def test_url_display(protocol, url, attempted):
     # is swallowed
     (
         """Bum Bam <b class="foo">Boum</b>""",
-        ['Bum Bam &#60;b class=', '"', 'foo', '"', '&#62;Boum']
+        ['Bum Bam &lt;b class=', '"', 'foo', '"', '&gt;Boum']
     ),
     # HTML classname and invalid HTML
     (
         """Bom Bam <b class="foo"><i>Boum</b>""",
-        ['Bom Bam &#60;b class=', '"', 'foo', '"', '&#62;', '<i>', 'Boum']
+        ['Bom Bam &lt;b class=', '"', 'foo', '"', '&gt;', '<i>', 'Boum']
     ),
     # Basic url
     (

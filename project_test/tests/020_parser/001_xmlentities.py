@@ -7,11 +7,11 @@ from djangotribune.parser import XmlEntities
 
 @pytest.mark.parametrize('source,attempted', [
     ("""Foo""", """Foo"""),
-    ("""Lorem & ipsum""", """Lorem &#38; ipsum"""),
-    ("""Lorem < ipsum""", """Lorem &#60; ipsum"""),
-    ("""Lorem > ipsum""", """Lorem &#62; ipsum"""),
-    ("""Lorem " ipsum""", """Lorem &#34; ipsum"""),
-    ("""Lorem & "ipsum" nec & <div>""", """Lorem &#38; &#34;ipsum&#34; nec &#38; &#60;div&#62;"""),
+    ("""Lorem & ipsum""", """Lorem &amp; ipsum"""),
+    ("""Lorem < ipsum""", """Lorem &lt; ipsum"""),
+    ("""Lorem > ipsum""", """Lorem &gt; ipsum"""),
+    ("""Lorem " ipsum""", """Lorem &quot; ipsum"""),
+    ("""Lorem & "ipsum" nec & <div>""", """Lorem &amp; &quot;ipsum&quot; nec &amp; &lt;div&gt;"""),
 ])
 def test_replacement(source, attempted):
     """Entity replacement"""
