@@ -18,3 +18,12 @@ def test_remote_parse(source, attempted):
     result = mp.render(source)
 
     assert result['remote_render'] == attempted
+
+
+@pytest.mark.parametrize('source,attempted', WEB_SAMPLES)
+def test_web_parse(source, attempted):
+    mp = MessageParser()
+
+    result = mp.render(source)
+
+    assert result['web_render'] == attempted

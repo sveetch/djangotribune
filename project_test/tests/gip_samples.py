@@ -14,7 +14,7 @@ SAMPLES = (
     (
         u'''Un lien correct http://perdu.com et un autre http://coin.org/foo.bar?po=1&foo=lop aussi''',
         u'''Un lien correct <a href="http://perdu.com">[url]</a> et un autre <a href="http://coin.org/foo.bar?po=1&amp;foo=lop">[url]</a> aussi''',
-        u'''Un lien correct <a href="http://perdu.com">[url]</a> et un autre <a href="http://coin.org/foo.bar?po=1&amp;foo=lop">[url]</a> aussi''',
+        u'''Un lien correct <a href="http://perdu.com" class="external" rel="nofollow">[url]</a> et un autre <a href="http://coin.org/foo.bar?po=1&amp;foo=lop" class="external" rel="nofollow">[url]</a> aussi''',
     ),
     (
         u'''Une url free pour la reconnaissance de motifs d'urls http://prout.free.fr et une autre http://prout.free.fr/flop/quiz voila''',
