@@ -3,6 +3,8 @@
 .. _crispy-forms-foundation: https://github.com/sveetch/crispy-forms-foundation
 .. _South: http://south.readthedocs.org/en/latest/
 
+**Project is no longer maintained and has been archived**
+
 Introduction
 ============
 
