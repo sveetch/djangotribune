@@ -6,6 +6,8 @@
 djangotribune
 *************
 
+**Project is no longer maintained and has been archived**
+
 Django-tribune is a *chat-like application* with some aspects of *IRC* but with a
 strong usage of message clocks.
 
